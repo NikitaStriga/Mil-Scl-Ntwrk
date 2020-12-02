@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration>
+    <Appenders>
+        <Console name="Console" target="SYSTEM_OUT">
+            <PatternLayout disableAnsi="false"  pattern="%highlight{%d{HH:mm:ss.SSS} %-5level %logger{36}.%M() @%L - %msg%n}{FATAL=red blink, ERROR=red, WARN=yellow bold, INFO=black, DEBUG=green bold, TRACE=blue}"/>
+        </Console>
+
+        <RollingFile name="RollingFile"
+                     fileName="./logs/infoLogs.log"
+                     filePattern="./logs/$${date:yyyy-MM}-info/infoLogs-%d{-dd-MMMM-yyyy}-%i.log">
+            <PatternLayout>
+                <pattern>%d %p %C{1.} [%t] %m%n</pattern>
+            </PatternLayout>
+            <Policies>
+                <!-- rollover on startup, daily and when the file reaches
+                    10 MegaBytes -->
+                <OnStartupTriggeringPolicy />
+                <SizeBasedTriggeringPolicy
+                        size="10 MB" />
+                <TimeBasedTriggeringPolicy />
+            </Policies>
+        </RollingFile>
+
+        <RollingFile name="ErrorLogs"
+                     fileName="./logs/errorLogs.log"
+                     filePattern="./logs/$${date:yyyy-MM}-warnings/errorLogs-%d{-dd-MMMM-yyyy}-%i.log">
+            <PatternLayout>
+                <pattern>%d %p %C{1.} [%t] %m%n</pattern>
+            </PatternLayout>
+            <Policies>
+                <!-- rollover on startup, daily and when the file reaches
+                    10 MegaBytes -->
+                <OnStartupTriggeringPolicy />
+                <SizeBasedTriggeringPolicy
+                        size="10 MB" />
+                <TimeBasedTriggeringPolicy />
+            </Policies>
+        </RollingFile>
+    </Appenders>
+
+    <Loggers>
+
+        <!-- LOG everything at INFO level -->
+        <Root level="info">
+            <AppenderRef ref="Console" />
+            <AppenderRef ref="RollingFile"/>
+            <AppenderRef ref="ErrorLogs" level="warn"/>
+        </Root>
+
+
+
+<!--        <Logger name="q3df.mil" level="warn" >-->
+<!--            <AppenderRef ref="ErrorLogs" />-->
+<!--        </Logger>-->
+
+
+    </Loggers>
+
+
+</Configuration>
+
+
+<!-- Уровень логирования наследуется (или устанавливается)
+ независимо от аппендера. Иначе говоря, если на логгере root сконфигурирован вывод в A1 с уровнем ERROR,
+  а на ru.skipy – в A2 с уровнем INFO, то вывод в ru.skipy с уровнем INFO попадет и в A2, и в A1, несмотря на то,
+   что в конфигурации прямо рядом с A1 указан уровень ERROR.-->
