@@ -28,5 +28,10 @@ public class DialogServiceImpl implements q3df.mil.service.DialogService {
 
     }
 
+    @Override
+    public void deleteById(Long id) {
+        deleteById(id);
+    }
+
 
 }

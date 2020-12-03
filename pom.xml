@@ -104,15 +104,13 @@
 		</dependency>
 
 
-		<!-- log4j2 -->
+		<!-- https://mvnrepository.com/artifact/commons-beanutils/commons-beanutils -->
 <!--		<dependency>-->
-<!--			<groupId>org.apache.logging.log4j</groupId>-->
-<!--			<artifactId>log4j-api</artifactId>-->
+<!--			<groupId>commons-beanutils</groupId>-->
+<!--			<artifactId>commons-beanutils</artifactId>-->
+<!--			<version>1.9.4</version>-->
 <!--		</dependency>-->
-<!--		<dependency>-->
-<!--			<groupId>org.apache.logging.log4j</groupId>-->
-<!--			<artifactId>log4j-core</artifactId>-->
-<!--		</dependency>-->
+
 
 
 		<!-- Security conf + sec web -->

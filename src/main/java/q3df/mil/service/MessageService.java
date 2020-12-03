@@ -8,4 +8,6 @@ public interface MessageService {
 
     List<MessageDto> findMessagesByDialogId(Long id);
 
+    int deleteMessagesByUser(Long id);
+
 }

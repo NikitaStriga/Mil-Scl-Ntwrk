@@ -6,6 +6,7 @@ import lombok.*;
 
 import q3df.mil.entities.enums.Gender;
 import q3df.mil.entities.messages_dialogs.Dialog;
+import q3df.mil.entities.messages_dialogs.Message;
 import q3df.mil.entities.photos_entities.Photo;
 import q3df.mil.entities.text_entities.Text;
 
@@ -99,7 +100,6 @@ public class User {
 
     @Column(name = "birthday")
     @Past(message = "Invalid date! It's must be in past!")
-//    @Pattern(regexp = "[1-2][09][0-9][0-9]-[0-9]{1,2}-[0-9]{1,2}",message = "Enter correct date. Its must be yyyy-mm-dd")
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
     private LocalDate birthday;
 
@@ -178,7 +178,7 @@ public class User {
     /***************** Relation to roles  + add ***********/
     @OneToMany(fetch = FetchType.LAZY,mappedBy = "user",
             cascade = {CascadeType.DETACH,
-                    CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH})
+                    CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH},orphanRemoval = true)
     private List<Role> roles=new ArrayList<>(4);
 
     //add new role for user
@@ -197,7 +197,7 @@ public class User {
                     CascadeType.DETACH,
                     CascadeType.MERGE,
                     CascadeType.PERSIST,
-                    CascadeType.REFRESH})
+                    CascadeType.REFRESH},orphanRemoval = true)
     private List<Text> texts=new ArrayList<>();
 
     //add new text for user
@@ -216,7 +216,7 @@ public class User {
 //                    CascadeType.DETACH,
 //                    CascadeType.MERGE,
 //                    CascadeType.PERSIST,
-//                    CascadeType.REFRESH})
+//                    CascadeType.REFRESH},orphanRemoval = true)
 //    private List<Friend> friends=new ArrayList<>();
 //
 //
@@ -235,7 +235,7 @@ public class User {
 //                    CascadeType.DETACH,
 //                    CascadeType.MERGE,
 //                    CascadeType.PERSIST,
-//                    CascadeType.REFRESH})
+//                    CascadeType.REFRESH},orphanRemoval = true)
 //    private List<Subscriber> subscribers=new ArrayList<>();
 //
 //    public void addSubscriber(Subscriber sub){
@@ -246,9 +246,13 @@ public class User {
 
 
 
+
+
+
+
     /************** Relation to dialogs  + add ***********/
     @ManyToMany(mappedBy = "users",cascade = {CascadeType.DETACH,
-                    CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH})
+                    CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH,CascadeType.REMOVE})
 
     private List<Dialog> dialogs=new ArrayList<>();
 
@@ -266,7 +270,7 @@ public class User {
 //                    CascadeType.DETACH,
 //                    CascadeType.MERGE,
 //                    CascadeType.PERSIST,
-//                    CascadeType.REFRESH})
+//                    CascadeType.REFRESH},orphanRemoval = true)
 //
 //    private List<Photo> photos=new ArrayList<>();
 //
@@ -278,10 +282,7 @@ public class User {
     /********************************************************/
 
 
-
-
-
-
+    /** ManyToMany  friends*/
     @ToString.Exclude
     @EqualsAndHashCode.Exclude
     @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH}, targetEntity = User.class)
@@ -290,7 +291,7 @@ public class User {
             inverseJoinColumns = @JoinColumn(name = "friend_id"))
     private List<User> friends = new ArrayList<>();
 
-
+    /** ManyToMany  subscribers*/
     @ToString.Exclude
     @EqualsAndHashCode.Exclude
     @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH}, targetEntity = User.class)
@@ -306,4 +307,37 @@ public class User {
 //modelMapper   or objectMapper
 
 
+
+
+
+//    /************** Relation to messages  + add ***********/
+//    @OneToMany(mappedBy = "fromWho",
+//            cascade = {
+//                    CascadeType.DETACH,
+//                    CascadeType.MERGE,
+//                    CascadeType.PERSIST,
+//                    CascadeType.REFRESH},orphanRemoval = true)
+//    private List<Message> messagesFromWho=new ArrayList<>();
+//
+//    public void addMessagesFromWho(Message message){
+//        messagesFromWho.add(message);
+//    }
+//
+//    /********************************************************/
+//    /********************************************************/
+//
+//    /************** Relation to messages  + add ***********/
+//    @OneToMany(mappedBy = "fromWho",
+//            cascade = {
+//                    CascadeType.DETACH,
+//                    CascadeType.MERGE,
+//                    CascadeType.PERSIST,
+//                    CascadeType.REFRESH},orphanRemoval = true)
+//    private List<Message> messagesToWho=new ArrayList<>();
+//
+//    public void addMessageToWho(Message message){
+//        messagesToWho.add(message);
+//    }
+//
+//    /********************************************************/
 }

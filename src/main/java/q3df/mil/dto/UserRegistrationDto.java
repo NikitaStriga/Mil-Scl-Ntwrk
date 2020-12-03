@@ -1,15 +1,14 @@
 package q3df.mil.dto;
 
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.springframework.format.annotation.DateTimeFormat;
 import q3df.mil.validators.ValidDate;
 
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotEmpty;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Pattern;
-import javax.validation.constraints.Size;
+import javax.validation.constraints.*;
+import java.time.LocalDate;
 
 
 @Data
@@ -21,6 +20,7 @@ public class UserRegistrationDto {
     @NotNull(message = "Mail should not be empty !")
     @NotEmpty(message = "Mail should not be empty !")
     @Size(max = 50,message = "Email must be less than 50 characters")
+    @Pattern(regexp = "^[\\S]*$")
     private String email;
 
 
@@ -72,7 +72,11 @@ public class UserRegistrationDto {
     @Size(max = 30, message = "To long city name !")
     private String city;
 
-    @ValidDate
-    private String birthday;
+
+
+    @Past(message = "Birthday must be in the past!")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
+    private LocalDate birthday;
+
 
 }

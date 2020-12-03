@@ -31,12 +31,12 @@ public class UserRegistrationMapper extends Mapper<User, UserRegistrationDto> {
     @Override
     public void mapFromEntityToDto(User source, UserRegistrationDto destination) {
         destination.setGender(source.getGender().name());
-        destination.setBirthday(source.getBirthday().toString());
+//        destination.setBirthday(source.getBirthday().toString());
     }
 
     @Override
     public void mapFromDtoToEntity(UserRegistrationDto source, User destination) {
         destination.setGender(Gender.valueOf(source.getGender().toUpperCase()));
-        destination.setBirthday(LocalDate.parse(source.getBirthday()));
+//        destination.setBirthday(LocalDate.parse(source.getBirthday()));
     }
 }

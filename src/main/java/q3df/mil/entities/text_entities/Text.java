@@ -64,7 +64,7 @@ public class Text {
                     CascadeType.DETACH,
                     CascadeType.MERGE,
                     CascadeType.PERSIST,
-                    CascadeType.REFRESH})
+                    CascadeType.REFRESH},orphanRemoval = true)
     private List<TextComment> textComments=new ArrayList<>();
 
     //add comments
@@ -83,7 +83,7 @@ public class Text {
                     CascadeType.DETACH,
                     CascadeType.MERGE,
                     CascadeType.PERSIST,
-                    CascadeType.REFRESH})
+                    CascadeType.REFRESH},orphanRemoval = true)
     private Set<TextLike> textLikes=new HashSet<>();
 
 

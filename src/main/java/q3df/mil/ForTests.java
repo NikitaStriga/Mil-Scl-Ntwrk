@@ -24,7 +24,7 @@ public class ForTests {
 
         System.out.println(LocalDate.parse("2020-12-10"));
 
-
+        System.out.println(LocalDate.now());
         LocalDate.parse("2");
 
 //        CommentEntity commentDto0=new CommentEntity("privet");

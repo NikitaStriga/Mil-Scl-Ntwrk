@@ -3,20 +3,20 @@ package q3df.mil.service;
 
 import q3df.mil.dto.UserDto;
 import q3df.mil.dto.UserRegistrationDto;
-import q3df.mil.entities.users_roles.User;
+import q3df.mil.dto.UserForPreviewOfAllUsersDto;
 
 import java.util.List;
 
 
 public interface UserService {
 
-    List<UserDto> findAll();
+    List<UserForPreviewOfAllUsersDto> findAll();
 
     UserDto findById(Long id);
 
     UserDto saveUser(UserRegistrationDto userRegistrationDto);
 
-    UserDto updateUser(User user);
+    UserDto updateUser(UserDto user);
 
-    void deleteUser(User user);
+    void deleteUser(Long id);
 }

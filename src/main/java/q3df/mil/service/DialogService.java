@@ -9,4 +9,8 @@ import java.util.List;
 public interface DialogService {
 
     List<DialogDto> findDialogsByUserId(Long id);
+
+    void deleteById(Long id);
+
+
 }

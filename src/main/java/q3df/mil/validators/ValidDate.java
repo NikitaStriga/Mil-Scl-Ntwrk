@@ -11,7 +11,7 @@ import static java.lang.annotation.ElementType.PARAMETER;
 
 @Target({FIELD, PARAMETER})
 @Retention(RetentionPolicy.RUNTIME)
-@Constraint(validatedBy = ValidDateValidator.class)
+@Constraint(validatedBy = DateValidator.class)
 public @interface ValidDate {
 
     String message() default "Invalid date! Please enter the correct value. Date format is yyyy-MM-dd";

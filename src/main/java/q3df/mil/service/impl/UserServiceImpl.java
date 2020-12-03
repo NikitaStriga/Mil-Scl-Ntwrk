@@ -1,14 +1,18 @@
 package q3df.mil.service.impl;
 
 
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
 import q3df.mil.dto.UserDto;
 import q3df.mil.dto.UserRegistrationDto;
+import q3df.mil.dto.UserForPreviewOfAllUsersDto;
 import q3df.mil.entities.users_roles.User;
 import q3df.mil.exception.EmailExistException;
 import q3df.mil.exception.LoginExistException;
 import q3df.mil.exception.UserNotFoundException;
+import q3df.mil.mapper.UserForPreviewOfAllUsersMapper;
 import q3df.mil.mapper.UserMapper;
 import q3df.mil.mapper.UserRegistrationMapper;
 import q3df.mil.repository.UserRepository;
@@ -25,22 +29,26 @@ public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
     private final UserMapper userMapper;
     private final UserRegistrationMapper userRegistrationMapper;
+    private final UserForPreviewOfAllUsersMapper userForPreviewOfAllUsersMapper;
 
 
     @Autowired
-    public UserServiceImpl(UserRepository userRepository, UserMapper userMapper, UserRegistrationMapper userRegistrationMapper) {
+    public UserServiceImpl(UserRepository userRepository, UserMapper userMapper, UserRegistrationMapper userRegistrationMapper, UserForPreviewOfAllUsersMapper userForPreviewOfAllUsersMapper) {
         this.userRepository = userRepository;
         this.userMapper = userMapper;
         this.userRegistrationMapper = userRegistrationMapper;
+        this.userForPreviewOfAllUsersMapper = userForPreviewOfAllUsersMapper;
     }
 
 
 
     @Override
     @Transactional
-    public List<UserDto> findAll() {
-        return userRepository.findAll().stream().map(userMapper::toDto).collect(Collectors.toList());
+    public List<UserForPreviewOfAllUsersDto> findAll() {
+        return userRepository.findAll().stream().map(userForPreviewOfAllUsersMapper::toDto).collect(Collectors.toList());
     }
+
+
 
     @Override
     @Transactional
@@ -51,6 +59,8 @@ public class UserServiceImpl implements UserService {
                         ()-> new UserNotFoundException("User with id " + id + " not found!")));
 
     }
+
+
 
     @Override
     @Transactional
@@ -66,15 +76,28 @@ public class UserServiceImpl implements UserService {
         return userMapper.toDto(userRepository.save(userRegistrationMapper.fromDto(userRegistrationDto)));
     }
 
-    @Override
-    @Transactional
-    public UserDto updateUser(User user) {
-        return null;
-    }
+
 
     @Override
     @Transactional
-    public void deleteUser(User user) {
+    public UserDto updateUser(UserDto userDto) {
+        User user = userRepository.getOne(userDto.getId());
+        BeanUtils.copyProperties(userDto, user);
+        return userMapper.toDto(user);
+    }
+
+
+
+    @Override
+    @Transactional
+    public void deleteUser(Long id) {
+        try{
+            userRepository.deleteById(id);
+        }catch (EmptyResultDataAccessException e){
+            throw new UserNotFoundException("User with id " + id + " doesn't exist!");
+        }
+
+
 
     }
 }

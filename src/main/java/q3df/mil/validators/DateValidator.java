@@ -8,10 +8,11 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 
-public class ValidDateValidator implements ConstraintValidator<ValidDate, String> {
+public class DateValidator implements ConstraintValidator<ValidDate, String> {
 
    @Override
    public void initialize(ValidDate validDate) {
+
    }
 
    @Override
@@ -19,9 +20,12 @@ public class ValidDateValidator implements ConstraintValidator<ValidDate, String
       return !StringUtils.isBlank(localDate) && isValidFormat("yyyy-MM-dd", localDate);
    }
 
-   private static boolean isValidFormat(String format, String localDate) {
+   public boolean isValidFormat(String format, String localDate) {
       try {
          LocalDate.parse(localDate, DateTimeFormatter.ofPattern(format));
+         if(!LocalDate.now().isAfter(LocalDate.parse(localDate))){
+
+         }
       } catch (DateTimeParseException e) {
          return false;
       }

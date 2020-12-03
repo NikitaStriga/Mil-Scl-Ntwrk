@@ -33,7 +33,7 @@ public class Message {
             CascadeType.DETACH,
             CascadeType.MERGE,
             CascadeType.PERSIST,
-            CascadeType.REFRESH })
+            CascadeType.REFRESH, })
     @JoinColumn(name = "to_who")
     private User toWho;
 

@@ -1,19 +1,21 @@
-package q3df.mil.dto.dto_for_main_page;
+package q3df.mil.dto;
 
-
+import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import q3df.mil.entities.enums.Gender;
-
+import q3df.mil.dto.friends_subs_dto.FriendDto;
+import q3df.mil.dto.friends_subs_dto.SubscriberDto;
+import q3df.mil.entities.users_roles.User;
 
 import java.time.LocalDate;
-import java.util.ArrayList;
+import java.time.LocalDateTime;
 import java.util.List;
 
 
 @Data
 @NoArgsConstructor
-public class UserDto {
+@JsonInclude(JsonInclude.Include.NON_NULL)
+public class UserForPreviewOfAllUsersDto {
 
     private Long id;
 
@@ -21,7 +23,8 @@ public class UserDto {
 
     private String lastName;
 
-    private Gender gender;
+    private String gender;
+
 
     private LocalDate birthday;
 
@@ -45,20 +48,11 @@ public class UserDto {
 
     private String contactVK;
 
-    //lists
-//    private List<Role> roles=new ArrayList<>(4);
+    private LocalDateTime registrationTime;
 
-    private List<TextDto> texts=new ArrayList<>();
+    private LocalDateTime updateTime;
 
-//    private List<Friend> friends=new ArrayList<>();
-
-//    private List<Subscriber> subscribers=new ArrayList<>();
-
-//    private List<Dialog> dialogs=new ArrayList<>();
-
-//    private List<Photo> photos=new ArrayList<>();
-
-
-
+//    private List<FriendDto> friends;
+//    private List<SubscriberDto> subscribers;
 
 }
