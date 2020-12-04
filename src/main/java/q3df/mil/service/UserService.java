@@ -1,9 +1,9 @@
 package q3df.mil.service;
 
 
-import q3df.mil.dto.UserDto;
-import q3df.mil.dto.UserRegistrationDto;
-import q3df.mil.dto.UserForPreviewOfAllUsersDto;
+import q3df.mil.dto.user.UserDto;
+import q3df.mil.dto.user.UserRegistrationDto;
+import q3df.mil.dto.user.UserForPreviewOfAllUsersDto;
 
 import java.util.List;
 

@@ -1,12 +1,11 @@
 package q3df.mil.service.impl;
 
 
-import lombok.extern.log4j.Log4j2;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.stereotype.Service;
-import q3df.mil.dto.friends_subs_dto.SubscriberDto;
-import q3df.mil.mapper.friend_sub_mappers.SubscriberMapper;
+import q3df.mil.dto.subscriber.SubscriberDto;
+import q3df.mil.mapper.subscriber.SubscriberMapper;
 import q3df.mil.repository.UserRepository;
 import q3df.mil.service.SubscriberService;
 

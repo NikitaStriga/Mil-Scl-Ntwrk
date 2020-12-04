@@ -3,7 +3,7 @@ package q3df.mil.repository;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import org.springframework.stereotype.Repository;
-import q3df.mil.entities.messages_dialogs.Message;
+import q3df.mil.entities.message.Message;
 
 import java.util.List;
 

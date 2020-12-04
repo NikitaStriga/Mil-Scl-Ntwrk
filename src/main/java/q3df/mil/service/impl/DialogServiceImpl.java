@@ -1,9 +1,11 @@
 package q3df.mil.service.impl;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
-import q3df.mil.dto.dialog_message_dto.DialogDto;
-import q3df.mil.mapper.dialog_message_mappers.DialogMapper;
+import q3df.mil.dto.dialog.DialogDto;
+import q3df.mil.exception.UserNotFoundException;
+import q3df.mil.mapper.dialog.DialogMapper;
 import q3df.mil.repository.DialogRepository;
 
 import javax.transaction.Transactional;
@@ -30,7 +32,11 @@ public class DialogServiceImpl implements q3df.mil.service.DialogService {
 
     @Override
     public void deleteById(Long id) {
-        deleteById(id);
+        try{
+            dialogRepository.deleteById(id);
+        }catch (EmptyResultDataAccessException ex){
+            throw new UserNotFoundException("User with id " + id + " doesn't exist!");
+        }
     }
 
 

@@ -2,8 +2,8 @@ package q3df.mil.service.impl;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import q3df.mil.dto.friends_subs_dto.FriendDto;
-import q3df.mil.mapper.friend_sub_mappers.FriendMapper;
+import q3df.mil.dto.friend.FriendDto;
+import q3df.mil.mapper.friend.FriendMapper;
 import q3df.mil.repository.UserRepository;
 import q3df.mil.service.FriendService;
 

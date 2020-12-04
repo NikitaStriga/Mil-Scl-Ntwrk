@@ -1,13 +1,11 @@
 package q3df.mil.service.impl;
 
 
-import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
-import q3df.mil.dto.dialog_message_dto.MessageDto;
-import q3df.mil.entities.messages_dialogs.Message;
+import q3df.mil.dto.message.MessageDto;
+import q3df.mil.entities.message.Message;
 import q3df.mil.exception.DialogNotFoundException;
-import q3df.mil.exception.UserNotFoundException;
-import q3df.mil.mapper.dialog_message_mappers.MessageMapper;
+import q3df.mil.mapper.message.MessageMapper;
 import q3df.mil.repository.MessageRepository;
 import q3df.mil.service.MessageService;
 

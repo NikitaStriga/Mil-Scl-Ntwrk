@@ -6,7 +6,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Import;
 import q3df.mil.config.ModelMapperConfig;
-import q3df.mil.mapper.UserMapper;
+import q3df.mil.mapper.user.UserMapper;
 import q3df.mil.repository.DialogRepository;
 import q3df.mil.service.UserService;
 import q3df.mil.service.impl.DialogServiceImpl;

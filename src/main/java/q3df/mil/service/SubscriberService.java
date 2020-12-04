@@ -1,6 +1,6 @@
 package q3df.mil.service;
 
-import q3df.mil.dto.friends_subs_dto.SubscriberDto;
+import q3df.mil.dto.subscriber.SubscriberDto;
 
 import java.util.List;
 

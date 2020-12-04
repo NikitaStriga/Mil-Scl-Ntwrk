@@ -3,7 +3,7 @@ package q3df.mil.repository;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
-import q3df.mil.entities.users_roles.User;
+import q3df.mil.entities.user.User;
 
 import java.util.List;
 
