@@ -8,4 +8,5 @@ public interface FriendService {
 
 
     List<FriendDto> findUserFriends(Long id);
+
 }

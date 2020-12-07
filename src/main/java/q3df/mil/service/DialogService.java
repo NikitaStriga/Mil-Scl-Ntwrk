@@ -7,7 +7,11 @@ import java.util.List;
 
 public interface DialogService {
 
+//    DialogDto findById(Long id);
+
     List<DialogDto> findDialogsByUserId(Long id);
+
+    DialogDto saveDialog(DialogDto dialogDto);
 
     void deleteById(Long id);
 

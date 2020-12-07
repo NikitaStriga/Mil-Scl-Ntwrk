@@ -1,10 +1,13 @@
 package q3df.mil.service.impl;
 
 
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
 import q3df.mil.dto.message.MessageDto;
 import q3df.mil.entities.message.Message;
 import q3df.mil.exception.DialogNotFoundException;
+import q3df.mil.exception.MessageNotFoundException;
+import q3df.mil.exception.UserNotFoundException;
 import q3df.mil.mapper.message.MessageMapper;
 import q3df.mil.repository.MessageRepository;
 import q3df.mil.service.MessageService;
@@ -38,7 +41,18 @@ public class MessageServiceImpl implements MessageService {
 
     @Override
     @Transactional
-    public int deleteMessagesByUser(Long id) {
-        return messageRepository.deleteByFromWhoIdOrToWhoId(id, id);
+    public void deleteById(Long id) {
+        try{
+            messageRepository.deleteById(id);
+        }catch (EmptyResultDataAccessException e){
+            throw new MessageNotFoundException("Message with id " + id + " doesn't exist!");
+        }
+    }
+
+    @Override
+    public MessageDto saveMessage(MessageDto messageDto) {
+        Message message = messageMapper.fromDto(messageDto);
+        Message savedMessage = messageRepository.save(message);
+        return messageMapper.toDto(savedMessage);
     }
 }

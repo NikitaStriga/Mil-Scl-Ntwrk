@@ -1,10 +1,9 @@
 package q3df.mil.dto.user;
 
 
-import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.context.annotation.PropertySource;
 import q3df.mil.validators.ValidDate;
 
 import javax.validation.constraints.*;
@@ -13,67 +12,68 @@ import java.time.LocalDate;
 
 @Data
 @NoArgsConstructor
+@PropertySource("classpath:messages.properties")
 public class UserRegistrationDto {
 
 
-    @NotBlank(message = "Mail should not be empty !")
-    @NotNull(message = "Mail should not be empty !")
-    @NotEmpty(message = "Mail should not be empty !")
-    @Size(max = 50,message = "Email must be less than 50 characters")
-    @Pattern(regexp = "^[\\S]*$")
+    @NotBlank(message = "{email.empty")
+    @NotNull(message = "{email.empty")
+    @NotEmpty(message = "{email.empty")
+    @Size(min=3,max = 50,message = "{email.size} {min}-{max} characters!")
+    @Pattern(regexp = "^[\\S]*$",message = "{email.pattern} {regexp}")
     private String email;
 
 
-    @NotBlank(message = "Login should not be empty !")
-    @NotNull(message = "Login should not be empty !")
-    @NotEmpty(message = "Login should not be empty !")
-    @Size(min=5, max = 30, message = "Login must be between 5 and 30 characters")
+    @NotBlank(message = "{login.empty")
+    @NotNull(message = "{login.empty")
+    @NotEmpty(message = "{login.empty")
+    @Size(min=3,max = 50,message = "{login.size} {min}-{max} characters!")
     @Pattern(regexp = "^[0-9A-z_@!@#$%^&*)(\\-\\]\\[]*$",
-            message = "Wrong login. Allowed characters 0-9, A-z, _ ! @ # $ % ^ & * ( ) - and NO whitespaces at start and at the end!")
+            message = "{login.pattern} {regexp}")
     private String login;
 
-    @NotBlank(message = "Password should not be empty !")
-    @NotNull(message = "Password should not be empty !")
-    @NotEmpty(message = "Password should not be empty !")
-    @Size(min=5, max = 30, message = "Password must be between 5 and 30 characters")
+    @NotBlank(message = "{password.empty")
+    @NotNull(message = "{password.empty")
+    @NotEmpty(message = "{password.empty")
+    @Size(min=3,max = 50,message = "{password.size} {min}-{max} characters!")
     @Pattern(regexp = "^[0-9A-z_@!@#$%^&*)(\\-\\]\\[]*$",
-            message = "Wrong password. Allowed characters 0-9, A-z, _ ! @ # $ % ^ & * ( ) - and NO whitespaces at start and at the end! ")
+            message = "{password.pattern} {regexp}")
     private String password;
 
-    @NotBlank(message = "First name should not be empty !")
-    @NotNull(message = "First name should not be empty !")
-    @NotEmpty(message = "First name should not be empty !")
-    @Size(max = 50,message = "First name is to long ! It must be less than or equal to 50 characters!")
-    @Pattern(regexp = "^[A-z]*$",message = "Please enter correct name!")
+    @NotBlank(message = "{firstName.empty")
+    @NotNull(message = "{firstName.empty")
+    @NotEmpty(message = "{firstName.empty")
+    @Size(min=3,max = 50,message = "{firstName.size} {min}-{max} characters!")
+    @Pattern(regexp = "^[A-z]*$",message = "{firstName.pattern} {regexp}")
     private String firstName;
 
-    @NotBlank(message = "Last name should not be empty !")
-    @NotNull(message = "Last name should not be empty !")
-    @NotEmpty(message = "Last name should not be empty !")
-    @Size(max = 50,message = "Last name is to long ! It must be less than or equal to 50 characters!")
-    @Pattern(regexp = "^[A-z]*$",message = "Please enter correct surname!")
+    @NotBlank(message = "{lastName.empty")
+    @NotNull(message = "{lastName.empty")
+    @NotEmpty(message = "{lastName.empty")
+    @Size(min=3,max = 50,message = "{lastName.size} {min}-{max} characters!")
+    @Pattern(regexp = "^[A-z]*$",message = "{lastName.pattern} {regexp}")
     private String lastName;
 
-    @NotBlank(message = "Gender  should not be empty !")
-    @NotNull(message = "Gender  should not be empty !")
-    @NotEmpty(message = "Gender  should not be empty !")
-    @Pattern(regexp = "(?i)male|female",message = "Please enter correct gender (male or female) !")
+    @NotBlank(message = "{gender.empty")
+    @NotNull(message = "{gender.empty")
+    @NotEmpty(message = "{gender.empty")
+    @Pattern(regexp = "(?i)male|female",message = "{gender.pattern} {regexp}")
     private String gender;
 
-    @NotBlank(message = "Country  should not be empty !")
-    @NotNull(message = "Country  should not be empty !")
-    @NotEmpty(message = "Country  should not be empty !")
-    @Size(max = 30, message = "To long country name !")
+    @NotBlank(message = "{country.empty")
+    @NotNull(message = "{country.empty")
+    @NotEmpty(message = "{country.empty")
+    @Size(min=3,max = 50,message = "{country.size} {min}-{max} characters!")
     private String country;
 
-    @NotBlank(message = "City  should not be empty !")
-    @NotNull(message = "City  should not be empty !")
-    @NotEmpty(message = "City  should not be empty !")
-    @Size(max = 30, message = "To long city name !")
+    @NotBlank(message = "{city.empty")
+    @NotNull(message = "{city.empty")
+    @NotEmpty(message = "{city.empty")
+    @Size(min=3,max = 50,message = "{city.size} {min}-{max} characters!")
     private String city;
 
 
-    @ValidDate
+    @ValidDate(afterYear = 2020,beforeYear = 2030)
     private LocalDate birthday;
 
 

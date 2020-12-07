@@ -1,8 +1,13 @@
 package q3df.mil.entities.user;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-import lombok.*;
 
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.NoArgsConstructor;
+import lombok.ToString;
 import q3df.mil.entities.enums.Gender;
 import q3df.mil.entities.dialog.Dialog;
 import q3df.mil.entities.message.Message;
@@ -46,8 +51,7 @@ import java.util.List;
                 @Index(name = "user_gender_idx",columnList = "gender"),
                 @Index(name = "user_birth_date_idx",columnList = "birthday"),
                 @Index(name = "user_country_idx",columnList = "country"),
-                @Index(name = "user_city_idx",columnList = "city"),
-                @Index(name = "user_address_idx",columnList = "address"),
+                @Index(name = "user_city_idx",columnList = "city")
         })
 @Data
 @Builder
@@ -75,7 +79,7 @@ public class User {
     @Column(name="password")
     @NotBlank(message = "Password should not be empty !")
     @NotNull(message = "Password should not be empty !")
-    @Size(max = 50,message = "Password is to long ! It must be less than 50 characters")
+    @Size(max = 80,message = "Password is to long ! It must be less than 80 characters")
     private String password;
 
     @Column(name="first_name")
@@ -113,33 +117,6 @@ public class User {
 //    @NotBlank(message = "City should not be empty! Please, enter correct value!")
     @Size(max = 50,message = "City is to long ! It must be less than 50 characters")
     private String city;
-
-    @Column(name = "address")
-//    @NotNull(message = "Address should not be empty! Please, enter correct value!")
-//    @NotBlank(message = "Address should not be empty! Please, enter correct value!")
-    @Size(max = 50,message = "Country is to long ! It must be less than 50 characters")
-    private String address;
-
-    @Column(name = "contact_email")
-//    @NotNull(message = "Address should not be empty! Please, enter correct value!")
-//    @NotBlank(message = "Address should not be empty! Please, enter correct value!")
-    @Size(max = 50,message = "Country is to long ! It must be less than 50 characters")
-    private String contactMail;
-
-    @Column(name = "contact_number")
-    private String contactNumber;
-
-    @Column(name = "contact_telegram")
-    private String contactTelegram;
-
-    @Column(name = "contact_instagram")
-    private String contactInstagram;
-
-    @Column(name = "contact_facebook")
-    private String contactFacebook;
-
-    @Column(name = "contact_vk")
-    private String contactVK;
 
     @Column(name = "registration_time",updatable = false)
     private LocalDateTime registrationTime;

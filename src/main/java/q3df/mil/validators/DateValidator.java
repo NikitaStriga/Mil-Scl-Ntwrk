@@ -1,15 +1,14 @@
 package q3df.mil.validators;
 
-import org.springframework.web.bind.MethodArgumentNotValidException;
+
 
 import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;
-import javax.validation.Valid;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Past;
 import java.time.LocalDate;
 
-
+/**
+ * this class used by @ValidDate to validate date for null, past and present
+ */
 public class DateValidator implements ConstraintValidator<ValidDate, LocalDate> {
 
    private  int afterDate;

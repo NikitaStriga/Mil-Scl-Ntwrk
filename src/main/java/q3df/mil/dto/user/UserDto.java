@@ -1,7 +1,6 @@
 package q3df.mil.dto.user;
 
 
-import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -19,6 +18,10 @@ import java.util.List;
 @NoArgsConstructor
 public class UserDto {
 
+    @NotBlank(message = "Id  should not be empty !")
+    @NotNull(message = "Id  should not be empty !")
+    @NotEmpty(message = "Id should not be empty !")
+    @Size(message = "Id should be positive!")
     private Long id;
 
     @NotBlank(message = "First name should not be empty !")

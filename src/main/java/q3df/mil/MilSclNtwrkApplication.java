@@ -3,8 +3,10 @@ package q3df.mil;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Import;
+import q3df.mil.config.MessageAndLocal;
 import q3df.mil.config.ModelMapperConfig;
 import q3df.mil.mapper.user.UserMapper;
 import q3df.mil.repository.DialogRepository;
@@ -16,8 +18,8 @@ import q3df.mil.service.impl.SubscriberServiceImpl;
 
 
 
-@SpringBootApplication
-@Import(ModelMapperConfig.class)
+@SpringBootApplication(exclude = { SecurityAutoConfiguration.class})
+@Import({ModelMapperConfig.class, MessageAndLocal.class})
 public class MilSclNtwrkApplication {
 
 	public static void main(String[] args) {

@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 
 import javax.validation.Constraint;
 import javax.validation.Payload;
+import javax.validation.constraints.Past;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
@@ -15,29 +16,35 @@ import static java.lang.annotation.ElementType.PARAMETER;
 
 
 /**
- * check for null and past,present date
- * */
+ * this annotation check for null,past and present date
+ * u need to use format yyyy-MM-dd
+ */
 @Target({FIELD,ANNOTATION_TYPE,PARAMETER})
 @Retention(RetentionPolicy.RUNTIME)
 @Constraint(validatedBy = DateValidator.class)
 public @interface ValidDate {
 
     /**
-     * this default message contains all information that u need, but if u want u can override it
+     * u can use ur own message but this by default covers all that u need
+     * @return message for exception
      */
     String message() default "Please enter the correct date of birth! It must be between {afterYear}-{beforeYear} and not null!";
 
     /**
-     * u need to use format yyyy-MM-dd
+     *
+     * @return after date
      */
     int afterYear()  default 1950;
 
     /**
-     * u need to use format yyyy-MM-dd
+     *
+     * @return before date
      */
     int beforeYear() default 2017;
 
+
     Class<?>[] groups() default {};
+
 
     Class<? extends Payload>[] payload() default {};
 

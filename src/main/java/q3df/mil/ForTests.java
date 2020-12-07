@@ -4,6 +4,7 @@ package q3df.mil;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.modelmapper.ModelMapper;
+import q3df.mil.entities.user.User;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
@@ -25,7 +26,8 @@ public class ForTests {
         System.out.println(LocalDate.parse("2020-12-10"));
 
         System.out.println(LocalDate.now());
-        LocalDate.parse("2");
+
+        System.out.println(User.class.getSimpleName());
 
 //        CommentEntity commentDto0=new CommentEntity("privet");
 //        CommentEntity commentDto1=new CommentEntity("bawd");

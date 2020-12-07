@@ -6,8 +6,12 @@ import java.util.List;
 
 public interface MessageService {
 
+//    MessageDto findById(Long id);
+
     List<MessageDto> findMessagesByDialogId(Long id);
 
-    int deleteMessagesByUser(Long id);
+    void deleteById(Long id);
+
+    MessageDto saveMessage(MessageDto messageDto);
 
 }

@@ -14,6 +14,16 @@ import org.springframework.web.servlet.NoHandlerFoundException;
 import q3df.mil.exception.DialogNotFoundException;
 import q3df.mil.exception.EmailExistException;
 import q3df.mil.exception.LoginExistException;
+import q3df.mil.exception.MessageNotFoundException;
+import q3df.mil.exception.PhotoCommentLikeNotFoundException;
+import q3df.mil.exception.PhotoCommentNotFoundException;
+import q3df.mil.exception.PhotoLikeNotFoundException;
+import q3df.mil.exception.PhotoNotFoundException;
+import q3df.mil.exception.RoleNotFoundException;
+import q3df.mil.exception.TextCommentLikeNotFoundException;
+import q3df.mil.exception.TextCommentNotFoundException;
+import q3df.mil.exception.TextLikeNotFoundException;
+import q3df.mil.exception.TextNotFoundException;
 import q3df.mil.exception.UserNotFoundException;
 
 import javax.servlet.http.HttpServletRequest;
@@ -26,27 +36,28 @@ import java.util.Map;
 public class GlobalExceptionHandler {
 
 
-    //for LoginExistException and EmailExistException
-    @ExceptionHandler({LoginExistException.class, EmailExistException.class})
+    //for all my custom exceptions
+    @ExceptionHandler({
+            DialogNotFoundException.class,
+            EmailExistException.class,
+            LoginExistException.class,
+            MessageNotFoundException.class,
+            PhotoCommentLikeNotFoundException.class,
+            PhotoCommentNotFoundException.class,
+            PhotoLikeNotFoundException.class,
+            PhotoNotFoundException.class,
+            RoleNotFoundException.class,
+            TextCommentLikeNotFoundException.class,
+            TextCommentNotFoundException.class,
+            TextLikeNotFoundException.class,
+            TextNotFoundException.class,
+            UserNotFoundException.class
+
+    })
     public ResponseEntity<HelperClassException> handleLoginExistExceptionAndEmailExistException(Exception e) {
-            return new ResponseEntity<>(new HelperClassException(e.getMessage()), HttpStatus.OK);
+            return new ResponseEntity<>(new HelperClassException(e.getMessage()), HttpStatus.NOT_FOUND);
         }
 
-
-
-    //for UserNotFoundException
-    @ExceptionHandler(UserNotFoundException.class)
-    public ResponseEntity<HelperClassException> handleUserNotFoundException(UserNotFoundException e){
-            return new ResponseEntity<>(new HelperClassException(e.getMessage()),HttpStatus.NOT_FOUND);
-    }
-
-
-
-    //for DialogNotFoundException
-    @ExceptionHandler(DialogNotFoundException.class)
-    public ResponseEntity<HelperClassException> handleDialogNotFoundException(DialogNotFoundException e){
-        return new ResponseEntity<>(new HelperClassException(e.getMessage()),HttpStatus.NOT_FOUND);
-    }
 
 
 

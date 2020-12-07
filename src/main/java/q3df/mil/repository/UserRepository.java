@@ -6,9 +6,11 @@ import org.springframework.stereotype.Repository;
 import q3df.mil.entities.user.User;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface UserRepository extends JpaRepository<User,Long> {
+
 
     @Query(value = "select * from users u join user_friends uf on u.id=uf.user_id where u.id=?1",
             nativeQuery=true)
@@ -20,7 +22,10 @@ public interface UserRepository extends JpaRepository<User,Long> {
     List<User> findUserSubscribers(Long id);
 
 
+    Optional<User> findByLogin(String login);
+
     User getOne(Long id);
+
 
     List<User> findUsersByEmailOrLogin(String email,String login);
 

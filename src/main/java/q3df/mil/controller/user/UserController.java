@@ -22,13 +22,9 @@ import java.util.List;
 public class UserController {
 
     private final UserService userService;
-    private final DialogService dialogService;
-    private final MessageService messageService;
 
-    public UserController(UserService userService, DialogService dialogService, MessageService messageService) {
+    public UserController(UserService userService) {
         this.userService = userService;
-        this.dialogService = dialogService;
-        this.messageService = messageService;
     }
 
 
@@ -41,14 +37,6 @@ public class UserController {
     @GetMapping("/{id}")
     public ResponseEntity<UserDto> findById(@PathVariable Long id){
             return ResponseEntity.ok(userService.findById(id));
-    }
-
-
-
-    //q
-    @PutMapping("/{id}")
-    public ResponseEntity<UserDto> updateUser(@Valid @RequestBody UserDto userDto){
-        return ResponseEntity.ok(userService.updateUser(userDto));
     }
 
 
@@ -67,9 +55,16 @@ public class UserController {
 
 
 
+    @PutMapping("/{id}")
+    public ResponseEntity<UserDto> updateUser(@PathVariable Long id, @Valid @RequestBody UserDto userDto){
+        return ResponseEntity.ok(userService.updateUser(userDto));
+    }
+
+
+
+
     @DeleteMapping("/{id}")
     public ResponseEntity<?> deleteUser(@PathVariable Long id){
-        messageService.deleteMessagesByUser(id);
         userService.deleteUser(id);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }

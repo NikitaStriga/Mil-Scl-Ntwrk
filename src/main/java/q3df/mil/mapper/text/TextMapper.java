@@ -37,6 +37,7 @@ public class TextMapper extends Mapper<Text, TextDto> {
         destination.setUserId(source.getUser().getId());
     }
 
+
     @Override
     public void mapFromDtoToEntity(TextDto source, Text destination) {
         destination.setUser(userRepository.findById(source.getUserId()).orElse(null));
