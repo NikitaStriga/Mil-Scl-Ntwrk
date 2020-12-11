@@ -1,9 +1,14 @@
 package q3df.mil.service.impl;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
-import q3df.mil.dto.text.TextLikeDto;
+import q3df.mil.dto.text.tl.TextLikeDto;
+import q3df.mil.dto.text.tl.TextLikeSaveDto;
 import q3df.mil.entities.text.TextLike;
-import q3df.mil.mapper.text.TextLikeMapper;
+import q3df.mil.exception.TextLikeNotFoundException;
+import q3df.mil.mapper.text.tl.TextLikeMapper;
+import q3df.mil.mapper.text.tl.TextLikeSaveMapper;
 import q3df.mil.repository.TextLikeRepository;
 import q3df.mil.service.TextLikeService;
 
@@ -13,15 +18,18 @@ public class TextLikeServiceImpl implements TextLikeService {
 
     private final TextLikeRepository textLikeRepository;
     private final TextLikeMapper textLikeMapper;
+    private final TextLikeSaveMapper textLikeSaveMapper;
 
-    public TextLikeServiceImpl(TextLikeRepository textLikeRepository, TextLikeMapper textLikeMapper) {
+    @Autowired
+    public TextLikeServiceImpl(TextLikeRepository textLikeRepository, TextLikeMapper textLikeMapper, TextLikeSaveMapper textLikeSaveMapper) {
         this.textLikeRepository = textLikeRepository;
         this.textLikeMapper = textLikeMapper;
+        this.textLikeSaveMapper = textLikeSaveMapper;
     }
 
     @Override
-    public TextLikeDto saveTextLike(TextLikeDto textLikeDto) {
-        TextLike textLike = textLikeMapper.fromDto(textLikeDto);
+    public TextLikeDto saveTextLike(TextLikeSaveDto textLikeDto) {
+        TextLike textLike = textLikeSaveMapper.fromDto(textLikeDto);
         TextLike savedTextLike = textLikeRepository.save(textLike);
         return textLikeMapper.toDto(savedTextLike);
     }
@@ -29,6 +37,10 @@ public class TextLikeServiceImpl implements TextLikeService {
 
     @Override
     public void deleteTextLikeById(Long id) {
-        textLikeRepository.deleteById(id);
+        try {
+            textLikeRepository.deleteById(id);
+        }catch (EmptyResultDataAccessException ex){
+            throw new TextLikeNotFoundException("Like with id " + id + " doesn't exist!");
+        }
     }
 }

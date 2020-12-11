@@ -1,6 +1,7 @@
 package q3df.mil.exception;
 
 public class RoleNotFoundException extends RuntimeException{
+
     public RoleNotFoundException() {
     }
 

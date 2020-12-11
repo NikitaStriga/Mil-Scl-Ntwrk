@@ -22,7 +22,7 @@ public class Role {
 
     @Column(name = "role")
     @Enumerated(value=EnumType.STRING)
-    private SystemRoles role=SystemRoles.ROLE_USER;
+    private SystemRoles role;
 
 
     @ToString.Exclude

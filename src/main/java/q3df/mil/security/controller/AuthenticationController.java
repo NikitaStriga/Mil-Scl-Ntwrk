@@ -1,14 +1,15 @@
 package q3df.mil.security.controller;
 
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiResponse;
+import io.swagger.annotations.ApiResponses;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -36,21 +37,27 @@ public class AuthenticationController {
         this.userProvider = userProvider;
     }
 
+
+
+    @ApiOperation(value = "Authenticate and Create token",
+            notes = "If  login and password are valid, a token will be generated and sent in the response")
+    @ApiResponses({
+            @ApiResponse(code = 200, message = "Login and password valid. Token was created successfully"),
+            @ApiResponse(code = 401, message = "Invalid login or password!")
+    })
     @PostMapping
     public ResponseEntity<AuthResponse> loginUser(@RequestBody AuthRequest request) {
 
-        /*Check login and password.  uses our method loadUserByUsername in  UserServiceProvide  */
+        /*Check login and password.  uses our method loadUserByUsername in  UserServiceProvide
+        * if login doesn't exist or password for this login ont valid it will be thrown AuthenticationException  */
         try {
-            Authentication authenticate = authenticationManager.authenticate(
+            authenticationManager.authenticate(
                     new UsernamePasswordAuthenticationToken(
                             request.getLogin(),
                             request.getPassword()
                     )
             );
 
-        /* put information (it will be login,password and roles)
-         in Spring Security Context about successful user authentication */
-//        SecurityContextHolder.getContext().setAuthentication(authenticate);
 
             //return response with generated token
             return ResponseEntity.ok(
@@ -61,7 +68,7 @@ public class AuthenticationController {
                             .build()
             );
         } catch (AuthenticationException e) {
-            throw new BadCredentialsException("Invalid username|password!");
+            throw new BadCredentialsException("Invalid login or password!");
         }
     }
 }

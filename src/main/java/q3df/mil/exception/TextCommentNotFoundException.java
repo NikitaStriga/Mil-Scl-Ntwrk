@@ -1,6 +1,7 @@
 package q3df.mil.exception;
 
 public class TextCommentNotFoundException extends RuntimeException{
+
     public TextCommentNotFoundException() {
     }
 

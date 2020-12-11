@@ -4,10 +4,8 @@ import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -21,24 +19,27 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.sql.Date;
+import java.time.LocalDateTime;
+import java.util.Date;
+import java.util.List;
 
+import static q3df.mil.security.util.JwtConstants.CREATE_VALUE;
+import static q3df.mil.security.util.JwtConstants.P_CHANGE;
+import static q3df.mil.security.util.JwtConstants.ROLES;
+import static q3df.mil.security.util.JwtConstants.USER_ID;
 
 
 @Component
 public class JwtTokenFilter extends OncePerRequestFilter {
 
-    public static final String AUTHORIZATION = "Authorization";
-
     private final TokenUtils tokenUtils;
     private final UserDetailsService userDetailsService;
-    private final AuthenticationManager authenticationManager;
+
 
     @Autowired
-    public JwtTokenFilter(TokenUtils tokenUtils, @Qualifier("userServiceProvider") UserDetailsService userDetailsService, AuthenticationManager authenticationManager) {
+    public JwtTokenFilter(TokenUtils tokenUtils, @Qualifier("userServiceProvider") UserDetailsService userDetailsService) {
         this.tokenUtils = tokenUtils;
         this.userDetailsService = userDetailsService;
-        this.authenticationManager = authenticationManager;
     }
 
 
@@ -54,8 +55,8 @@ public class JwtTokenFilter extends OncePerRequestFilter {
 
         //check for toke exist and for valid
         if(token!=null&&tokenUtils.validateToken(token)) {
-            //setAuthentication
-            setAuthIntoContext(token);
+            //setAuthentication and add attribute to request
+            setAuthIntoContext(token,request);
         }
 
         //if token expired
@@ -67,10 +68,10 @@ public class JwtTokenFilter extends OncePerRequestFilter {
             //get URL
             String requestUrl = request.getRequestURL().toString();
 
-            //check if password was changed after creation token and whether the URL contains refreshtoken
+            //check if password was changed after creation token and whether the URL contains refresh token
             if(!tokenUtils.
                         isCreatedBeforeLastPasswordReset(
-                                (Date) claims.get("created"), Date.valueOf("1000-01-01"))&&
+                                claims.get(CREATE_VALUE, Date.class), claims.get(P_CHANGE, LocalDateTime.class))&&
                         requestUrl.contains("refreshtoken")){
 
                     //by this method we set into request attribute claims with info about claims
@@ -92,15 +93,36 @@ public class JwtTokenFilter extends OncePerRequestFilter {
 
 
     //setAuthentication
-    private void setAuthIntoContext(String token){
+    private void setAuthIntoContext(String token,HttpServletRequest request){
+
+        //get Claims
+        Claims claimsFromToken = tokenUtils.getClaimsFromToken(token);
+
         //get userName from token
-        String usernameFromToken = tokenUtils.getUsernameFromToken(token);
+        String usernameFromToken = claimsFromToken.getSubject();
+
+
+
+        //get userId and then pass it to request attribute
+        {
+            Long userID = claimsFromToken.get(USER_ID,Long.class);
+            request.setAttribute("id", userID);
+        }
+
+        //check the token for the presence of the admin role, and if it exists,
+        // then set the permission = true attribute in the request
+        {
+            if(claimsFromToken.get(ROLES,List.class).contains("ADMIN")){
+                request.setAttribute("permission","true");
+            }
+        }
 
         //get UserDetails by login (username)
         //can throw new UsernameNotFoundException("Cant found user with login " + login);
         UserDetails userDetails = userDetailsService.loadUserByUsername(usernameFromToken);
 
-        //create implementation of Authenticate
+
+        // create implementation of Authenticate
         UsernamePasswordAuthenticationToken auth =
                 new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
 

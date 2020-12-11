@@ -41,8 +41,9 @@ public class Message {
     @Column(name = "created",updatable = false)
     private LocalDateTime created;
 
-    @Column(name = "edited")
-    private Boolean edited;
+    @Column(name = "update_time")
+    private LocalDateTime updateTime;
+
 
     @Column(name = "text")
     private String text;
@@ -60,6 +61,10 @@ public class Message {
     @JoinColumn(name = "dialog_id")
     private Dialog dialog;
 
+    @PreUpdate
+    void onUpdate(){
+        this.setUpdateTime(LocalDateTime.now());
+    }
 
     @PrePersist
     void onCreate(){

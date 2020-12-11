@@ -1,10 +1,9 @@
 package q3df.mil.service.impl;
 
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.springframework.stereotype.Service;
 import q3df.mil.dto.subscriber.SubscriberDto;
+import q3df.mil.exception.CustomException;
 import q3df.mil.mapper.subscriber.SubscriberMapper;
 import q3df.mil.repository.UserRepository;
 import q3df.mil.service.SubscriberService;
@@ -16,7 +15,7 @@ import java.util.stream.Collectors;
 
 @Service
 public class SubscriberServiceImpl implements SubscriberService {
-    Logger logger= LogManager.getLogger(SubscriberServiceImpl.class);
+
     private final UserRepository userRepository;
     private final SubscriberMapper subscriberMapper;
 
@@ -28,6 +27,39 @@ public class SubscriberServiceImpl implements SubscriberService {
     @Override
     @Transactional
     public List<SubscriberDto> findUserSubscribers(Long id) {
-        return userRepository.findUserSubscribers(id).stream().map(subscriberMapper::toDto).collect(Collectors.toList());
+        return userRepository
+                .findUserSubscribers(id)
+                .stream()
+                .map(subscriberMapper::toDto)
+                .collect(Collectors.toList());
     }
+
+
+    @Override
+    public int addSubscriber(Long userId, Long subscriberId) {
+        Long userId1 = userRepository.checkForFriend(userId, subscriberId);
+        if (userId1>0){
+            throw new CustomException("Cant add subscriber with id "
+                    + subscriberId + " to user with id " +
+                    userId + " cause he almost in friends of user!");
+        }
+        Long userId2 = userRepository.checkForSubscriber(userId, subscriberId);
+        if(userId2>0){
+            throw new CustomException("Cant add subscriber with id "
+                    + subscriberId + " to user with id " +
+                    userId + " cause he almost in subscribers of user!");
+        }
+        userRepository.addSubscriber(userId,subscriberId);
+        return userRepository.addSubscriber(userId,subscriberId);
+    }
+
+
+    @Override
+    public void deleteSubscriber(Long userId, Long subscriberId) {
+        int i = userRepository.deleteFromSubs(userId, subscriberId);
+        if(i==0){
+            throw new CustomException("Cant find subscriber with id " + subscriberId + " in subscribers of user with id " + userId );
+        }
+    }
+
 }

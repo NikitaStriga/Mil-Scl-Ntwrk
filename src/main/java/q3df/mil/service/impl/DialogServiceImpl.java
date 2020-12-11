@@ -28,7 +28,11 @@ public class DialogServiceImpl implements q3df.mil.service.DialogService {
 
     @Transactional
     public List<DialogDto> findDialogsByUserId(Long id){
-        return dialogRepository.findDialogsByUserId(id).stream().map(dialogMapper::toDto).collect(Collectors.toList());
+        return dialogRepository
+                .findDialogsByUserId(id)
+                .stream()
+                .map(dialogMapper::toDto)
+                .collect(Collectors.toList());
 
     }
 

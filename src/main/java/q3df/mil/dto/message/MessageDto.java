@@ -1,11 +1,13 @@
 package q3df.mil.dto.message;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import java.time.LocalDateTime;
 
 @Data
 @NoArgsConstructor
+@JsonInclude(value = JsonInclude.Include.NON_NULL)
 public class MessageDto {
 
     private Long id;
@@ -20,7 +22,7 @@ public class MessageDto {
 
     private LocalDateTime created;
 
-    private Boolean edited;
+    private LocalDateTime updateTime;
 
     private String text;
 

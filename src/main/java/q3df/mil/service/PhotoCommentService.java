@@ -1,15 +1,15 @@
 package q3df.mil.service;
 
-import q3df.mil.dto.photo.PhotoCommentDto;
+import q3df.mil.dto.photo.pc.PhotoCommentDto;
+import q3df.mil.dto.photo.pc.PhotoCommentSaveDto;
+import q3df.mil.dto.photo.pc.PhotoCommentUpdateDto;
 
 
 public interface PhotoCommentService {
 
-//    PhotoCommentDto findById(Long id);
+    PhotoCommentDto savePhotoComment(PhotoCommentSaveDto photoCommentSaveDto);
 
-    PhotoCommentDto savePhotoComment(PhotoCommentDto photoCommentDto);
-
-    PhotoCommentDto updatePhotoComment(PhotoCommentDto photoCommentDto);
+    PhotoCommentDto updatePhotoComment(PhotoCommentUpdateDto photoCommentUpdateDto);
 
     void deletePhotoCommentById(Long id);
 }

@@ -51,10 +51,6 @@ public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter {
         return super.authenticationManagerBean();
     }
 
-    @Bean
-    public PasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder();
-    }
 
     @Override
     protected void configure(HttpSecurity httpSecurity) throws Exception {
@@ -68,13 +64,13 @@ public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter {
                 .and()
                 .authorizeRequests()
 //                /*For swagger access only*/
-//                .antMatchers("/v2/api-docs", "/configuration/ui/**", "/swagger-resources/**", "/configuration/security/**", "/swagger-ui.html", "/webjars/**").permitAll()
-//                .antMatchers("/actuator/**").permitAll()
-//                .antMatchers(HttpMethod.GET, "/swagger-ui.html#").permitAll()
+                .antMatchers("/v2/api-docs", "/configuration/ui/**", "/swagger-resources/**", "/configuration/security/**", "/swagger-ui.html", "/webjars/**").permitAll()
+                .antMatchers("/actuator/**").permitAll()
+                .antMatchers(HttpMethod.GET, "/swagger-ui.html#").permitAll()
                 .antMatchers(HttpMethod.OPTIONS, "/**").permitAll()
                 .antMatchers("/registration/**").permitAll()
                 .antMatchers("/authentication/**").permitAll()
-                .antMatchers("/rest/**").permitAll()
+                .antMatchers("/users/**").permitAll()
                 .antMatchers("/admin/**").hasRole("ADMIN")
                 .anyRequest().authenticated()
                 .and().exceptionHandling().authenticationEntryPoint(jwtAuthenticationEntryPoint)

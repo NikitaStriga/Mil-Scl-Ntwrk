@@ -9,6 +9,7 @@ import q3df.mil.entities.user.User;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 public class ForTests {
@@ -27,7 +28,13 @@ public class ForTests {
 
         System.out.println(LocalDate.now());
 
+        System.out.println(new Date() + " Its Date");
+
         System.out.println(User.class.getSimpleName());
+
+
+        BomboEntity bomboEntity = new BomboEntity();
+        bomboEntity.setName(null);
 
 //        CommentEntity commentDto0=new CommentEntity("privet");
 //        CommentEntity commentDto1=new CommentEntity("bawd");

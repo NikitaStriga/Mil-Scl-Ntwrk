@@ -1,6 +1,7 @@
 package q3df.mil.exception;
 
 public class AccessDeniedException extends RuntimeException{
+
     public AccessDeniedException() {
     }
 

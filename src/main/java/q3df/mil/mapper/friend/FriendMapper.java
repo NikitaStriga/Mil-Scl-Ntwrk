@@ -22,8 +22,8 @@ public class FriendMapper extends Mapper<User, FriendDto> {
                 .addMappings(m -> m.skip(FriendDto::setName))
                 .addMappings(m -> m.skip(FriendDto::setSurname))
                 .setPostConverter(toDtoConverter());
-//        modelMapper.createTypeMap(FriendDto.class, User.class)
-//                .addMappings(m -> m.skip(Text::setUser)).setPostConverter(toEntityConverter());
+        modelMapper.createTypeMap(FriendDto.class, User.class)
+                .setPostConverter(toEntityConverter());
     }
 
 
@@ -36,6 +36,6 @@ public class FriendMapper extends Mapper<User, FriendDto> {
 
     @Override
     public void mapFromDtoToEntity(FriendDto source, User destination) {
-//        destination.setUser(userRepository.findById(source.getUserId()).orElse(null));
+        //
     }
 }

@@ -1,6 +1,11 @@
 package q3df.mil.entities.text;
 
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.NoArgsConstructor;
+import lombok.ToString;
 import q3df.mil.entities.user.User;
 
 import javax.persistence.*;

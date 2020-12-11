@@ -1,6 +1,11 @@
 package q3df.mil.controller.photo;
 
 
+import io.swagger.annotations.ApiImplicitParam;
+import io.swagger.annotations.ApiImplicitParams;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiResponse;
+import io.swagger.annotations.ApiResponses;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -9,7 +14,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
-import q3df.mil.dto.photo.PhotoCommentLikeDto;
+import q3df.mil.dto.photo.pcl.PhotoCommentLikeDto;
+import q3df.mil.dto.photo.pcl.PhotoCommentLikeSaveDto;
 import q3df.mil.service.PhotoCommentLikeService;
 
 import java.net.URI;
@@ -25,22 +31,40 @@ public class PhotoCommentLikeController {
         this.photoCommentLikeService = photoCommentLikeService;
     }
 
+
+    @ApiOperation(value = "Save photo comment like")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "X-Auth-Token", defaultValue = "token", required = true, paramType = "header", dataType = "string"),
+    })
+    @ApiResponses({
+            @ApiResponse(code = 201, message = "Photo comment like was created"),
+            @ApiResponse(code = 404, message = "User or photo comment  not found")
+    })
     @PostMapping
-    public ResponseEntity<?> saveText(PhotoCommentLikeDto photoCommentLikeDto){
-        PhotoCommentLikeDto savedPhotoCommentLike = photoCommentLikeService.savePhotoCommentLike(photoCommentLikeDto);
-        URI location=
-                ServletUriComponentsBuilder
-                        .fromCurrentRequest()
-                        .path("/{id}")
-                        .buildAndExpand(savedPhotoCommentLike.getId())
-                        .toUri();
-        return ResponseEntity.created(location).build();
+    public ResponseEntity<PhotoCommentLikeDto> saveText(PhotoCommentLikeSaveDto photoCommentLikeSaveDto){
+        PhotoCommentLikeDto savedPhotoCommentLike = photoCommentLikeService.savePhotoCommentLike(photoCommentLikeSaveDto);
+//        URI location=
+//                ServletUriComponentsBuilder
+//                        .fromCurrentRequest()
+//                        .path("/{id}")
+//                        .buildAndExpand(savedPhotoCommentLike.getId())
+//                        .toUri();
+//        return ResponseEntity.created(location).build();
+        return new ResponseEntity<>(savedPhotoCommentLike,HttpStatus.CREATED);
     }
 
 
-    @DeleteMapping("/{photocommentlikeid}")
-    public ResponseEntity<?> deleteText(@PathVariable Long photocommentlikeid){
-        photoCommentLikeService.deleteCommentLikeById(photocommentlikeid);
+    @ApiOperation(value = "Delete photo comment like")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "X-Auth-Token", defaultValue = "token", required = true, paramType = "header", dataType = "string"),
+    })
+    @ApiResponses({
+            @ApiResponse(code = 204, message = "Photo comment like was deleted"),
+            @ApiResponse(code = 404, message = "Photo comment like not found")
+    })
+    @DeleteMapping("/{photoCommentLikeId}")
+    public ResponseEntity<?> deleteText(@PathVariable Long photoCommentLikeId){
+        photoCommentLikeService.deleteCommentLikeById(photoCommentLikeId);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 }

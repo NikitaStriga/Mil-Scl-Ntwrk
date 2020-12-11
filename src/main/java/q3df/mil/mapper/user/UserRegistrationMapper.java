@@ -1,5 +1,6 @@
 package q3df.mil.mapper.user;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 import q3df.mil.dto.user.UserRegistrationDto;
@@ -12,12 +13,14 @@ import javax.annotation.PostConstruct;
 @Component
 public class UserRegistrationMapper extends Mapper<User, UserRegistrationDto> {
 
-//    private final PasswordEncoder passwordEncoder;
+    private final PasswordEncoder passwordEncoder;
 
-    public UserRegistrationMapper() {
+    @Autowired
+    public UserRegistrationMapper(PasswordEncoder passwordEncoder) {
         super(User.class, UserRegistrationDto.class);
-//        this.passwordEncoder = passwordEncoder;
+        this.passwordEncoder = passwordEncoder;
     }
+
 
     @PostConstruct
     public void setupMapper() {
@@ -39,6 +42,8 @@ public class UserRegistrationMapper extends Mapper<User, UserRegistrationDto> {
     @Override
     public void mapFromDtoToEntity(UserRegistrationDto source, User destination) {
         destination.setGender(Gender.valueOf(source.getGender().toUpperCase()));
-//        destination.setPassword(passwordEncoder.encode(source.getPassword()));
+        destination.setPassword(passwordEncoder.encode(source.getPassword()));
     }
+
+
 }

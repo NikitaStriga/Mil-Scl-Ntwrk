@@ -1,7 +1,12 @@
 package q3df.mil.entities.text;
 
 
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.NoArgsConstructor;
+import lombok.ToString;
 import q3df.mil.entities.user.User;
 
 import javax.persistence.*;
@@ -28,14 +33,14 @@ public class TextComment {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @EqualsAndHashCode.Exclude
+    @ToString.Exclude
     @ManyToOne(cascade = {
             CascadeType.DETACH,
             CascadeType.MERGE,
             CascadeType.PERSIST,
             CascadeType.REFRESH })
     @JoinColumn(name = "text_id")
-    @NotBlank(message = "Comment  should not be empty !")
-    @NotNull(message = "Comment should not be empty !")
     private Text text;
 
     @EqualsAndHashCode.Exclude
@@ -46,7 +51,7 @@ public class TextComment {
             CascadeType.PERSIST,
             CascadeType.REFRESH })
     @JoinColumn(name = "user_id")
-    private User userId;
+    private User user;
 
     @Column(name = "comment")
     private String comment;
@@ -54,8 +59,8 @@ public class TextComment {
     @Column(name = "created",updatable = false)
     private LocalDateTime created;
 
-    @Column(name = "edited")
-    private Boolean edited;
+    @Column(name = "update_time")
+    private LocalDateTime updateTime;
 
     @Column(name = "deleted")
     private Boolean deleted;
@@ -65,8 +70,13 @@ public class TextComment {
         this.setCreated(LocalDateTime.now());
     }
 
+    @PreUpdate
+    void onUpdate(){
+        this.setUpdateTime(LocalDateTime.now());
+    }
+
     /****************** Relation TextCommentLike + add *********/
-    @OneToMany(fetch = FetchType.LAZY,mappedBy = "textCommentId",
+    @OneToMany(fetch = FetchType.LAZY,mappedBy = "textComment",
             cascade = {
                     CascadeType.DETACH,
                     CascadeType.MERGE,

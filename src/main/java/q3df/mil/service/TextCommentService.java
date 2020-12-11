@@ -1,14 +1,17 @@
 package q3df.mil.service;
 
-import q3df.mil.dto.text.TextCommentDto;
+import q3df.mil.dto.text.tc.TextCommentDto;
+import q3df.mil.dto.text.tc.TextCommentSaveDto;
+import q3df.mil.dto.text.tc.TextCommentUpdateDto;
 
 
 public interface TextCommentService {
 
-//    TextCommentDto findById(Long id);
-    TextCommentDto saveTextComment(TextCommentDto textDto);
+    TextCommentDto saveTextComment(TextCommentSaveDto textCommentSaveDto);
+
     void deleteTextCommentById(Long id);
-    TextCommentDto updateTextComment(TextCommentDto textDto);
+
+    TextCommentDto updateTextComment(TextCommentUpdateDto textCommentUpdateDto);
 
 
 }

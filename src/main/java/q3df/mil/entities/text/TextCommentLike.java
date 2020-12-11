@@ -1,7 +1,12 @@
 package q3df.mil.entities.text;
 
 
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.NoArgsConstructor;
+import lombok.ToString;
 import q3df.mil.entities.user.User;
 
 import javax.persistence.*;
@@ -30,7 +35,7 @@ public class TextCommentLike {
             CascadeType.PERSIST,
             CascadeType.REFRESH })
     @JoinColumn(name = "text_comment_id")
-    private TextComment textCommentId;
+    private TextComment textComment;
 
     @EqualsAndHashCode.Exclude
     @ToString.Exclude
@@ -40,7 +45,7 @@ public class TextCommentLike {
             CascadeType.PERSIST,
             CascadeType.REFRESH })
     @JoinColumn(name = "user_id")
-    private User userId;
+    private User user;
 
     @Column(name = "delete")
     private Boolean delete;

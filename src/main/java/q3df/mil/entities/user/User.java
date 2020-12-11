@@ -8,11 +8,13 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
+import org.springframework.context.annotation.PropertySource;
 import q3df.mil.entities.enums.Gender;
 import q3df.mil.entities.dialog.Dialog;
 import q3df.mil.entities.message.Message;
 import q3df.mil.entities.role.Role;
 import q3df.mil.entities.text.Text;
+import q3df.mil.validators.ValidDate;
 
 
 import javax.persistence.CascadeType;
@@ -32,9 +34,11 @@ import javax.persistence.OneToMany;
 import javax.persistence.PrePersist;
 import javax.persistence.PreUpdate;
 import javax.persistence.Table;
+import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Past;
+import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 
 import java.time.LocalDate;
@@ -45,18 +49,23 @@ import java.util.List;
 @Entity
 @Table(name = "users",
         indexes = {
-                @Index(name = "user_id_idx",columnList = "id"),
                 @Index(name = "user_first_name_idx",columnList = "first_name"),
                 @Index(name = "user_last_name_idx",columnList = "last_name"),
                 @Index(name = "user_gender_idx",columnList = "gender"),
                 @Index(name = "user_birth_date_idx",columnList = "birthday"),
                 @Index(name = "user_country_idx",columnList = "country"),
-                @Index(name = "user_city_idx",columnList = "city")
+                @Index(name = "user_city_idx",columnList = "city"),
+                //composite indexes
+                @Index(name = "user_city_country_idx",columnList = "city,country"),
+                @Index(name = "user_city_country_gender_idx",columnList = "gender, city, country"),
+                @Index(name = "user_city_country_gender_birthday_idx",columnList = "gender, city, country, birthday"),
+                @Index(name = "user_fname_lname_idx",columnList = "first_name, last_name")
         })
 @Data
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
+@PropertySource("classpath:ValidationMessages.properties")
 public class User {
 
     @Id
@@ -64,58 +73,67 @@ public class User {
     @Column(name="id")
     private Long id;
 
-    @Column(name = "email",unique = true)
-    @NotBlank(message = "Mail should not be empty !")
-    @NotNull(message = "Mail should not be empty !")
-    @Size(max = 150,message = "Mail is to long ! It must be less than 50 characters")
+    @Column(name = "email")
+    @Size(min=3,max = 50,message = "{email.size} {min}-{max} characters!")
+    @NotBlank(message = "{email.empty}")
+    @NotNull(message = "{email.empty}")
+    @NotEmpty(message = "{email.empty}")
     private String email;
 
-    @Column(name="login",unique = true)
-    @NotBlank(message = "Login should not be empty !")
-    @NotNull(message = "Login should not be empty !")
-    @Size(max = 50,message = "Login is to long ! It must be less than 50 characters")
+    @Column(name = "login")
+    @NotBlank(message = "{login.empty}")
+    @NotNull(message = "{login.empty}")
+    @NotEmpty(message = "{login.empty}")
+    @Size(min=33,max = 50,message = "{login.size} {min}-{max} characters!")
+    @Pattern(regexp = "^[0-9A-z_@!@#$%^&*)(\\-\\]\\[]*$",
+            message = "{login.pattern} {regexp}")
     private String login;
 
     @Column(name="password")
-    @NotBlank(message = "Password should not be empty !")
-    @NotNull(message = "Password should not be empty !")
-    @Size(max = 80,message = "Password is to long ! It must be less than 80 characters")
+    @NotBlank(message = "{password.empty}")
+    @NotNull(message = "{password.empty}")
+    @NotEmpty(message = "{password.empty}")
     private String password;
 
     @Column(name="first_name")
-    @NotBlank(message = "First name should not be empty !")
-    @NotNull(message = "First name should not be empty !")
-    @Size(max = 50,message = "First name is to long ! It must be less than 50 characters")
+    @NotBlank(message = "{firstName.empty}")
+    @NotNull(message = "{firstName.empty}")
+    @NotEmpty(message = "{firstName.empty}")
+    @Size(min=3,max = 50,message = "{firstName.size} {min}-{max} characters!")
+    @Pattern(regexp = "^[A-z]*$",message = "{firstName.pattern} {regexp}")
     private String firstName;
 
-    @Column(name="last_name")
-    @NotBlank(message = "Last name should not be empty !")
-    @NotNull(message = "Last name should not be empty !")
-    @Size(max = 50,message = "Last name is to long ! It must be less than 50 characters")
+    @Column(name = "last_name")
+    @NotBlank(message = "{lastName.empty}")
+    @NotNull(message = "{lastName.empty}")
+    @NotEmpty(message = "{lastName.empty}")
+    @Size(min=3,max = 50,message = "{lastName.size} {min}-{max} characters!")
+    @Pattern(regexp = "^[A-z]*$",
+            message = "{lastName.pattern} {regexp}")
     private String lastName;
 
     @Column(name="gender")
-//    @Pattern(regexp = "MALE|FEMALE",message = "Please choose correct gender: MAIL or FEMALE")
-//    @NotBlank(message = "Please indicate your gender")
-    @NotNull(message = "Please indicate your gender")
     @Enumerated(value = EnumType.STRING)
     private Gender gender;
 
     @Column(name = "birthday")
-    @Past(message = "Invalid date! It's must be in past!")
+    @ValidDate(afterYear = 1930,beforeYear = 2020)
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
     private LocalDate birthday;
 
     @Column(name = "country")
-//    @NotNull(message = "Country should not be empty! Please, enter correct value!")
-//    @NotBlank(message = "Country should not be empty! Please, enter correct value!")
-    @Size(max = 50,message = "Country is to long ! It must be less than 50 characters")
+    @NotBlank(message = "{country.empty}")
+    @NotNull(message = "{country.empty}")
+    @NotEmpty(message = "{country.empty}")
+    @Size(min=3,max = 50,
+            message = "{country.size} {min}-{max} characters!")
     private String country;
 
     @Column(name = "city")
-//    @NotNull(message = "City should not be empty! Please, enter correct value!")
-//    @NotBlank(message = "City should not be empty! Please, enter correct value!")
-    @Size(max = 50,message = "City is to long ! It must be less than 50 characters")
+    @NotBlank(message = "{city.empty}")
+    @NotNull(message = "{city.empty}")
+    @NotEmpty(message = "{city.empty}")
+    @Size(min=3,max = 50,message = "{city.size} {min}-{max} characters!")
     private String city;
 
     @Column(name = "registration_time",updatable = false)
@@ -124,6 +142,9 @@ public class User {
     @Column(name = "update_time")
     private LocalDateTime updateTime;
 
+    @Column(name = "p_change")
+    private LocalDateTime pChange;
+
     @Column(name = "delete")
     private Boolean delete;
 
@@ -131,6 +152,7 @@ public class User {
     void onCreate(){
         this.setRegistrationTime(LocalDateTime.now());
         this.setUpdateTime(LocalDateTime.now());
+        this.setPChange(LocalDateTime.now());
 
     }
 
@@ -225,7 +247,7 @@ public class User {
 
 
 
-    /************** Relation to messages fro outbox  + add ***********/
+    /************** Relation to messages / outbox  + add ***********/
     @OneToMany(mappedBy = "fromWho",
             cascade = {
                     CascadeType.DETACH,
@@ -241,7 +263,7 @@ public class User {
     /********************************************************/
 
 
-    /************** Relation to dialogs  + add ***********/
+    /************** Relation to messages / inbox  + add ***********/
     @OneToMany(mappedBy = "toWho",
             cascade = {
                     CascadeType.DETACH,
@@ -282,8 +304,12 @@ public class User {
     @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH}, targetEntity = User.class)
     @JoinTable(name = "user_friends",
             joinColumns = @JoinColumn(name = "user_id"),
-            inverseJoinColumns = @JoinColumn(name = "friend_id"))
+            inverseJoinColumns = @JoinColumn(name = "friend_id"),
+    uniqueConstraints = {
+            @UniqueConstraint(columnNames = {"user_id", "friend_id"})
+    })
     private List<User> friends = new ArrayList<>();
+
 
     /** ManyToMany  subscribers*/
     @ToString.Exclude
@@ -291,7 +317,10 @@ public class User {
     @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH}, targetEntity = User.class)
     @JoinTable(name = "user_subscribers",
             joinColumns = @JoinColumn(name = "user_id"),
-            inverseJoinColumns = @JoinColumn(name = "subscriber_id"))
+            inverseJoinColumns = @JoinColumn(name = "subscriber_id"),
+    uniqueConstraints = {
+            @UniqueConstraint(columnNames = {"user_id", "subscriber_id"})
+    })
     private List<User> subscribers = new ArrayList<>();
 
 

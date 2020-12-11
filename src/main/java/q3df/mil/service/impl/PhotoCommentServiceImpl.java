@@ -1,11 +1,18 @@
 package q3df.mil.service.impl;
 
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
-import q3df.mil.dto.photo.PhotoCommentDto;
+import q3df.mil.dto.photo.pc.PhotoCommentDto;
+import q3df.mil.dto.photo.pc.PhotoCommentSaveDto;
+import q3df.mil.dto.photo.pc.PhotoCommentUpdateDto;
 import q3df.mil.entities.photo.PhotoComment;
-import q3df.mil.mapper.photo.PhotoCommentMapper;
+import q3df.mil.exception.PhotoCommentNotFoundException;
+import q3df.mil.mapper.photo.pc.PhotoCommentMapper;
+import q3df.mil.mapper.photo.pc.PhotoCommentSaveMapper;
 import q3df.mil.repository.PhotoCommentRepository;
 import q3df.mil.service.PhotoCommentService;
+
+import javax.persistence.EntityNotFoundException;
 
 @Service
 public class PhotoCommentServiceImpl implements PhotoCommentService {
@@ -13,30 +20,44 @@ public class PhotoCommentServiceImpl implements PhotoCommentService {
 
     private final PhotoCommentRepository photoCommentRepository;
     private final PhotoCommentMapper photoCommentMapper;
+    private final PhotoCommentSaveMapper photoCommentSaveMapper;
 
-    public PhotoCommentServiceImpl(PhotoCommentRepository photoCommentRepository, PhotoCommentMapper photoCommentMapper) {
+    public PhotoCommentServiceImpl(PhotoCommentRepository photoCommentRepository,
+                                   PhotoCommentMapper photoCommentMapper,
+                                   PhotoCommentSaveMapper photoCommentSaveMapper) {
         this.photoCommentRepository = photoCommentRepository;
         this.photoCommentMapper = photoCommentMapper;
+        this.photoCommentSaveMapper = photoCommentSaveMapper;
     }
 
     @Override
-    public PhotoCommentDto savePhotoComment(PhotoCommentDto photoCommentDto) {
-        PhotoComment photoComment = photoCommentMapper.fromDto(photoCommentDto);
+    public PhotoCommentDto savePhotoComment(PhotoCommentSaveDto photoCommentSaveDto) {
+        PhotoComment photoComment = photoCommentSaveMapper.fromDto(photoCommentSaveDto);
         PhotoComment savedPhotoComment = photoCommentRepository.save(photoComment);
         return photoCommentMapper.toDto(savedPhotoComment);
     }
 
 
     @Override
-    public PhotoCommentDto updatePhotoComment(PhotoCommentDto photoCommentDto) {
-        PhotoComment photoComment = photoCommentMapper.fromDto(photoCommentDto);
-        PhotoComment savedPhotoComment = photoCommentRepository.save(photoComment);
-        return photoCommentMapper.toDto(savedPhotoComment);
+    public PhotoCommentDto updatePhotoComment(PhotoCommentUpdateDto photoCommentUpdateDto) {
+        PhotoComment photoComment;
+        try{
+            photoComment = photoCommentRepository.getOne(photoCommentUpdateDto.getId());
+        }catch (EntityNotFoundException ex){
+            throw new PhotoCommentNotFoundException("Photo comment with id " + photoCommentUpdateDto.getId() + " doesn't exist!");
+        }
+        photoComment.setComment(photoCommentUpdateDto.getComment());
+        return photoCommentMapper.toDto(photoComment);
     }
 
 
     @Override
     public void deletePhotoCommentById(Long id) {
+        try{
         photoCommentRepository.deleteById(id);
+        }catch (EmptyResultDataAccessException ex){
+            throw new PhotoCommentNotFoundException("Photo comment with id " + id + " doesn't exist!");
+        }
     }
+
 }

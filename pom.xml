@@ -21,8 +21,13 @@
 
 	<properties>
 		<java.version>11</java.version>
+		<swager.version>2.9.2</swager.version>
+		<jwt.version>0.9.1</jwt.version>
+		<modelmapper.version>2.3.9</modelmapper.version>
+		<hibernatevalidator.version>6.1.6.Final</hibernatevalidator.version>
 	</properties>
 
+	<!-- starter + exclude default logger -->
 	<dependencies>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
@@ -36,6 +41,7 @@
 		</dependency>
 
 
+		<!-- test -->
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-test</artifactId>
@@ -73,14 +79,14 @@
 		<dependency>
 			<groupId>org.hibernate</groupId>
 			<artifactId>hibernate-validator</artifactId>
-			<version>6.1.6.Final</version>
+			<version>${hibernatevalidator.version}</version>
 		</dependency>
 
 		<!-- ModelMapper -->
 		<dependency>
 			<groupId>org.modelmapper</groupId>
 			<artifactId>modelmapper</artifactId>
-			<version>2.3.9</version>
+			<version>${modelmapper.version}</version>
 		</dependency>
 
 
@@ -109,8 +115,39 @@
 		<dependency>
 			<groupId>io.jsonwebtoken</groupId>
 			<artifactId>jjwt</artifactId>
-			<version>0.9.1</version>
+			<version>${jwt.version}</version>
 		</dependency>
+
+
+		<!-- SWAGGER -->
+		<!-- responsible for ui -->
+		<dependency>
+			<groupId>io.springfox</groupId>
+			<artifactId>springfox-swagger-ui</artifactId>
+			<version>${swager.version}</version>
+		</dependency>
+		<!-- classes responsible for reflection, passing through classes, mappings. Finding controllers, etc -->
+		<dependency>
+			<groupId>io.springfox</groupId>
+			<artifactId>springfox-swagger2</artifactId>
+			<version>${swager.version}</version>
+		</dependency>
+
+		<!-- AOP -->
+		<!-- used to support annotations -->
+		<dependency>
+			<groupId>org.aspectj</groupId>
+			<artifactId>aspectjweaver</artifactId>
+			<scope>runtime</scope>
+		</dependency>
+
+		<!-- compile-time linking or at the class loading stage  ||| this dependency is not need in my case -->
+<!--		<dependency>-->
+<!--			<groupId>org.aspectj</groupId>-->
+<!--			<artifactId>aspectjrt</artifactId>-->
+<!--		</dependency>-->
+
+
 
 
 		<!-- https://mvnrepository.com/artifact/org.springframework.boot/spring-boot-configuration-processor -->
@@ -134,14 +171,9 @@
 			<artifactId>commons-lang3</artifactId>
 		</dependency>
 
-
-
-
-
-
-
-
 	</dependencies>
+
+
 
 	<build>
 		<plugins>

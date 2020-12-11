@@ -1,20 +1,28 @@
 package q3df.mil.controller.exception;
 
+import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.exc.InvalidFormatException;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
+import org.apache.commons.lang3.StringUtils;
+import org.modelmapper.MappingException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.validation.FieldError;
 import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 import org.springframework.web.servlet.NoHandlerFoundException;
+import q3df.mil.exception.CustomException;
 import q3df.mil.exception.DialogNotFoundException;
 import q3df.mil.exception.EmailExistException;
 import q3df.mil.exception.LoginExistException;
 import q3df.mil.exception.MessageNotFoundException;
+import q3df.mil.exception.NoPermissionCustomException;
 import q3df.mil.exception.PhotoCommentLikeNotFoundException;
 import q3df.mil.exception.PhotoCommentNotFoundException;
 import q3df.mil.exception.PhotoLikeNotFoundException;
@@ -52,12 +60,19 @@ public class GlobalExceptionHandler {
             TextLikeNotFoundException.class,
             TextNotFoundException.class,
             UserNotFoundException.class
-
     })
-    public ResponseEntity<HelperClassException> handleLoginExistExceptionAndEmailExistException(Exception e) {
-            return new ResponseEntity<>(new HelperClassException(e.getMessage()), HttpStatus.NOT_FOUND);
+    public ResponseEntity<HelperClassException> handleLoginExistExceptionAndEmailExistException(Exception ex) {
+            return new ResponseEntity<>(new HelperClassException(ex.getMessage()), HttpStatus.NOT_FOUND);
         }
 
+
+
+    //for ModelMapperException (model mapper wraps our own exception and throw MappingException )
+    @ExceptionHandler(org.modelmapper.MappingException.class)
+    public ResponseEntity<HelperClassException> handleModelMappingException(MappingException ex){
+        System.out.println("hello");
+        return new ResponseEntity<>(new HelperClassException(ex.getCause().getMessage()), HttpStatus.NOT_FOUND);
+    }
 
 
 
@@ -77,24 +92,33 @@ public class GlobalExceptionHandler {
 
 
     //for bad URL (if spring can't find a handler for url he throw NoHandlerFoundException)
-    @ExceptionHandler(NoHandlerFoundException.class)
-    public ResponseEntity<Map<String,String>> handleNoHandlerFoundException(HttpServletRequest request,NoHandlerFoundException e){
-        Map<String, String> errors = new HashMap<>();
-        errors.put("message","This URL doesn't exist!");
-        errors.put("url",request.getRequestURL().toString());
-        return new ResponseEntity<>(errors,HttpStatus.BAD_REQUEST);
-    }
+//    @ExceptionHandler(NoHandlerFoundException.class)
+//    public ResponseEntity<Map<String,String>> handleNoHandlerFoundException(HttpServletRequest request,NoHandlerFoundException e){
+//        Map<String, String> errors = new HashMap<>();
+//        errors.put("message","This URL doesn't exist!");
+//        errors.put("url",request.getRequestURL().toString());
+//        return new ResponseEntity<>(errors,HttpStatus.BAD_REQUEST);
+//    }
+
 
 
     //if request method is not supported for current url
     @ExceptionHandler(HttpRequestMethodNotSupportedException.class)
-    protected ResponseEntity<Map<String,Object>> handleHttpRequestMethodNotSupported(
+    public ResponseEntity<Map<String,Object>> handleHttpRequestMethodNotSupported(
             HttpRequestMethodNotSupportedException ex,
             HttpServletRequest request) {
         Map<String,Object> responseMap=new LinkedHashMap<>();
         responseMap.put("message","Request method " + ex.getMethod() + " not supported for this URL " + request.getRequestURL().toString());
         responseMap.put("supported methods",ex.getSupportedHttpMethods());
         return new ResponseEntity<>(responseMap,HttpStatus.METHOD_NOT_ALLOWED);
+    }
+
+
+
+    //for custom exception
+    @ExceptionHandler(CustomException.class)
+    public ResponseEntity<HelperClassException> customEx(CustomException ex){
+        return new ResponseEntity<>(new HelperClassException(ex.getMessage()),HttpStatus.BAD_REQUEST);
     }
 
 
@@ -114,13 +138,60 @@ public class GlobalExceptionHandler {
 
 
 
+    //for bad syntax of Json
+    @ExceptionHandler(com.fasterxml.jackson.databind.JsonMappingException.class)
+    public ResponseEntity<HelperClassException> badSyntaxOfJson(JsonMappingException exception){
+        return new ResponseEntity<>(new HelperClassException(exception.getMessage()), HttpStatus.BAD_REQUEST);
+    }
+
+
+
+    //for BadCredentialsException in authentication controller
+    @ExceptionHandler(BadCredentialsException.class)
+    public ResponseEntity<HelperClassException> notAuthorized(BadCredentialsException ex){
+        return new ResponseEntity<>(new HelperClassException(ex.getMessage()),HttpStatus.UNAUTHORIZED);
+    }
+
+
+
+    //for NoPermissionException
+    @ExceptionHandler(NoPermissionCustomException.class)
+    public ResponseEntity<HelperClassException> noPermission(NoPermissionCustomException ex){
+        return new ResponseEntity<>(new HelperClassException(ex.getMessage()),HttpStatus.FORBIDDEN);
+    }
+
+
+
+    //javax validation from entity (exception from Hibernate entities)
+    @ExceptionHandler(javax.validation.ConstraintViolationException.class)
+    public ResponseEntity<Map<String,String>> badDataInEntities(javax.validation.ConstraintViolationException ex){
+        Map<String,String> errors = new HashMap<>();
+        ex.getConstraintViolations().forEach( e -> {
+
+            String  field = e.getPropertyPath().toString();
+            String message = e.getMessage();
+            errors.put(field,message);
+
+        });
+        return new ResponseEntity<>(errors,HttpStatus.BAD_REQUEST);
+    }
+
+
+
+    //This exception is thrown when method argument is not the expected type
+    @ExceptionHandler({ MethodArgumentTypeMismatchException.class })
+    public ResponseEntity<Object> handleMethodArgumentTypeMismatch(MethodArgumentTypeMismatchException ex) {
+        String message = StringUtils.join(ex.getName() + " should be next type - " + ex.getRequiredType().getName());
+        return new ResponseEntity<>(new HelperClassException(message),HttpStatus.BAD_REQUEST);
+    }
+
+
 
 //    /** For unexpected exceptions*  :) */
 //    @ExceptionHandler(Exception.class)
 //    public ResponseEntity<HelperClassException> universalHandler(Exception ex, HttpServletRequest request){
 //        return new ResponseEntity<>(new HelperClassException("Something going wrong :( "),HttpStatus.INTERNAL_SERVER_ERROR);
 //    }
-
 
 
 
@@ -135,7 +206,7 @@ public class GlobalExceptionHandler {
 
 
 
-//can use directly in controllers
+        //can use directly in controllers
 //        try{
 //            return ResponseEntity.ok(userService.saveUser(userRegistrationDto));
 //        }catch (Exception ex){
@@ -144,18 +215,5 @@ public class GlobalExceptionHandler {
 
 
 
-//This exception is thrown when method argument is not the expected type:
-//    @ExceptionHandler({ MethodArgumentTypeMismatchException.class })
-//    public ResponseEntity<Object> handleMethodArgumentTypeMismatch(
-//            MethodArgumentTypeMismatchException ex, WebRequest request) {
-//        String error =
-//                ex.getName() + " should be of type " + ex.getRequiredType().getName();
-//
-//        ApiError apiError =
-//                new ApiError(HttpStatus.BAD_REQUEST, ex.getLocalizedMessage(), error);
-//        return new ResponseEntity<Object>(
-//                apiError, new HttpHeaders(), apiError.getStatus());
-//    }
 
 
-//com.fasterxml.jackson.databind.JsonMappingException if we use bad mapping (for example we forget to write " in some place)

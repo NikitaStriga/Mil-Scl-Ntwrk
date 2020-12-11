@@ -1,6 +1,8 @@
 package q3df.mil.entities.dialog;
 
 
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
@@ -16,6 +18,8 @@ import java.util.List;
 @Entity
 @Table(name = "dialogs")
 @Data
+@Builder
+@AllArgsConstructor
 @NoArgsConstructor
 public class Dialog {
 
@@ -56,9 +60,6 @@ public class Dialog {
                     CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH})
 
     @JoinTable(
-            indexes = {
-                    @Index(name = "dialog_user_id_idx",columnList = "user_id")
-            },
             name = "user_dialogs",
             joinColumns = @JoinColumn(name = "dialog_id"),
             inverseJoinColumns = @JoinColumn(name = "user_id")

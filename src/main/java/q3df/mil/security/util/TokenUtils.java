@@ -8,14 +8,24 @@ import io.jsonwebtoken.MalformedJwtException;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.SignatureException;
 import io.jsonwebtoken.UnsupportedJwtException;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.PropertySource;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
+import q3df.mil.entities.user.User;
+import q3df.mil.exception.UserNotFoundException;
+import q3df.mil.repository.UserRepository;
 import q3df.mil.security.configuration.JwtTokenConfig;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
@@ -25,49 +35,59 @@ import java.util.stream.Collectors;
 
 import static io.jsonwebtoken.Claims.SUBJECT;
 import static java.util.Calendar.MILLISECOND;
+import static q3df.mil.security.util.JwtConstants.CREATE_VALUE;
+import static q3df.mil.security.util.JwtConstants.P_CHANGE;
+import static q3df.mil.security.util.JwtConstants.ROLES;
+import static q3df.mil.security.util.JwtConstants.USER_ID;
 
 
 @Component
 @Log4j2
+@PropertySource("classpath:jwtconfig.properties")
 public class TokenUtils {
 
-    public static final String CREATE_VALUE = "created";
-    public static final String ROLES = "roles";
+
 
     private final JwtTokenConfig jwtTokenConfig;
+    private final UserRepository userRepository;
 
     @Autowired
-    public TokenUtils(JwtTokenConfig jwtTokenConfig) {
+    public TokenUtils(JwtTokenConfig jwtTokenConfig, UserRepository userRepository) {
         this.jwtTokenConfig = jwtTokenConfig;
+        this.userRepository = userRepository;
     }
 
 
     /**
+     * ->  IT SEEMS LIKE THIS METHOD IS NOT NEEDED <-
      * get username(login)
      * @param token jwtToken
      * @return login of user
      */
-    public String getUsernameFromToken(String token) {
-        return getClaimsFromToken(token).getSubject();
-    }
+//    public String getUsernameFromToken(String token) {
+//        return getClaimsFromToken(token).getSubject();
+//    }
+
 
     /**
+     * ->  IT SEEMS LIKE THIS METHOD IS NOT NEEDED <-
      * get creation time of token
      * @param token jwtToken
      * @return creation time of jwtToken
      */
-    public Date getCreatedDateFromToken(String token) {
-        return (Date) getClaimsFromToken(token).get(CREATE_VALUE);
-    }
+//    public Date getCreatedDateFromToken(String token) {
+//        return (Date) getClaimsFromToken(token).get(CREATE_VALUE);
+//    }
 
     /**
+     * ->  IT SEEMS LIKE THIS METHOD IS NOT NEEDED <-
      * get expiration date of token
      * @param token jwtToken
      * @return expiration time of jwtToken
      */
-    public Date getExpirationDateFromToken(String token) {
-        return getClaimsFromToken(token).getExpiration();
-    }
+//    public Date getExpirationDateFromToken(String token) {
+//        return getClaimsFromToken(token).getExpiration();
+//    }
 
 
     /**
@@ -75,7 +95,7 @@ public class TokenUtils {
      * @param token jwtToken
      * @return claims
      */
-    private Claims getClaimsFromToken(String token) {
+     public Claims getClaimsFromToken(String token) {
                 return Jwts
                         .parser()
                         .setSigningKey(jwtTokenConfig.getSecret())
@@ -86,7 +106,7 @@ public class TokenUtils {
 
 
     /**
-     *
+     *check for valid of token
      * @param token jwtToken
      * @return exception if token is not valid , true if the parsing was successful
      */
@@ -141,8 +161,11 @@ public class TokenUtils {
      * @param lastPasswordReset password reset time
      * @return true if password reset date was change after creation time of jwtToken, true if not
      */
-    public Boolean isCreatedBeforeLastPasswordReset(Date created, Date lastPasswordReset) {
-        return (lastPasswordReset != null && created.before(lastPasswordReset));
+    public Boolean isCreatedBeforeLastPasswordReset(Date created, LocalDateTime lastPasswordReset) {
+        LocalDateTime createdLocalDateTime = created.toInstant()
+                .atZone(ZoneId.systemDefault())
+                .toLocalDateTime();
+        return (lastPasswordReset != null && createdLocalDateTime.isBefore(lastPasswordReset));
     }
 
 
@@ -168,6 +191,9 @@ public class TokenUtils {
      */
     public String generateToken(UserDetails userDetails) {
         Map<String, Object> claims = new HashMap<>();
+        UserHelperClaims userIdAndPCByLogin = findUserIdAndPCByLogin(userDetails);
+        claims.put(USER_ID, userIdAndPCByLogin.getId());
+        claims.put(P_CHANGE,userIdAndPCByLogin.getPChange());
         claims.put(SUBJECT, userDetails.getUsername());
         claims.put(CREATE_VALUE, generateCurrentDate());
         claims.put(ROLES, getEncryptedRoles(userDetails));
@@ -175,6 +201,19 @@ public class TokenUtils {
     }
 
 
+    /**
+     * find user id and pChange by user details
+     * @param userDetails basic information from userProvider which is implemented in  {@link q3df.mil.security.service.UserServiceProvider}
+     * @return UserHelperClaims with user id and pChange
+     * @exception UserNotFoundException if user is not found
+     */
+    private UserHelperClaims findUserIdAndPCByLogin(UserDetails userDetails){
+        User user = userRepository
+                .findByLogin(userDetails.getUsername())
+                .orElseThrow(() ->
+                        new UserNotFoundException("User with login " + userDetails.getUsername() + " not found!"));
+        return new UserHelperClaims(user.getId(),user.getPChange());
+    }
     /**
      * get List of Roles without prefix ROLE_
      * @param userDetails basic information from userProvider which is implemented in  {@link q3df.mil.security.service.UserServiceProvider}
@@ -236,6 +275,14 @@ public class TokenUtils {
 //        final String username = getUsernameFromToken(token);
 //        return username.equals(userDetails.getUsername());
 //    }
+
+
+    @Data
+    @AllArgsConstructor
+    class UserHelperClaims{
+        private Long id;
+        private LocalDateTime pChange;
+    }
 
 
 }

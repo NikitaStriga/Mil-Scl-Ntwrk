@@ -46,16 +46,26 @@ public class PhotoComment {
     private User user;
 
     @Column(name = "comments")
-    private String comments;
+    private String comment;
 
     @Column(name = "created",updatable = false)
     private LocalDateTime created;
 
-    @Column(name = "edited")
-    private Boolean edited;
+    @Column(name = "update_time")
+    private LocalDateTime updateTime;
 
     @Column(name = "delete")
     private Boolean delete;
+
+    @PrePersist
+    void onCreate(){
+        this.created = LocalDateTime.now();
+    }
+
+    @PreUpdate
+    void onUpdate(){
+        this.setUpdateTime(LocalDateTime.now());
+    }
 
 
 
@@ -74,10 +84,5 @@ public class PhotoComment {
 
     /****************************************************************/
 
-
-    @PrePersist
-    void onCreate(){
-        this.created = LocalDateTime.now();
-    }
 
 }

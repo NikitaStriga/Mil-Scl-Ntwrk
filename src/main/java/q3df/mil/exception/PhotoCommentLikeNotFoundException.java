@@ -1,6 +1,7 @@
 package q3df.mil.exception;
 
 public class PhotoCommentLikeNotFoundException extends RuntimeException{
+
     public PhotoCommentLikeNotFoundException() {
     }
 

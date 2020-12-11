@@ -6,20 +6,35 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Import;
-import q3df.mil.config.MessageAndLocal;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
+import q3df.mil.config.MessageSourceAndLocalValidatorConfig;
 import q3df.mil.config.ModelMapperConfig;
+import q3df.mil.config.PasswordEncoderConfiguration;
+import q3df.mil.config.SwaggerConfig;
+import q3df.mil.entities.text.Text;
 import q3df.mil.mapper.user.UserMapper;
 import q3df.mil.repository.DialogRepository;
+import q3df.mil.repository.TextRepository;
+import q3df.mil.repository.UserRepository;
 import q3df.mil.service.UserService;
 import q3df.mil.service.impl.DialogServiceImpl;
 import q3df.mil.service.impl.FriendServiceImpl;
 import q3df.mil.service.impl.MessageServiceImpl;
 import q3df.mil.service.impl.SubscriberServiceImpl;
+import springfox.documentation.swagger2.annotations.EnableSwagger2;
 
+import java.sql.Date;
+import java.time.LocalDate;
+import java.util.List;
 
 
 @SpringBootApplication(exclude = { SecurityAutoConfiguration.class})
-@Import({ModelMapperConfig.class, MessageAndLocal.class})
+@EnableSwagger2
+@Import({ModelMapperConfig.class
+		, MessageSourceAndLocalValidatorConfig.class
+		, SwaggerConfig.class
+		, PasswordEncoderConfiguration.class})
 public class MilSclNtwrkApplication {
 
 	public static void main(String[] args) {
@@ -28,13 +43,15 @@ public class MilSclNtwrkApplication {
 
 
 	@Bean
-	public CommandLineRunner process(UserService userService,
+	public CommandLineRunner process(UserRepository userRepository,
+									 UserService userService,
 									 UserMapper userMapper,
 									 DialogRepository dialogRepository,
 									 DialogServiceImpl dialogService,
 									 MessageServiceImpl messageService,
 									 FriendServiceImpl friendService,
-									 SubscriberServiceImpl subscriberService
+									 SubscriberServiceImpl subscriberService,
+									 TextRepository textRepository
 									 ) {
 		return a -> {
 //			UserDto user = userRepository.findById(1L);
@@ -54,8 +71,12 @@ public class MilSclNtwrkApplication {
 //			System.out.println(messageService.findMessagesByDialogId(1L));
 //			System.out.println(friendService.findUserFriends(1L));
 //			System.out.println(subscriberService.findUserSubscribers(1L));
-			System.out.println("Hello");
-
+//			System.out.println("Hello");
+//			System.out.println(userRepository.findAll(PageRequest.of(1, 3)).getSize());
+//			System.out.println(userRepository.findByFirstNameLike("%u%", PageRequest.of(1, 3)).size());
+//			System.out.println(userRepository.findByBirthdayBetween(LocalDate.parse("2010-01-01"), LocalDate.parse("2020-01-01"), PageRequest.of(0, 30, Sort.by(Sort.Direction.DESC,"birthday"))).size());
+//			System.out.println(userRepository.findByLastNameIgnoreCase("vivians").size());
+//			System.out.println(userRepository.findByFirstNameLikeIgnoreCase("%duArdo%").size());
 		};
 	}
 
