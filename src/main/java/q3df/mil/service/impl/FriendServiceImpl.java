@@ -1,5 +1,6 @@
 package q3df.mil.service.impl;
 
+import org.postgresql.util.PSQLException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import q3df.mil.dto.friend.FriendDto;
@@ -37,17 +38,24 @@ public class FriendServiceImpl implements FriendService {
     }
 
 
+    @Transactional
     @Override
     public int addFriendToUser(Long userId, Long friendId) {
-        //if we want to save friend need to check if friendId is exist in subscribers and if there is
-        //delete from subs and add to friends
-        Long userId1 = userRepository.checkForSubscriber(userId, friendId);
-        if(userId1==0){
+        //if we need add friend to user, first of all nee to check if friend is always exist in friend list
+        // then -> need to check friend in subscriber list if its exist delete from subs and add to friends
+        System.out.println(friendId);
+        Long checkInFriendList = userRepository.checkForFriend(userId,friendId);
+        if(checkInFriendList!=null){
+            throw new CustomException("Friend with id " + friendId + " is always exist in friend list of user");
+        }
+        Long checkInSubList = userRepository.checkForSubscriber(userId, friendId);
+        if(checkInSubList==null){
             throw new CustomException("Can't add friend to user cause we cant find him in subscribers!");
         }else {
             userRepository.deleteFromSubs(userId,friendId);
         }
-        return userRepository.addFriend(userId,friendId);
+            return userRepository.addFriend(userId,friendId);
+
     }
 
 

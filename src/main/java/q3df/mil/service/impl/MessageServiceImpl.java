@@ -53,9 +53,11 @@ public class MessageServiceImpl implements MessageService {
 
     @Override
     public MessageDto saveMessage(MessageSaveDto messageSaveDto) {
+        if (messageSaveDto.getFromWhoId().equals(messageSaveDto.getToWhoId())) {
+            throw new CustomException("You cannot write to yourself");
+        }
         Message message = messageSaveMapper.fromDto(messageSaveDto);
         if (message.getDialog()==null) {
-            // думать :)
             Dialog dialog = new Dialog();
             message.setDialog(dialog);
         }else {

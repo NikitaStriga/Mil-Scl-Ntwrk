@@ -35,7 +35,7 @@ public class TextLikeMapper extends Mapper<TextLike, TextLikeDto> {
                 .setPostConverter(toDtoConverter());
         modelMapper.createTypeMap(TextLikeDto.class, TextLike.class)
                 .addMappings(m -> m.skip(TextLike::setTextId))
-                .addMappings(m -> m.skip(TextLike::setUserId))
+                .addMappings(m -> m.skip(TextLike::setUser))
                 .setPostConverter(toEntityConverter());
     }
 
@@ -43,16 +43,16 @@ public class TextLikeMapper extends Mapper<TextLike, TextLikeDto> {
     @Override
     public void mapFromEntityToDto(TextLike source, TextLikeDto destination) {
         destination.setUserId(source.getTextId().getId());
-        destination.setTextId(source.getUserId().getId());
-        destination.setUsername(source.getUserId().getFirstName());
-        destination.setSurname(source.getUserId().getLastName());
+        destination.setTextId(source.getUser().getId());
+        destination.setUsername(source.getUser().getFirstName());
+        destination.setSurname(source.getUser().getLastName());
     }
 
     @Override
     public void mapFromDtoToEntity(TextLikeDto source, TextLike destination) {
         destination.setTextId(textRepository.findById(source.getTextId())
                 .orElseThrow( () -> new TextNotFoundException("Text with id " + source.getTextId() + "doesn't exist!")));
-        destination.setUserId(userRepository.findById(source.getUserId())
+        destination.setUser(userRepository.findById(source.getUserId())
                 .orElseThrow( () -> new UserNotFoundException("User with id " + source.getUserId() + "doesn't exist!")));
     }
 }

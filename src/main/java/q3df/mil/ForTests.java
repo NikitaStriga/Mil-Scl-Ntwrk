@@ -3,6 +3,7 @@ package q3df.mil;
 
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.apache.commons.lang3.StringUtils;
 import org.modelmapper.ModelMapper;
 import q3df.mil.entities.user.User;
 
@@ -32,9 +33,12 @@ public class ForTests {
 
         System.out.println(User.class.getSimpleName());
 
+        String hello = StringUtils.substring("Hello", 1,4);
+        String hello1 = StringUtils.substring("Hello",2);
 
-        BomboEntity bomboEntity = new BomboEntity();
-        bomboEntity.setName(null);
+        System.out.println(hello);
+        System.out.println(hello1);
+
 
 //        CommentEntity commentDto0=new CommentEntity("privet");
 //        CommentEntity commentDto1=new CommentEntity("bawd");
@@ -67,42 +71,42 @@ public class ForTests {
     }
 }
 
-@Data
-@NoArgsConstructor
-class BomboEntity{
-    private String name;
-    private List<CommentEntity> comment;
-
-    public BomboEntity(String name, List<CommentEntity> commentEntities) {
-        this.name = name;
-        this.comment = commentEntities;
-    }
-}
-
-@Data
-@NoArgsConstructor
-class BomboDto{
-    private String name;
-    private List<CommentDto> comment;
-
-}
-
-@Data
-@NoArgsConstructor
-class CommentEntity{
-    private String text;
-
-    public CommentEntity(String text) {
-        this.text = text;
-    }
-}
-
-@Data
-@NoArgsConstructor
-class CommentDto{
-    private String text;
-
-    public CommentDto(String text) {
-        this.text = text;
-    }
-}
+//@Data
+//@NoArgsConstructor
+//class BomboEntity{
+//    private String name;
+//    private List<CommentEntity> comment;
+//
+//    public BomboEntity(String name, List<CommentEntity> commentEntities) {
+//        this.name = name;
+//        this.comment = commentEntities;
+//    }
+//}
+//
+//@Data
+//@NoArgsConstructor
+//class BomboDto{
+//    private String name;
+//    private List<CommentDto> comment;
+//
+//}
+//
+//@Data
+//@NoArgsConstructor
+//class CommentEntity{
+//    private String text;
+//
+//    public CommentEntity(String text) {
+//        this.text = text;
+//    }
+//}
+//
+//@Data
+//@NoArgsConstructor
+//class CommentDto{
+//    private String text;
+//
+//    public CommentDto(String text) {
+//        this.text = text;
+//    }
+//}

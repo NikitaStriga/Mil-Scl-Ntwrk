@@ -7,11 +7,28 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
+import org.hibernate.annotations.OnDelete;
+import org.springframework.context.annotation.PropertySource;
 import q3df.mil.entities.user.User;
 
-import javax.persistence.*;
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.Index;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
+import javax.persistence.PrePersist;
+import javax.persistence.PreUpdate;
+import javax.persistence.Table;
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.Set;
@@ -20,12 +37,13 @@ import java.util.Set;
 @Entity
 @Table(name = "text_comments",
             indexes = {
-        @Index(name = "text_comment_text_id_idx",columnList = "text_id")
+        @Index(name = "created_idx",columnList = "created DESC")
             })
 @Data
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
+@PropertySource("classpath:ValidationMessages.properties")
 public class TextComment {
 
 
@@ -54,6 +72,10 @@ public class TextComment {
     private User user;
 
     @Column(name = "comment")
+    @NotNull(message = "{textComment.empty}")
+    @NotBlank(message = "{textComment.empty}")
+    @NotEmpty(message = "{textComment.empty}")
+    @Size(min = 1, max = 350, message = "{textComment.size} {min}-{max} characters!")
     private String comment;
 
     @Column(name = "created",updatable = false)
@@ -82,6 +104,7 @@ public class TextComment {
                     CascadeType.MERGE,
                     CascadeType.PERSIST,
                     CascadeType.REFRESH})
+    @OnDelete(action = org.hibernate.annotations.OnDeleteAction.CASCADE)
     private Set<TextCommentLike> textCommentsLikeSet=new HashSet<>();
 
     public void addTextCommentLike(TextCommentLike tcl){

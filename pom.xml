@@ -133,6 +133,13 @@
 			<version>${swager.version}</version>
 		</dependency>
 
+
+		<!-- MAIL -->
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-mail</artifactId>
+		</dependency>
+
 		<!-- AOP -->
 		<!-- used to support annotations -->
 		<dependency>

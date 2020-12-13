@@ -3,6 +3,7 @@ package q3df.mil.repository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 import q3df.mil.entities.user.User;
@@ -23,16 +24,16 @@ public interface UserRepository extends JpaRepository<User,Long> {
     //pageable + sort + search
 
     //findAll
-    Page<User> findAll(Pageable page);
+    Page<User> findAllByDeleteFalse(Pageable page);
 
     //by birthday between ...
-    List<User> findByBirthdayBetween(LocalDate before, LocalDate after, Pageable page);
+    List<User> findByDeleteFalseAndBirthdayBetween(LocalDate before, LocalDate after, Pageable page);
 
     //by country + city
-    List<User> findByCountryIgnoreCaseAndCityIgnoreCase(String country, String city, Pageable page);
+    List<User> findByDeleteFalseAndCountryIgnoreCaseAndCityIgnoreCase(String country, String city, Pageable page);
 
     //by firstName and Surname
-    List<User> findByFirstNameLikeIgnoreCaseAndLastNameLikeIgnoreCase(String name, String surname,Pageable page);
+    List<User> findByDeleteFalseAndFirstNameLikeIgnoreCaseAndLastNameLikeIgnoreCase(String name, String surname,Pageable page);
 
 
 
@@ -45,6 +46,7 @@ public interface UserRepository extends JpaRepository<User,Long> {
     List<User> findUserFriends(Long id);
 
     //add friend
+    @Modifying
     @Query(value = "insert into user_friends (user_id, friend_id) VALUES (?1,?2)",
             nativeQuery=true)
     int addFriend(Long userId, Long subscriberId);
@@ -55,6 +57,7 @@ public interface UserRepository extends JpaRepository<User,Long> {
     Long checkForFriend(Long userId, Long friendId);
 
     //delete friend
+    @Modifying
     @Query(value = "delete from user_friends where user_id=?1 and friend_id=?2",
             nativeQuery=true)
     int deleteFromFriends(Long userId, Long subId);
@@ -66,6 +69,7 @@ public interface UserRepository extends JpaRepository<User,Long> {
     List<User> findUserSubscribers(Long id);
 
     //add subscriber
+    @Modifying
     @Query(value = "insert into user_subscribers (user_id, subscriber_id) VALUES (?1,?2)",
             nativeQuery=true)
     int addSubscriber(Long userId, Long subscriberId);
@@ -76,6 +80,7 @@ public interface UserRepository extends JpaRepository<User,Long> {
     Long checkForSubscriber(Long userId, Long friendId);
 
     //delete from subs
+    @Modifying
     @Query(value = "delete from user_subscribers where user_id=?1 and subscriber_id=?2",
             nativeQuery=true)
     int deleteFromSubs(Long userId, Long subId);

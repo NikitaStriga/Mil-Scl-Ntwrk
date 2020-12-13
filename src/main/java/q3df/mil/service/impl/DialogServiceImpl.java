@@ -6,7 +6,6 @@ import org.springframework.stereotype.Service;
 import q3df.mil.dto.dialog.DialogDto;
 import q3df.mil.entities.dialog.Dialog;
 import q3df.mil.exception.DialogNotFoundException;
-import q3df.mil.exception.UserNotFoundException;
 import q3df.mil.mapper.dialog.DialogMapper;
 import q3df.mil.repository.DialogRepository;
 
@@ -26,7 +25,8 @@ public class DialogServiceImpl implements q3df.mil.service.DialogService {
         this.dialogMapper = dialogMapper;
     }
 
-    @Transactional
+
+    @Override
     public List<DialogDto> findDialogsByUserId(Long id){
         return dialogRepository
                 .findDialogsByUserId(id)

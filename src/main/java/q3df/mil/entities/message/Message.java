@@ -1,21 +1,38 @@
 package q3df.mil.entities.message;
 
 import lombok.*;
+import org.springframework.context.annotation.PropertySource;
 import q3df.mil.entities.dialog.Dialog;
 import q3df.mil.entities.user.User;
 
-import javax.persistence.*;
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.Index;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.PrePersist;
+import javax.persistence.PreUpdate;
+import javax.persistence.Table;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "messages",
         indexes = {
-        @Index(name = "message_dialog_id_idx",columnList = "dialog_id")
+        @Index(name = "created_idx",columnList = "created DESC")
         })
 @Data
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
+@PropertySource("classpath:ValidationMessages.properties")
 public class Message {
 
     @Id
@@ -46,6 +63,10 @@ public class Message {
 
 
     @Column(name = "text")
+    @NotNull(message = "{messageText.empty}")
+    @NotBlank(message = "{messageText.empty}")
+    @NotEmpty(message = "{messageText.empty}")
+    @Size(min = 1, max = 350, message = "{messageText.size} {min}-{max} characters!")
     private String text;
 
     @Column(name = "delete")

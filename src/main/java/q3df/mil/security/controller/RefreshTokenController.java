@@ -35,6 +35,7 @@ public class RefreshTokenController {
     })
     @ApiResponses({
             @ApiResponse(code = 200, message = "Token has been successfully refreshed!"),
+            @ApiResponse(code = 401, message = "Token not valid!"),
     })
     @GetMapping
     public ResponseEntity<AuthResponse> refreshToken(HttpServletRequest request){

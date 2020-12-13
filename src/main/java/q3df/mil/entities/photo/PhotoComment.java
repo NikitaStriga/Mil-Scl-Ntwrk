@@ -5,9 +5,27 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.OnDelete;
+import org.springframework.context.annotation.PropertySource;
 import q3df.mil.entities.user.User;
 
-import javax.persistence.*;
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.Index;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
+import javax.persistence.PrePersist;
+import javax.persistence.PreUpdate;
+import javax.persistence.Table;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -15,12 +33,13 @@ import java.util.List;
 @Entity
 @Table(name = "photo_comments",
         indexes = {
-            @Index(name = "photo_comment_photo_id_idx",columnList = "photo_id")
+            @Index(name = "created_idx",columnList = "created DESC")
         })
 @Data
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
+@PropertySource("classpath:ValidationMessages.properties")
 public class PhotoComment {
 
 
@@ -46,6 +65,10 @@ public class PhotoComment {
     private User user;
 
     @Column(name = "comments")
+    @NotNull(message = "{photoComment.empty}")
+    @NotBlank(message = "{photoComment.empty}")
+    @NotEmpty(message = "{photoComment.empty}")
+    @Size(min = 1, max = 350, message = "{photoComment.size} {min}-{max} characters!")
     private String comment;
 
     @Column(name = "created",updatable = false)
@@ -76,6 +99,7 @@ public class PhotoComment {
                     CascadeType.MERGE,
                     CascadeType.PERSIST,
                     CascadeType.REFRESH})
+    @OnDelete(action = org.hibernate.annotations.OnDeleteAction.CASCADE)
     private List<PhotoCommentLike> photoCommentLikeList=new ArrayList<>();
 
     public void addPhotoCommentLike(PhotoCommentLike pcl){

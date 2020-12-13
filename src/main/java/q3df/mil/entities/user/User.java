@@ -8,12 +8,20 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
+import org.hibernate.annotations.OnDelete;
 import org.springframework.context.annotation.PropertySource;
 import q3df.mil.entities.enums.Gender;
 import q3df.mil.entities.dialog.Dialog;
 import q3df.mil.entities.message.Message;
+import q3df.mil.entities.photo.Photo;
+import q3df.mil.entities.photo.PhotoComment;
+import q3df.mil.entities.photo.PhotoCommentLike;
+import q3df.mil.entities.photo.PhotoLike;
 import q3df.mil.entities.role.Role;
 import q3df.mil.entities.text.Text;
+import q3df.mil.entities.text.TextComment;
+import q3df.mil.entities.text.TextCommentLike;
+import q3df.mil.entities.text.TextLike;
 import q3df.mil.validators.ValidDate;
 
 
@@ -35,6 +43,7 @@ import javax.persistence.PrePersist;
 import javax.persistence.PreUpdate;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
+import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
@@ -78,6 +87,7 @@ public class User {
     @NotBlank(message = "{email.empty}")
     @NotNull(message = "{email.empty}")
     @NotEmpty(message = "{email.empty}")
+    @Email(message = "{email.pattern}")
     private String email;
 
     @Column(name = "login")
@@ -148,12 +158,15 @@ public class User {
     @Column(name = "delete")
     private Boolean delete;
 
+    @Column(name = "recovery_code")
+    @Size(max = 36)
+    private String recoveryCode;
+
     @PrePersist
     void onCreate(){
         this.setRegistrationTime(LocalDateTime.now());
         this.setUpdateTime(LocalDateTime.now());
         this.setPChange(LocalDateTime.now());
-
     }
 
     @PreUpdate
@@ -166,6 +179,7 @@ public class User {
     @OneToMany(fetch = FetchType.LAZY,mappedBy = "user",
             cascade = {CascadeType.DETACH,
                     CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH},orphanRemoval = true)
+    @OnDelete(action = org.hibernate.annotations.OnDeleteAction.CASCADE)
     private List<Role> roles=new ArrayList<>();
 
     //add new role for user
@@ -185,6 +199,7 @@ public class User {
                     CascadeType.MERGE,
                     CascadeType.PERSIST,
                     CascadeType.REFRESH},orphanRemoval = true)
+    @OnDelete(action = org.hibernate.annotations.OnDeleteAction.CASCADE)
     private List<Text> texts=new ArrayList<>();
 
     //add new text for user
@@ -195,48 +210,10 @@ public class User {
     /********************************************************/
 
 
-
-
-    /***************** Relation to friends  + add ***********/
-//    @OneToMany(mappedBy = "user",
-//            cascade = {
-//                    CascadeType.DETACH,
-//                    CascadeType.MERGE,
-//                    CascadeType.PERSIST,
-//                    CascadeType.REFRESH},orphanRemoval = true)
-//    private List<Friend> friends=new ArrayList<>();
-//
-//
-//    public void addFriend(Friend friend){
-//        friends.add(friend);
-//    }
-
-    /*********************************************************/
-
-
-
-
-    /************** Relation to subscribers  + add ***********/
-//    @OneToMany(mappedBy = "user",
-//            cascade = {
-//                    CascadeType.DETACH,
-//                    CascadeType.MERGE,
-//                    CascadeType.PERSIST,
-//                    CascadeType.REFRESH},orphanRemoval = true)
-//    private List<Subscriber> subscribers=new ArrayList<>();
-//
-//    public void addSubscriber(Subscriber sub){
-//        subscribers.add(sub);
-//    }
-
-    /********************************************************/
-
-
-
     /************** Relation to dialogs  + add ***********/
     @ManyToMany(mappedBy = "users",cascade = {CascadeType.DETACH,
                     CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH,CascadeType.REMOVE})
-
+    @OnDelete(action = org.hibernate.annotations.OnDeleteAction.CASCADE)
     private List<Dialog> dialogs=new ArrayList<>();
 
     public void addDialog(Dialog dlg){
@@ -254,6 +231,7 @@ public class User {
                     CascadeType.MERGE,
                     CascadeType.PERSIST,
                     CascadeType.REFRESH},orphanRemoval = true)
+    @OnDelete(action = org.hibernate.annotations.OnDeleteAction.CASCADE)
     private List<Message> outboxMessages=new ArrayList<>();
 
     public void addOutboxMessage(Message message){
@@ -270,6 +248,7 @@ public class User {
                     CascadeType.MERGE,
                     CascadeType.PERSIST,
                     CascadeType.REFRESH},orphanRemoval = true)
+    @OnDelete(action = org.hibernate.annotations.OnDeleteAction.CASCADE)
     private List<Message> inboxMessages=new ArrayList<>();
 
     public void addInboxMessage(Message message){
@@ -281,18 +260,18 @@ public class User {
 
 
     /************** Relation to Photos  + add ***********/
-//    @OneToMany(mappedBy = "user",
-//            cascade = {
-//                    CascadeType.DETACH,
-//                    CascadeType.MERGE,
-//                    CascadeType.PERSIST,
-//                    CascadeType.REFRESH},orphanRemoval = true)
-//
-//    private List<Photo> photos=new ArrayList<>();
-//
-//    public void addPhoto(Photo p){
-//        photos.add(p);
-//    }
+    @OneToMany(mappedBy = "user",
+            cascade = {
+                    CascadeType.DETACH,
+                    CascadeType.MERGE,
+                    CascadeType.PERSIST,
+                    CascadeType.REFRESH},orphanRemoval = true)
+    @OnDelete(action = org.hibernate.annotations.OnDeleteAction.CASCADE)
+    private List<Photo> photos=new ArrayList<>();
+
+    public void addPhoto(Photo p){
+        photos.add(p);
+    }
 
 
     /********************************************************/
@@ -324,6 +303,71 @@ public class User {
     private List<User> subscribers = new ArrayList<>();
 
 
+
+
+    /*************************************************************************/
+    @OneToMany(fetch = FetchType.LAZY,
+            mappedBy = "user",
+            cascade = {
+                    CascadeType.DETACH,
+                    CascadeType.MERGE,
+                    CascadeType.PERSIST,
+                    CascadeType.REFRESH},orphanRemoval = true)
+    @OnDelete(action = org.hibernate.annotations.OnDeleteAction.CASCADE)
+    private List<TextComment> textComments=new ArrayList<>();
+
+    @OneToMany(fetch = FetchType.LAZY,
+            mappedBy = "user",
+            cascade = {
+                    CascadeType.DETACH,
+                    CascadeType.MERGE,
+                    CascadeType.PERSIST,
+                    CascadeType.REFRESH},orphanRemoval = true)
+    @OnDelete(action = org.hibernate.annotations.OnDeleteAction.CASCADE)
+    private List<TextLike> textLikes=new ArrayList<>();
+
+    @OneToMany(fetch = FetchType.LAZY,
+            mappedBy = "user",
+            cascade = {
+                    CascadeType.DETACH,
+                    CascadeType.MERGE,
+                    CascadeType.PERSIST,
+                    CascadeType.REFRESH},orphanRemoval = true)
+    @OnDelete(action = org.hibernate.annotations.OnDeleteAction.CASCADE)
+    private List<TextCommentLike> textCommentLikes=new ArrayList<>();
+
+
+    @OneToMany(fetch = FetchType.LAZY,
+            mappedBy = "user",
+            cascade = {
+                    CascadeType.DETACH,
+                    CascadeType.MERGE,
+                    CascadeType.PERSIST,
+                    CascadeType.REFRESH},orphanRemoval = true)
+    @OnDelete(action = org.hibernate.annotations.OnDeleteAction.CASCADE)
+    private List<PhotoComment>  photoComments=new ArrayList<>();
+
+    @OneToMany(fetch = FetchType.LAZY,
+            mappedBy = "user",
+            cascade = {
+                    CascadeType.DETACH,
+                    CascadeType.MERGE,
+                    CascadeType.PERSIST,
+                    CascadeType.REFRESH},orphanRemoval = true)
+    @OnDelete(action = org.hibernate.annotations.OnDeleteAction.CASCADE)
+    private List<PhotoLike> photoLikes=new ArrayList<>();
+
+    @OneToMany(fetch = FetchType.LAZY,
+            mappedBy = "user",
+            cascade = {
+                    CascadeType.DETACH,
+                    CascadeType.MERGE,
+                    CascadeType.PERSIST,
+                    CascadeType.REFRESH},orphanRemoval = true)
+    @OnDelete(action = org.hibernate.annotations.OnDeleteAction.CASCADE)
+    private List<PhotoCommentLike> photoCommentLikes=new ArrayList<>();
+
+    /*************************************************************************/
 
 
 
@@ -364,5 +408,39 @@ public class User {
 //        messagesToWho.add(message);
 //    }
 //
+//    /********************************************************/
+
+//    /***************** Relation to friends  + add ***********/
+//    @OneToMany(mappedBy = "user",
+//            cascade = {
+//                    CascadeType.DETACH,
+//                    CascadeType.MERGE,
+//                    CascadeType.PERSIST,
+//                    CascadeType.REFRESH},orphanRemoval = true)
+//    private List<Friend> friends=new ArrayList<>();
+//
+//
+//    public void addFriend(Friend friend){
+//        friends.add(friend);
+//    }
+
+//    /*********************************************************/
+
+
+
+
+//    /************** Relation to subscribers  + add ***********/
+//    @OneToMany(mappedBy = "user",
+//            cascade = {
+//                    CascadeType.DETACH,
+//                    CascadeType.MERGE,
+//                    CascadeType.PERSIST,
+//                    CascadeType.REFRESH},orphanRemoval = true)
+//    private List<Subscriber> subscribers=new ArrayList<>();
+//
+//    public void addSubscriber(Subscriber sub){
+//        subscribers.add(sub);
+//    }
+
 //    /********************************************************/
 }

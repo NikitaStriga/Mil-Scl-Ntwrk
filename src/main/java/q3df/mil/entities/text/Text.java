@@ -7,6 +7,7 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
+import org.hibernate.annotations.OnDelete;
 import org.springframework.context.annotation.PropertySource;
 import q3df.mil.entities.user.User;
 
@@ -94,6 +95,7 @@ public class Text {
                     CascadeType.MERGE,
                     CascadeType.PERSIST,
                     CascadeType.REFRESH},orphanRemoval = true)
+    @OnDelete(action = org.hibernate.annotations.OnDeleteAction.CASCADE)
     private List<TextComment> textComments=new ArrayList<>();
 
     //add comments
@@ -113,6 +115,7 @@ public class Text {
                     CascadeType.MERGE,
                     CascadeType.PERSIST,
                     CascadeType.REFRESH},orphanRemoval = true)
+    @OnDelete(action = org.hibernate.annotations.OnDeleteAction.CASCADE)
     private Set<TextLike> textLikes=new HashSet<>();
 
 

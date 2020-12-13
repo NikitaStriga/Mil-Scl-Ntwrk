@@ -9,6 +9,7 @@ import q3df.mil.dto.user.UserUpdateDto;
 import q3df.mil.entities.enums.SystemRoles;
 import q3df.mil.entities.user.User;
 import q3df.mil.security.model.ChangePasswordRequest;
+import q3df.mil.security.model.PasswordRecovery;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -45,5 +46,10 @@ public interface UserService {
     List<UserPreview> findByFirstNameAndLastName(String name, String surname,Pageable page);
 
 
+
+    //recovery password
+    void recoveryPassword(PasswordRecovery passwordRecovery);
+
+    boolean applyingNewPassword(String recoveryCode);
 
 }

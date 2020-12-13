@@ -13,6 +13,7 @@ import q3df.mil.repository.PhotoRepository;
 import q3df.mil.service.PhotoService;
 
 import javax.persistence.EntityNotFoundException;
+import javax.transaction.Transactional;
 
 @Service
 public class PhotoServiceImpl implements PhotoService {
@@ -29,6 +30,7 @@ public class PhotoServiceImpl implements PhotoService {
 
 
     @Override
+    @Transactional
     public PhotoDto findById(Long id) {
         Photo photo = photoRepository.findById(id)
                 .orElseThrow(() -> new PhotoNotFoundException("Photo with id " + id + " doesn't exist!"));
@@ -36,6 +38,7 @@ public class PhotoServiceImpl implements PhotoService {
     }
 
     @Override
+    @Transactional
     public PhotoDto savePhoto(PhotoSaveDto photoSaveDto) {
         Photo photo = photoSaveMapper.fromDto(photoSaveDto);
         Photo savedPhoto = photoRepository.save(photo);
@@ -43,6 +46,7 @@ public class PhotoServiceImpl implements PhotoService {
     }
 
     @Override
+    @Transactional
     public PhotoDto updatePhoto(PhotoUpdateDto photoUpdateDto) {
         Photo photo;
         try{

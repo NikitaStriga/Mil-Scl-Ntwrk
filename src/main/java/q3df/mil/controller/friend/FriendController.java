@@ -5,7 +5,9 @@ import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
+import lombok.Data;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.PropertySource;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -54,8 +56,8 @@ public class FriendController {
             @ApiResponse(code = 404, message = "Friend almost exist in friend- or friend list, or either of both doesn't exist")
     })
     @PostMapping
-    public ResponseEntity<String> addFriendToUser(@PathVariable Long id, @Valid @NotNull @Positive Long friendId){
-        friendService.addFriendToUser(id,friendId);
+    public ResponseEntity<String> addFriendToUser(@PathVariable Long id,@Valid HelperFriendClass friend){
+        friendService.addFriendToUser(id,friend.getFriendId());
         return ResponseEntity.ok("Friend was added!");
     }
 
@@ -69,9 +71,19 @@ public class FriendController {
             @ApiResponse(code = 404, message = "Friend doesn't exist in subscriber list of user")
     })
     @DeleteMapping
-    public ResponseEntity<String> deleteFriendFromUser(@PathVariable Long id, @Valid @NotNull @Positive Long friendId ){
-        friendService.deleteFriendFromUser(id,friendId);
+    public ResponseEntity<String> deleteFriendFromUser(@PathVariable Long id,@Valid HelperFriendClass friend ){
+        friendService.deleteFriendFromUser(id,friend.getFriendId());
         return ResponseEntity.ok("Friend was deleted!");
+    }
+
+
+
+    @Data
+    @PropertySource("classpath:messages.properties")
+    public class HelperFriendClass{
+        @NotNull(message = "{friendId.empty}")
+        @Positive(message = "{friendId.positive}")
+        private Long friendId;
     }
 
 }

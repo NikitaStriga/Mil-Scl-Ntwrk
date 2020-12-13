@@ -37,14 +37,14 @@ public class SubscriberServiceImpl implements SubscriberService {
 
     @Override
     public int addSubscriber(Long userId, Long subscriberId) {
-        Long userId1 = userRepository.checkForFriend(userId, subscriberId);
-        if (userId1>0){
+        Long userIdFromCheck1 = userRepository.checkForFriend(userId, subscriberId);
+        if (userIdFromCheck1!=null){
             throw new CustomException("Cant add subscriber with id "
                     + subscriberId + " to user with id " +
                     userId + " cause he almost in friends of user!");
         }
-        Long userId2 = userRepository.checkForSubscriber(userId, subscriberId);
-        if(userId2>0){
+        Long userIdFromCheck2 = userRepository.checkForSubscriber(userId, subscriberId);
+        if(userIdFromCheck2!=null){
             throw new CustomException("Cant add subscriber with id "
                     + subscriberId + " to user with id " +
                     userId + " cause he almost in subscribers of user!");

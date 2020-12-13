@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.exc.InvalidFormatException;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import lombok.extern.log4j.Log4j2;
 import org.apache.commons.lang3.StringUtils;
 import org.modelmapper.MappingException;
 import org.springframework.http.HttpStatus;
@@ -41,6 +42,7 @@ import java.util.Map;
 
 
 @RestControllerAdvice
+@Log4j2
 public class GlobalExceptionHandler {
 
 
@@ -62,8 +64,8 @@ public class GlobalExceptionHandler {
             UserNotFoundException.class
     })
     public ResponseEntity<HelperClassException> handleLoginExistExceptionAndEmailExistException(Exception ex) {
-            return new ResponseEntity<>(new HelperClassException(ex.getMessage()), HttpStatus.NOT_FOUND);
-        }
+        return new ResponseEntity<>(new HelperClassException(ex.getMessage()), HttpStatus.NOT_FOUND);
+    }
 
 
 

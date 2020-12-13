@@ -75,7 +75,6 @@ public class DialogController {
 //    }
 
 
-
     @ApiOperation(value = "Delete dialog")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "X-Auth-Token", defaultValue = "token", required = true, paramType = "header", dataType = "string"),

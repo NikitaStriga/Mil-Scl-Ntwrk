@@ -6,15 +6,14 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Import;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Sort;
 import q3df.mil.config.MessageSourceAndLocalValidatorConfig;
 import q3df.mil.config.ModelMapperConfig;
 import q3df.mil.config.PasswordEncoderConfiguration;
 import q3df.mil.config.SwaggerConfig;
-import q3df.mil.entities.text.Text;
+import q3df.mil.mail.MailConfig;
 import q3df.mil.mapper.user.UserMapper;
 import q3df.mil.repository.DialogRepository;
+import q3df.mil.repository.TextCommentRepository;
 import q3df.mil.repository.TextRepository;
 import q3df.mil.repository.UserRepository;
 import q3df.mil.service.UserService;
@@ -24,17 +23,15 @@ import q3df.mil.service.impl.MessageServiceImpl;
 import q3df.mil.service.impl.SubscriberServiceImpl;
 import springfox.documentation.swagger2.annotations.EnableSwagger2;
 
-import java.sql.Date;
-import java.time.LocalDate;
-import java.util.List;
 
 
 @SpringBootApplication(exclude = { SecurityAutoConfiguration.class})
 @EnableSwagger2
-@Import({ModelMapperConfig.class
-		, MessageSourceAndLocalValidatorConfig.class
-		, SwaggerConfig.class
-		, PasswordEncoderConfiguration.class})
+@Import({ModelMapperConfig.class,
+		MessageSourceAndLocalValidatorConfig.class,
+		SwaggerConfig.class,
+		PasswordEncoderConfiguration.class,
+		MailConfig.class})
 public class MilSclNtwrkApplication {
 
 	public static void main(String[] args) {
@@ -51,7 +48,8 @@ public class MilSclNtwrkApplication {
 									 MessageServiceImpl messageService,
 									 FriendServiceImpl friendService,
 									 SubscriberServiceImpl subscriberService,
-									 TextRepository textRepository
+									 TextRepository textRepository,
+									 TextCommentRepository textCommentRepository
 									 ) {
 		return a -> {
 //			UserDto user = userRepository.findById(1L);
@@ -77,6 +75,12 @@ public class MilSclNtwrkApplication {
 //			System.out.println(userRepository.findByBirthdayBetween(LocalDate.parse("2010-01-01"), LocalDate.parse("2020-01-01"), PageRequest.of(0, 30, Sort.by(Sort.Direction.DESC,"birthday"))).size());
 //			System.out.println(userRepository.findByLastNameIgnoreCase("vivians").size());
 //			System.out.println(userRepository.findByFirstNameLikeIgnoreCase("%duArdo%").size());
+//			friendService.addFriendToUser(1L,2L);
+//			userRepository.deleteFromSubs(1L,2L);
+//			dialogService.deleteById(1L);
+//			userRepository.deleteById(1L);
+//			textRepository.deleteById(1L);
+//			textCommentRepository.deleteById(1L);
 		};
 	}
 

@@ -100,7 +100,7 @@ public class UserController {
 
 
 
-    @ApiOperation(value = "Delete user")
+    @ApiOperation(value = "Delete user", notes = "Marks a user as deleted")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "X-Auth-Token", defaultValue = "token", required = true, paramType = "header", dataType = "string"),
     })
@@ -145,8 +145,8 @@ public class UserController {
     public ResponseEntity<List<UserPreview>> findByCountryAndCity(
             @RequestParam(defaultValue = "0") Integer page,
             @RequestParam(defaultValue = "15") Integer size,
-            @RequestParam(defaultValue = "France") String country,
-            @RequestParam(defaultValue = "Montfort-sur-Meu") String city){
+            @RequestParam(defaultValue = "Belarus") String country,
+            @RequestParam(defaultValue = "Minsk") String city){
         PageRequest pageRequest = PageRequest.of(page, size, Sort.by(Sort.Direction.ASC, "firstName"));
         return ResponseEntity.ok(userService.findByCountryAndCity(country,city,pageRequest));
     }

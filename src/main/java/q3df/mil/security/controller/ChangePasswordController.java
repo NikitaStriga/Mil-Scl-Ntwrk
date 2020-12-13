@@ -16,6 +16,8 @@ import org.springframework.web.bind.annotation.RestController;
 import q3df.mil.security.model.ChangePasswordRequest;
 import q3df.mil.service.UserService;
 
+import javax.validation.Valid;
+
 @RestController
 @RequestMapping("/password")
 public class ChangePasswordController {
@@ -37,7 +39,7 @@ public class ChangePasswordController {
             @ApiResponse(code = 401, message = "Invalid login or password")
     })
     @PostMapping
-    public ResponseEntity<String> changePassword(@RequestBody ChangePasswordRequest cp){
+    public ResponseEntity<String> changePassword(@Valid @RequestBody ChangePasswordRequest cp){
 
 
         /*Check login and password.  uses our method loadUserByUsername in  UserServiceProvide
@@ -57,5 +59,7 @@ public class ChangePasswordController {
             throw new BadCredentialsException("Invalid login or password!");
         }
     }
+
+
 
 }

@@ -5,9 +5,27 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.OnDelete;
+import org.springframework.context.annotation.PropertySource;
 import q3df.mil.entities.user.User;
 
-import javax.persistence.*;
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.Index;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
+import javax.persistence.PrePersist;
+import javax.persistence.PreUpdate;
+import javax.persistence.Table;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -15,12 +33,13 @@ import java.util.List;
 @Entity
 @Table(name = "photos",
         indexes = {
-            @Index(name = "photo_user_id_idx",columnList = "user_id")
+            @Index(name = "created_idx",columnList = "created DESC")
         })
 @Data
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
+@PropertySource("classpath:ValidationMessages.properties")
 public class Photo {
 
     @Id
@@ -42,12 +61,20 @@ public class Photo {
     private LocalDateTime updateTime;
 
     @Column(name = "description")
+    @NotNull(message = "{description.empty}")
+    @NotBlank(message = "{description.empty}")
+    @NotEmpty(message = "{description.empty}")
+    @Size(min = 1, max = 350, message = "{text.size} {min}-{max} characters!")
     private String description;
 
     @Column(name = "main_photo")
     private Boolean mainPhoto;
 
     @Column(name = "path")
+    @NotNull(message = "{path.empty}")
+    @NotBlank(message = "{path.empty}")
+    @NotEmpty(message = "{path.empty}")
+    @Size(min = 1, max = 100, message = "{path.size} {min}-{max} characters!")
     private String path;
 
     @Column(name = "delete")
@@ -72,6 +99,7 @@ public class Photo {
                     CascadeType.MERGE,
                     CascadeType.PERSIST,
                     CascadeType.REFRESH})
+    @OnDelete(action = org.hibernate.annotations.OnDeleteAction.CASCADE)
     private List<PhotoComment> photoComments=new ArrayList<>();
 
     public void addPhotoComments(PhotoComment pc){
@@ -89,6 +117,7 @@ public class Photo {
                     CascadeType.MERGE,
                     CascadeType.PERSIST,
                     CascadeType.REFRESH})
+    @OnDelete(action = org.hibernate.annotations.OnDeleteAction.CASCADE)
     private List<PhotoLike> photoLikes=new ArrayList<>();
 
     public void addPhotoLike(PhotoLike pl){

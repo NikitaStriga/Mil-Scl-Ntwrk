@@ -7,16 +7,32 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
+import org.hibernate.annotations.OnDelete;
 import q3df.mil.entities.message.Message;
 import q3df.mil.entities.user.User;
 
-import javax.persistence.*;
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.Index;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
+import javax.persistence.OneToMany;
+import javax.persistence.PrePersist;
+import javax.persistence.Table;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
 @Entity
-@Table(name = "dialogs")
+@Table(name = "dialogs",
+        indexes = {
+        @Index(name = "created_idx",columnList = "created DESC")
+})
 @Data
 @Builder
 @AllArgsConstructor
@@ -46,6 +62,7 @@ public class Dialog {
                     CascadeType.MERGE,
                     CascadeType.PERSIST,
                     CascadeType.REFRESH},orphanRemoval = true)
+    @OnDelete(action = org.hibernate.annotations.OnDeleteAction.CASCADE)
     private List<Message> messages=new ArrayList<>();
 
     public void addMessage(Message msg){

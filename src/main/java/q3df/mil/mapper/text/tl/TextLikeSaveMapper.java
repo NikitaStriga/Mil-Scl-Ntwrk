@@ -30,7 +30,7 @@ public class TextLikeSaveMapper extends Mapper<TextLike, TextLikeSaveDto> {
                 .setPostConverter(toDtoConverter());
         modelMapper.createTypeMap(TextLikeSaveDto.class, TextLike.class)
                 .addMappings(m -> m.skip(TextLike::setTextId))
-                .addMappings(m -> m.skip(TextLike::setUserId))
+                .addMappings(m -> m.skip(TextLike::setUser))
                 .setPostConverter(toEntityConverter());
     }
 
@@ -44,7 +44,7 @@ public class TextLikeSaveMapper extends Mapper<TextLike, TextLikeSaveDto> {
     public void mapFromDtoToEntity(TextLikeSaveDto source, TextLike destination) {
         destination.setTextId(textRepository.findById(source.getTextId())
                 .orElseThrow( () -> new TextNotFoundException("Text with id " + source.getTextId() + "doesn't exist!")));
-        destination.setUserId(userRepository.findById(source.getUserId())
+        destination.setUser(userRepository.findById(source.getUserId())
                 .orElseThrow( () -> new UserNotFoundException("User with id " + source.getUserId() + "doesn't exist!")));
     }
 }

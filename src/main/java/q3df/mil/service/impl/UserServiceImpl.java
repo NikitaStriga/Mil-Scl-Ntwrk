@@ -1,14 +1,15 @@
 package q3df.mil.service.impl;
 
 
+import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import q3df.mil.dto.user.UserUpdateDto;
 import q3df.mil.exception.CustomException;
+import q3df.mil.mail.MailSender;
 import q3df.mil.myfeatures.CopyPropertiesHelperClass;
 import q3df.mil.dto.user.UserDto;
 import q3df.mil.dto.user.UserRegistrationDto;
@@ -23,6 +24,7 @@ import q3df.mil.mapper.user.UserRegistrationMapper;
 import q3df.mil.myfeatures.SupClass;
 import q3df.mil.repository.UserRepository;
 import q3df.mil.security.model.ChangePasswordRequest;
+import q3df.mil.security.model.PasswordRecovery;
 import q3df.mil.service.UserService;
 
 import javax.persistence.EntityNotFoundException;
@@ -32,6 +34,7 @@ import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Service
@@ -44,6 +47,7 @@ public class UserServiceImpl implements UserService {
     private final PasswordEncoder passwordEncoder;
     private final SupClass supClass;
     private final CopyPropertiesHelperClass copyPropertiesHelperClass;
+    private final MailSender mailSender;
 
 
     @Autowired
@@ -52,7 +56,9 @@ public class UserServiceImpl implements UserService {
                            UserRegistrationMapper userRegistrationMapper,
                            UserPreviewMapper userPreviewMapper,
                            PasswordEncoder passwordEncoder,
-                           SupClass supClass, CopyPropertiesHelperClass copyPropertiesHelperClass) {
+                           SupClass supClass,
+                           CopyPropertiesHelperClass copyPropertiesHelperClass,
+                           MailSender mailSender) {
         this.userRepository = userRepository;
         this.userMapper = userMapper;
         this.userRegistrationMapper = userRegistrationMapper;
@@ -60,15 +66,15 @@ public class UserServiceImpl implements UserService {
         this.passwordEncoder = passwordEncoder;
         this.supClass = supClass;
         this.copyPropertiesHelperClass = copyPropertiesHelperClass;
+        this.mailSender = mailSender;
     }
 
 
 
     @Override
-    @Transactional
     public List<UserPreview> findAll(Pageable pageable) {
         return userRepository
-                .findAll(pageable)
+                .findAllByDeleteFalse(pageable)
                 .stream()
                 .map(userPreviewMapper::toDto)
                 .collect(Collectors.toList());
@@ -122,18 +128,18 @@ public class UserServiceImpl implements UserService {
 
 
     @Override
-    @Transactional
     public void deleteUser(Long id) {
+        User user;
         try{
-            userRepository.deleteById(id);
-        }catch (EmptyResultDataAccessException e){
+            user=userRepository.getOne(id);
+        }catch (EntityNotFoundException ex){
             throw new UserNotFoundException("User with id " + id + " doesn't exist!");
         }
+        user.setDelete(true);
     }
 
 
     @Override
-    @Transactional
     public void changePassword(ChangePasswordRequest cp) {
         Optional<User> byLogin = userRepository.findByLogin(cp.getLogin());
         User user = byLogin
@@ -172,7 +178,7 @@ public class UserServiceImpl implements UserService {
     public List<UserPreview> findUserBetweenDates(String before, String after, Pageable page) {
         try{
             return userRepository
-                    .findByBirthdayBetween(LocalDate.parse(before), LocalDate.parse(after), page)
+                    .findByDeleteFalseAndBirthdayBetween(LocalDate.parse(before), LocalDate.parse(after), page)
                     .stream()
                     .map(userPreviewMapper::toDto)
                     .collect(Collectors.toList());
@@ -185,7 +191,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public List<UserPreview> findByCountryAndCity(String country, String city, Pageable page) {
         return userRepository
-                .findByCountryIgnoreCaseAndCityIgnoreCase(country,city,page)
+                .findByDeleteFalseAndCountryIgnoreCaseAndCityIgnoreCase(country,city,page)
                 .stream()
                 .map(userPreviewMapper::toDto)
                 .collect(Collectors.toList());
@@ -196,10 +202,47 @@ public class UserServiceImpl implements UserService {
         String firstName = StringUtils.join("%", name, "%");
         String lastName = StringUtils.join("%",surname,"%");
         return userRepository
-                .findByCountryIgnoreCaseAndCityIgnoreCase(firstName,lastName,page)
+                .findByDeleteFalseAndFirstNameLikeIgnoreCaseAndLastNameLikeIgnoreCase(firstName,lastName,page)
                 .stream()
                 .map(userPreviewMapper::toDto)
                 .collect(Collectors.toList());
+    }
+
+
+    @Override
+    public void recoveryPassword(PasswordRecovery passwordRecovery) {
+        Optional<User> byLogin = userRepository.findByLogin(passwordRecovery.getLogin());
+        User user = byLogin
+                .orElseThrow(() -> new UserNotFoundException("User with login " + passwordRecovery.getLogin() + " doesn't exist!"));
+        if(user.getEmail().equals(passwordRecovery.getEmail())){
+            throw new CustomException("Email is not match with login!");
+        }
+        String recoveryCode = UUID.randomUUID().toString();
+        String generatedString = RandomStringUtils.randomAlphanumeric(8);
+        String message = StringUtils.join("Hello, ",
+                user.getFirstName(),
+                "! \nPlease follow the link to indicate that it is really you want change password!" +
+                        " Link : http://localhost8080/recovery/",
+                recoveryCode,generatedString,passwordRecovery.getLogin(),
+                " \nYour new password is ",
+                generatedString);
+        mailSender.send(passwordRecovery.getEmail(), "Recovery code!", message);
+        user.setRecoveryCode(generatedString);
+    }
+
+    @Override
+    public boolean applyingNewPassword(String recoveryCode) {
+        String login = StringUtils.substring(recoveryCode, 36, 42);
+        String newPass = StringUtils.substring(recoveryCode, 42);
+        Optional<User> byLogin = userRepository.findByLogin(login);
+        User user = byLogin
+                .orElseThrow(() -> new CustomException("Invalid recoveryCode!"));
+        if(!user.getRecoveryCode().equals(recoveryCode)){
+            throw new CustomException("Invalid recoveryCode!");
+        }
+        user.setRecoveryCode(null);
+        user.setPassword(newPass);
+        return true;
     }
 
 }

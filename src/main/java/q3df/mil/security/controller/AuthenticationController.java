@@ -19,6 +19,8 @@ import q3df.mil.security.model.AuthRequest;
 import q3df.mil.security.model.AuthResponse;
 import q3df.mil.security.util.TokenUtils;
 
+import javax.validation.Valid;
+
 @RestController
 @RequestMapping("/authentication")
 public class AuthenticationController {
@@ -46,7 +48,7 @@ public class AuthenticationController {
             @ApiResponse(code = 401, message = "Invalid login or password!")
     })
     @PostMapping
-    public ResponseEntity<AuthResponse> loginUser(@RequestBody AuthRequest request) {
+    public ResponseEntity<AuthResponse> loginUser(@Valid @RequestBody AuthRequest request) {
 
         /*Check login and password.  uses our method loadUserByUsername in  UserServiceProvide
         * if login doesn't exist or password for this login ont valid it will be thrown AuthenticationException  */

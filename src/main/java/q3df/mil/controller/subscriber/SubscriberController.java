@@ -5,7 +5,10 @@ import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
+import lombok.AllArgsConstructor;
+import lombok.Data;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.PropertySource;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -58,8 +61,8 @@ public class SubscriberController {
             @ApiResponse(code = 404, message = "Subscriber almost exist in friend- or subscriber list, or either of both doesn't exist")
     })
     @PostMapping
-    public ResponseEntity<?> addSubscriberToUser(@PathVariable Long id, @Valid @NotNull @Positive Long friendId){
-        subscriberService.addSubscriber(id,friendId);
+    public ResponseEntity<?> addSubscriberToUser(@PathVariable Long id, @Valid HelperSubscriberClass subscriber ){
+        subscriberService.addSubscriber(id,subscriber.getSubscriberId());
         return new ResponseEntity<>("Subscriber was added!",HttpStatus.CREATED);
     }
 
@@ -73,9 +76,20 @@ public class SubscriberController {
             @ApiResponse(code = 404, message = "Subscriber doesn't exist in subscriber list of user")
     })
     @DeleteMapping
-    public ResponseEntity<?> deleteSubscriberFromUser(@PathVariable Long id, @Valid @NotNull @Positive Long friendId ){
-        subscriberService.deleteSubscriber(id,friendId);
+    public ResponseEntity<?> deleteSubscriberFromUser(@PathVariable Long id,@Valid HelperSubscriberClass subscriber ){
+        subscriberService.deleteSubscriber(id,subscriber.getSubscriberId());
         return new ResponseEntity<>("Subscriber was deleted!",HttpStatus.NO_CONTENT);
+    }
+
+
+
+    @Data
+    @AllArgsConstructor
+    @PropertySource("classpath:messages.properties")
+    public class HelperSubscriberClass{
+        @NotNull(message = "{subscriberId.empty}")
+        @Positive(message = "{subscriberId.positive}")
+        private Long subscriberId;
     }
 
 }
