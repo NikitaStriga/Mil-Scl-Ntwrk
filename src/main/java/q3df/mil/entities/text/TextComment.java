@@ -37,7 +37,7 @@ import java.util.Set;
 @Entity
 @Table(name = "text_comments",
             indexes = {
-        @Index(name = "created_idx",columnList = "created DESC")
+        @Index(name = "text_comments_created_idx",columnList = "created DESC")
             })
 @Data
 @Builder

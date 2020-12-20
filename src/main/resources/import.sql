@@ -160,8 +160,8 @@ insert into user_subscribers values (1,39);
 insert into user_subscribers values (1,40);
 
 
-insert into text (created, delete, update_time, text, user_id) values ('2020-04-13 00:00:00.000000',false,'2020-04-13 00:00:00.000000','Hello its 1st text of user1',1);
-insert into text (created, delete, update_time, text, user_id) values ('2020-04-13 01:00:00.000000',false,'2020-04-13 01:00:00.000000','Hello its 2st text of user1',1);
+insert into text (created, delete, update_time, text, user_id) values ('2020-04-13 00:00:00.000000',false,'2020-04-13 00:00:00.000000','Its first message on my wall! ',1);
+insert into text (created, delete, update_time, text, user_id) values ('2020-04-13 01:00:00.000000',false,'2020-04-13 01:00:00.000000','Wow, its nice day today!',1);
 insert into text (created, delete, update_time, text, user_id) values ('2020-04-13 02:00:00.000000',false,'2020-04-13 02:00:00.000000','Hello its 3st text of user1',1);
 insert into text (created, delete, update_time, text, user_id) values ('2020-04-13 03:00:00.000000',false,'2020-04-13 03:00:00.000000','Hello its 4st text of user1',1);
 insert into text (created, delete, update_time, text, user_id) values ('2020-04-13 04:00:00.000000',false,'2020-04-13 04:00:00.000000','Hello its 5st text of user1',1);
@@ -170,9 +170,9 @@ insert into text (created, delete, update_time, text, user_id) values ('2020-04-
 insert into text (created, delete, update_time, text, user_id) values ('2020-04-13 07:00:00.000000',false,'2020-04-13 07:00:00.000000','Hello its 8st text of user1',1);
 
 
-insert into text_comments (comment, created, deleted, update_time, text_id, user_id) values ('Hi man, its comment for user text','2020-05-13 00:00:00.000000',false,'2020-05-13 00:00:00.000000',1,1);
-insert into text_comments (comment, created, deleted, update_time, text_id, user_id) values ('Hi man, its comment for user text','2020-05-13 02:00:00.000000',false,'2020-05-13 02:00:00.000000',2,1);
-insert into text_comments (comment, created, deleted, update_time, text_id, user_id) values ('Hi man, its comment for user text','2020-05-13 05:00:00.000000',false,'2020-05-13 05:00:00.000000',3,1);
-insert into text_comments (comment, created, deleted, update_time, text_id, user_id) values ('Hi man, its comment for user text','2020-05-13 08:00:00.000000',false,'2020-05-13 08:00:00.000000',4,1);
-insert into text_comments (comment, created, deleted, update_time, text_id, user_id) values ('Hi man, its comment for user text','2020-05-13 09:00:00.000000',false,'2020-05-13 09:00:00.000000',5,1);
+insert into text_comments (comment, created, deleted, update_time, text_id, user_id) values ('Agree with you :)','2020-05-13 00:00:00.000000',false,'2020-05-13 00:00:00.000000',2,2);
+insert into text_comments (comment, created, deleted, update_time, text_id, user_id) values ('Me 2 :>','2020-05-13 02:00:00.000000',false,'2020-05-13 02:00:00.000000',2,3);
+insert into text_comments (comment, created, deleted, update_time, text_id, user_id) values ('What do you know about aliens ?','2020-05-13 05:00:00.000000',false,'2020-05-13 05:00:00.000000',2,4);
+insert into text_comments (comment, created, deleted, update_time, text_id, user_id) values ('No smoke more , Man !','2020-05-13 08:00:00.000000',false,'2020-05-13 08:00:00.000000',2,5);
+insert into text_comments (comment, created, deleted, update_time, text_id, user_id) values ('Hi man, its 5 comment for user text','2020-05-13 09:00:00.000000',false,'2020-05-13 09:00:00.000000',2,6);
 

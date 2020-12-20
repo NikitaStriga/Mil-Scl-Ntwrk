@@ -36,9 +36,9 @@ public class PhotoDto {
 
     private Boolean delete;
 
-    private List<PhotoCommentDto> photoComments=new ArrayList<>();
+    private List<PhotoCommentDto> photoComments = new ArrayList<>();
 
-    private List<PhotoLikeDto> photoLikes=new ArrayList<>();
+    private List<PhotoLikeDto> photoLikes = new ArrayList<>();
 
 
 }

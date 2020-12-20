@@ -33,7 +33,7 @@ import java.util.List;
 @Entity
 @Table(name = "photos",
         indexes = {
-            @Index(name = "created_idx",columnList = "created DESC")
+            @Index(name = "photos_created_idx",columnList = "created DESC")
         })
 @Data
 @Builder
@@ -100,6 +100,7 @@ public class Photo {
                     CascadeType.PERSIST,
                     CascadeType.REFRESH})
     @OnDelete(action = org.hibernate.annotations.OnDeleteAction.CASCADE)
+    @org.hibernate.annotations.OrderBy(clause = "created DESC")
     private List<PhotoComment> photoComments=new ArrayList<>();
 
     public void addPhotoComments(PhotoComment pc){

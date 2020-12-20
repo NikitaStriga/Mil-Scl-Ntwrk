@@ -21,9 +21,6 @@ import javax.persistence.UniqueConstraint;
 
 @Entity
 @Table(name = "photo_likes",
-        indexes = {
-            @Index(name = "photo_like_photo_id_idx1",columnList = "photo_id")
-        },
         uniqueConstraints = {@UniqueConstraint(columnNames = {"photo_id", "user_id"})})
 @Data
 @Builder

@@ -13,7 +13,6 @@ import q3df.mil.repository.PhotoCommentRepository;
 import q3df.mil.service.PhotoCommentService;
 
 import javax.persistence.EntityNotFoundException;
-import javax.transaction.Transactional;
 
 @Service
 public class PhotoCommentServiceImpl implements PhotoCommentService {
@@ -32,7 +31,7 @@ public class PhotoCommentServiceImpl implements PhotoCommentService {
     }
 
     @Override
-    @Transactional
+    @org.springframework.transaction.annotation.Transactional
     public PhotoCommentDto savePhotoComment(PhotoCommentSaveDto photoCommentSaveDto) {
         PhotoComment photoComment = photoCommentSaveMapper.fromDto(photoCommentSaveDto);
         PhotoComment savedPhotoComment = photoCommentRepository.save(photoComment);
@@ -41,7 +40,7 @@ public class PhotoCommentServiceImpl implements PhotoCommentService {
 
 
     @Override
-    @Transactional
+    @org.springframework.transaction.annotation.Transactional
     public PhotoCommentDto updatePhotoComment(PhotoCommentUpdateDto photoCommentUpdateDto) {
         PhotoComment photoComment;
         try{

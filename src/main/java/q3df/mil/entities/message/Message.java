@@ -26,7 +26,7 @@ import java.time.LocalDateTime;
 @Entity
 @Table(name = "messages",
         indexes = {
-        @Index(name = "created_idx",columnList = "created DESC")
+        @Index(name = "messages_created_idx",columnList = "created DESC")
         })
 @Data
 @Builder
@@ -72,16 +72,6 @@ public class Message {
     @Column(name = "delete")
     private Boolean delete;
 
-    @ToString.Exclude
-    @EqualsAndHashCode.Exclude
-    @ManyToOne(cascade = {
-            CascadeType.DETACH,
-            CascadeType.MERGE,
-            CascadeType.PERSIST,
-            CascadeType.REFRESH })
-    @JoinColumn(name = "dialog_id")
-    private Dialog dialog;
-
     @PreUpdate
     void onUpdate(){
         this.setUpdateTime(LocalDateTime.now());
@@ -92,5 +82,14 @@ public class Message {
         this.setCreated(LocalDateTime.now());
     }
 
+    @ToString.Exclude
+    @EqualsAndHashCode.Exclude
+    @ManyToOne(cascade = {
+            CascadeType.DETACH,
+            CascadeType.MERGE,
+            CascadeType.PERSIST,
+            CascadeType.REFRESH })
+    @JoinColumn(name = "dialog_id")
+    private Dialog dialog;
 
 }

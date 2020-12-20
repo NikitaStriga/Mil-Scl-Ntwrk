@@ -28,6 +28,7 @@ public class PhotoLikeServiceImpl implements PhotoLikeService {
 
 
     @Override
+    @org.springframework.transaction.annotation.Transactional
     public PhotoLikeDto savePhotoLike(PhotoLikeSaveDto photoLikeSaveDto) {
         PhotoLike photoLike = photoLikeSaveMapper.fromDto(photoLikeSaveDto);
         PhotoLike savedPhotoLike = photoLikeRepository.save(photoLike);

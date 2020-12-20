@@ -31,7 +31,7 @@ import java.util.List;
 @Entity
 @Table(name = "dialogs",
         indexes = {
-        @Index(name = "created_idx",columnList = "created DESC")
+        @Index(name = "dialogs_created_idx",columnList = "created DESC")
 })
 @Data
 @Builder
@@ -63,6 +63,7 @@ public class Dialog {
                     CascadeType.PERSIST,
                     CascadeType.REFRESH},orphanRemoval = true)
     @OnDelete(action = org.hibernate.annotations.OnDeleteAction.CASCADE)
+    @org.hibernate.annotations.OrderBy(clause = "created DESC")
     private List<Message> messages=new ArrayList<>();
 
     public void addMessage(Message msg){

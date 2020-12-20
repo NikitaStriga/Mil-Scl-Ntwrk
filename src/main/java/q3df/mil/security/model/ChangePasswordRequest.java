@@ -1,5 +1,6 @@
 package q3df.mil.security.model;
 
+import io.swagger.annotations.ApiModelProperty;
 import lombok.Builder;
 import lombok.Data;
 import org.springframework.context.annotation.PropertySource;
@@ -31,6 +32,7 @@ public class ChangePasswordRequest {
             message = "{password.pattern} {regexp}")
     private String password;
 
+    @ApiModelProperty(position = 3)
     @NotBlank(message = "{password.empty}")
     @NotNull(message = "{password.empty}")
     @NotEmpty(message = "{password.empty}")

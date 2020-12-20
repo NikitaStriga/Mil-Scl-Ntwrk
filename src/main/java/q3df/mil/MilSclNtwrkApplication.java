@@ -10,12 +10,15 @@ import q3df.mil.config.MessageSourceAndLocalValidatorConfig;
 import q3df.mil.config.ModelMapperConfig;
 import q3df.mil.config.PasswordEncoderConfiguration;
 import q3df.mil.config.SwaggerConfig;
+import q3df.mil.dto.user.UserPreview;
 import q3df.mil.mail.MailConfig;
 import q3df.mil.mapper.user.UserMapper;
 import q3df.mil.repository.DialogRepository;
 import q3df.mil.repository.TextCommentRepository;
 import q3df.mil.repository.TextRepository;
 import q3df.mil.repository.UserRepository;
+import q3df.mil.repository.custom.CustomRepository;
+import q3df.mil.repository.custom.impl.CustomRepositoryImpl;
 import q3df.mil.service.UserService;
 import q3df.mil.service.impl.DialogServiceImpl;
 import q3df.mil.service.impl.FriendServiceImpl;
@@ -23,6 +26,7 @@ import q3df.mil.service.impl.MessageServiceImpl;
 import q3df.mil.service.impl.SubscriberServiceImpl;
 import springfox.documentation.swagger2.annotations.EnableSwagger2;
 
+import java.util.List;
 
 
 @SpringBootApplication(exclude = { SecurityAutoConfiguration.class})
@@ -49,7 +53,8 @@ public class MilSclNtwrkApplication {
 									 FriendServiceImpl friendService,
 									 SubscriberServiceImpl subscriberService,
 									 TextRepository textRepository,
-									 TextCommentRepository textCommentRepository
+									 TextCommentRepository textCommentRepository,
+									 CustomRepositoryImpl customRepository
 									 ) {
 		return a -> {
 //			UserDto user = userRepository.findById(1L);
@@ -81,6 +86,10 @@ public class MilSclNtwrkApplication {
 //			userRepository.deleteById(1L);
 //			textRepository.deleteById(1L);
 //			textCommentRepository.deleteById(1L);
+			List<UserPreview> userPreviews = customRepository.showUsersByParams(
+					"2010-01-01", "2020-01-01", "", "", "", "", "","0","10");
+			System.out.println(userPreviews.size());
+			System.out.println(userPreviews);
 		};
 	}
 

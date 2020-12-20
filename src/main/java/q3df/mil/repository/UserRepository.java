@@ -5,15 +5,17 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.jpa.repository.QueryHints;
 import org.springframework.stereotype.Repository;
 import q3df.mil.entities.user.User;
 
+import javax.persistence.QueryHint;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
 @Repository
-public interface UserRepository extends JpaRepository<User,Long> {
+public interface UserRepository extends JpaRepository<User,Long>{
 
     Optional<User> findByLogin(String login);
 
@@ -24,6 +26,8 @@ public interface UserRepository extends JpaRepository<User,Long> {
     //pageable + sort + search
 
     //findAll
+//    @QueryHints(value = { @QueryHint(name = org.hibernate.annotations.QueryHints.FLUSH_MODE, value = "COMMIT")},
+//            forCounting = false)
     Page<User> findAllByDeleteFalse(Pageable page);
 
     //by birthday between ...
@@ -84,8 +88,6 @@ public interface UserRepository extends JpaRepository<User,Long> {
     @Query(value = "delete from user_subscribers where user_id=?1 and subscriber_id=?2",
             nativeQuery=true)
     int deleteFromSubs(Long userId, Long subId);
-
-
 
 
 }

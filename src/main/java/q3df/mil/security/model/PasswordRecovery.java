@@ -1,6 +1,5 @@
 package q3df.mil.security.model;
 
-import com.fasterxml.jackson.databind.annotation.JsonAppend;
 import lombok.Builder;
 import lombok.Data;
 import org.springframework.context.annotation.PropertySource;

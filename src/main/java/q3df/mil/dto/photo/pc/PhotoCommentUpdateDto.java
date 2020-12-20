@@ -1,6 +1,7 @@
 package q3df.mil.dto.photo.pc;
 
 
+import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.context.annotation.PropertySource;
@@ -16,10 +17,12 @@ import javax.validation.constraints.Size;
 @PropertySource("classpath:messages.properties")
 public class PhotoCommentUpdateDto {
 
+    @ApiModelProperty(position = 1)
     @NotNull(message = "{photoCommentId.empty}")
     @Positive(message = "{photoCommentId.positive}")
     private Long id;
 
+    @ApiModelProperty(position = 2)
     @NotNull(message = "{photoComment.empty}")
     @NotBlank(message = "{photoComment.empty}")
     @NotEmpty(message = "{photoComment.empty}")

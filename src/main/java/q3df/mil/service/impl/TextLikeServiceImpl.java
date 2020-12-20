@@ -28,6 +28,7 @@ public class TextLikeServiceImpl implements TextLikeService {
     }
 
     @Override
+    @org.springframework.transaction.annotation.Transactional
     public TextLikeDto saveTextLike(TextLikeSaveDto textLikeDto) {
         TextLike textLike = textLikeSaveMapper.fromDto(textLikeDto);
         TextLike savedTextLike = textLikeRepository.save(textLike);

@@ -10,6 +10,7 @@ import lombok.NoArgsConstructor;
 import lombok.ToString;
 import org.hibernate.annotations.OnDelete;
 import org.springframework.context.annotation.PropertySource;
+import q3df.mil.entities.contacts.Contact;
 import q3df.mil.entities.enums.Gender;
 import q3df.mil.entities.dialog.Dialog;
 import q3df.mil.entities.message.Message;
@@ -94,7 +95,7 @@ public class User {
     @NotBlank(message = "{login.empty}")
     @NotNull(message = "{login.empty}")
     @NotEmpty(message = "{login.empty}")
-    @Size(min=33,max = 50,message = "{login.size} {min}-{max} characters!")
+    @Size(min=3,max = 50,message = "{login.size} {min}-{max} characters!")
     @Pattern(regexp = "^[0-9A-z_@!@#$%^&*)(\\-\\]\\[]*$",
             message = "{login.pattern} {regexp}")
     private String login;
@@ -103,6 +104,8 @@ public class User {
     @NotBlank(message = "{password.empty}")
     @NotNull(message = "{password.empty}")
     @NotEmpty(message = "{password.empty}")
+    @Size(min=3,max = 60,message = "{password.size} {min}-{max} characters!")
+    @Pattern(regexp = "^[0-9A-z_@!@#$%^&*)(\\-\\]\\[]*$", message = "{password.pattern} {regexp}")
     private String password;
 
     @Column(name="first_name")
@@ -158,9 +161,11 @@ public class User {
     @Column(name = "delete")
     private Boolean delete;
 
-    @Column(name = "recovery_code")
+    @Column(name = "recovery_code", insertable = false, nullable = true)
     @Size(max = 36)
     private String recoveryCode;
+
+    private Contact contact;
 
     @PrePersist
     void onCreate(){
@@ -200,7 +205,8 @@ public class User {
                     CascadeType.PERSIST,
                     CascadeType.REFRESH},orphanRemoval = true)
     @OnDelete(action = org.hibernate.annotations.OnDeleteAction.CASCADE)
-    private List<Text> texts=new ArrayList<>();
+    @org.hibernate.annotations.OrderBy(clause = "created DESC")
+    private List<Text> texts = new ArrayList<>();
 
     //add new text for user
     public void addText(Text text){
@@ -214,7 +220,7 @@ public class User {
     @ManyToMany(mappedBy = "users",cascade = {CascadeType.DETACH,
                     CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH,CascadeType.REMOVE})
     @OnDelete(action = org.hibernate.annotations.OnDeleteAction.CASCADE)
-    private List<Dialog> dialogs=new ArrayList<>();
+    private List<Dialog> dialogs = new ArrayList<>();
 
     public void addDialog(Dialog dlg){
         dialogs.add(dlg);
@@ -267,7 +273,8 @@ public class User {
                     CascadeType.PERSIST,
                     CascadeType.REFRESH},orphanRemoval = true)
     @OnDelete(action = org.hibernate.annotations.OnDeleteAction.CASCADE)
-    private List<Photo> photos=new ArrayList<>();
+    @org.hibernate.annotations.OrderBy(clause = "created DESC")
+    private List<Photo> photos = new ArrayList<>();
 
     public void addPhoto(Photo p){
         photos.add(p);

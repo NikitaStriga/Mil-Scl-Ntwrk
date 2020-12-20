@@ -10,7 +10,6 @@ import q3df.mil.dto.message.MessageUpdateDto;
 import q3df.mil.entities.dialog.Dialog;
 import q3df.mil.entities.message.Message;
 import q3df.mil.exception.CustomException;
-import q3df.mil.exception.DialogNotFoundException;
 import q3df.mil.exception.MessageNotFoundException;
 import q3df.mil.mapper.message.MessageMapper;
 import q3df.mil.mapper.message.MessageSaveMapper;
@@ -40,10 +39,10 @@ public class MessageServiceImpl implements MessageService {
 
 
     @Override
-    @Transactional
+    @org.springframework.transaction.annotation.Transactional(readOnly = true)
     public List<MessageDto> findMessagesByDialogId(Long id) {
         return messageRepository
-                .findMessagesByDialogId(id)
+                .findMessagesByDialogIdOrderByCreatedDesc(id)
                 .stream()
                 .map(messageMapper::toDto)
                 .collect(Collectors.toList());
@@ -52,7 +51,29 @@ public class MessageServiceImpl implements MessageService {
 
 
     @Override
+    @org.springframework.transaction.annotation.Transactional
     public MessageDto saveMessage(MessageSaveDto messageSaveDto) {
+//        if (messageSaveDto.getFromWhoId().equals(messageSaveDto.getToWhoId())) {
+//            throw new CustomException("You cannot write to yourself");
+//        }
+//        Message message = messageSaveMapper.fromDto(messageSaveDto);
+//        if (message.getDialog()==null) {
+//            Dialog dialog = new Dialog();
+//            message.setDialog(dialog);
+//        }else {
+//            Long dialogId = message.getDialog().getId();
+//            Message checkMessage = message.getDialog().getMessages().get(0);
+//            Long fromWhoId = checkMessage.getFromWho().getId();
+//            Long toWhoId = checkMessage.getToWho().getId();
+//            if(!fromWhoId.equals(message.getFromWho().getId())){
+//                throw new CustomException("User with id " + fromWhoId + " not belong to dialog with id " + dialogId);
+//            }
+//            if(!toWhoId.equals(message.getToWho().getId())){
+//                throw new CustomException("User with id " + toWhoId + " not belong to dialog with id " + dialogId);
+//            }
+//        }
+//        Message savedMessage = messageRepository.save(message);
+//        return messageMapper.toDto(savedMessage);
         if (messageSaveDto.getFromWhoId().equals(messageSaveDto.getToWhoId())) {
             throw new CustomException("You cannot write to yourself");
         }
@@ -60,24 +81,15 @@ public class MessageServiceImpl implements MessageService {
         if (message.getDialog()==null) {
             Dialog dialog = new Dialog();
             message.setDialog(dialog);
-        }else {
-            Long dialogId = message.getDialog().getId();
-            Message checkMessage = message.getDialog().getMessages().get(0);
-            Long fromWhoId = checkMessage.getFromWho().getId();
-            Long toWhoId = checkMessage.getToWho().getId();
-            if(!fromWhoId.equals(message.getFromWho().getId())){
-                throw new CustomException("User with id " + fromWhoId + " not belong to dialog with id " + dialogId);
-            }
-            if(!toWhoId.equals(message.getToWho().getId())){
-                throw new CustomException("User with id " + toWhoId + " not belong to dialog with id " + dialogId);
-            }
         }
         Message savedMessage = messageRepository.save(message);
         return messageMapper.toDto(savedMessage);
-
     }
 
+
+
     @Override
+    @Transactional
     public MessageDto updateMessage(MessageUpdateDto messageUpdateDto) {
         Message message;
         try{
@@ -91,7 +103,6 @@ public class MessageServiceImpl implements MessageService {
 
 
     @Override
-    @Transactional
     public void deleteById(Long id) {
         try{
             messageRepository.deleteById(id);

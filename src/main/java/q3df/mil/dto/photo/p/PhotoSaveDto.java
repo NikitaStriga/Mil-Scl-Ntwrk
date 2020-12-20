@@ -1,5 +1,6 @@
 package q3df.mil.dto.photo.p;
 
+import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.context.annotation.PropertySource;
@@ -17,16 +18,19 @@ import javax.validation.constraints.Size;
 public class PhotoSaveDto {
 
     //userId
+    @ApiModelProperty(position = 1)
     @NotNull(message = "{userId.empty}")
     @Positive(message = "{userId.positive}")
     private Long userId;
 
+    @ApiModelProperty(position = 2)
     @NotNull(message = "{description.empty}")
     @NotBlank(message = "{description.empty}")
     @NotEmpty(message = "{description.empty}")
     @Size(min = 1, max = 350, message = "{text.size} {min}-{max} characters!")
     private String description;
 
+    @ApiModelProperty(position = 3)
     @NotNull(message = "{path.empty}")
     @NotBlank(message = "{path.empty}")
     @NotEmpty(message = "{path.empty}")

@@ -3,7 +3,6 @@ package q3df.mil.controller.exception;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.exc.InvalidFormatException;
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
 import lombok.extern.log4j.Log4j2;
 import org.apache.commons.lang3.StringUtils;
@@ -72,7 +71,6 @@ public class GlobalExceptionHandler {
     //for ModelMapperException (model mapper wraps our own exception and throw MappingException )
     @ExceptionHandler(org.modelmapper.MappingException.class)
     public ResponseEntity<HelperClassException> handleModelMappingException(MappingException ex){
-        System.out.println("hello");
         return new ResponseEntity<>(new HelperClassException(ex.getCause().getMessage()), HttpStatus.NOT_FOUND);
     }
 
@@ -134,7 +132,7 @@ public class GlobalExceptionHandler {
                 .append("Cant parse value |")
                 .append(ex.getValue())
                 .append("| for type ")
-                .append(simpleNameType.equals("LocalDate")?simpleNameType + " , use valid type 'yyyy-MM-dd' !" : simpleNameType);
+                .append(simpleNameType.equals("LocalDate") ? simpleNameType + " , use valid type 'yyyy-MM-dd' !" : simpleNameType);
         return new ResponseEntity<>(new HelperClassException(stringBuilder.toString()),HttpStatus.BAD_REQUEST);
     }
 
@@ -188,6 +186,15 @@ public class GlobalExceptionHandler {
     }
 
 
+    //for jsonParseError
+    @ExceptionHandler({com.fasterxml.jackson.core.JsonParseException.class})
+    public ResponseEntity<Map<String,String>> handleJParseExc(com.fasterxml.jackson.core.JsonParseException jsEx){
+        jsEx.getCause();
+        Map<String,String> map = new HashMap<>();
+        map.put("message","invalid format of json");
+        map.put("cause",jsEx.getOriginalMessage());
+        return new ResponseEntity<>(map, HttpStatus.BAD_REQUEST);
+    }
 
 //    /** For unexpected exceptions*  :) */
 //    @ExceptionHandler(Exception.class)

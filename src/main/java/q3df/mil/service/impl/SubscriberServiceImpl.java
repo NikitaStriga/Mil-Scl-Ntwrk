@@ -8,7 +8,6 @@ import q3df.mil.mapper.subscriber.SubscriberMapper;
 import q3df.mil.repository.UserRepository;
 import q3df.mil.service.SubscriberService;
 
-import javax.transaction.Transactional;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -25,7 +24,6 @@ public class SubscriberServiceImpl implements SubscriberService {
     }
 
     @Override
-    @Transactional
     public List<SubscriberDto> findUserSubscribers(Long id) {
         return userRepository
                 .findUserSubscribers(id)
@@ -36,6 +34,7 @@ public class SubscriberServiceImpl implements SubscriberService {
 
 
     @Override
+    @org.springframework.transaction.annotation.Transactional
     public int addSubscriber(Long userId, Long subscriberId) {
         Long userIdFromCheck1 = userRepository.checkForFriend(userId, subscriberId);
         if (userIdFromCheck1!=null){

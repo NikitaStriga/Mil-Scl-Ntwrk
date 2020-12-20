@@ -14,7 +14,6 @@ import q3df.mil.repository.TextRepository;
 import q3df.mil.service.TextService;
 
 import javax.persistence.EntityNotFoundException;
-import javax.transaction.Transactional;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -33,7 +32,7 @@ public class TextServiceImpl implements TextService {
 
 
     @Override
-    @Transactional
+    @org.springframework.transaction.annotation.Transactional(readOnly = true)
     public List<TextDto> findTextsByUserIdInDescOrder(Long id) {
         List<Text> texts = textRepository.findTextByUserIdWithDescOrder(id);
         List<TextDto> textDtos = texts.stream().map(textMapper::toDto).collect(Collectors.toList());
@@ -43,7 +42,7 @@ public class TextServiceImpl implements TextService {
 
 
     @Override
-    @Transactional
+    @org.springframework.transaction.annotation.Transactional
     public TextDto saveText(TextSaveDto textSaveDto) {
         Text text = textSaveMapper.fromDto(textSaveDto);
         Text savedText = textRepository.save(text);
@@ -52,7 +51,7 @@ public class TextServiceImpl implements TextService {
 
 
     @Override
-    @Transactional
+    @org.springframework.transaction.annotation.Transactional
     public TextDto updateText(TextUpdateDto textUpdateDto) {
         Text text;
         try{

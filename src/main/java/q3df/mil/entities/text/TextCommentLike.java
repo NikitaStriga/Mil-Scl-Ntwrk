@@ -23,9 +23,6 @@ import javax.persistence.UniqueConstraint;
 
 @Entity
 @Table(name = "text_comment_likes",
-        indexes = {
-        @Index(name = "text_comment_like_text_comment_id_idx",columnList = "text_comment_id")
-        },
         uniqueConstraints = {@UniqueConstraint(columnNames = {"text_comment_id", "user_id"})})
 @Data
 @Builder

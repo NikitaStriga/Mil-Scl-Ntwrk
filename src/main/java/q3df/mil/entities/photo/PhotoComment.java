@@ -33,7 +33,7 @@ import java.util.List;
 @Entity
 @Table(name = "photo_comments",
         indexes = {
-            @Index(name = "created_idx",columnList = "created DESC")
+            @Index(name = "photo_comments_created_idx",columnList = "created DESC")
         })
 @Data
 @Builder

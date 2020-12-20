@@ -9,7 +9,6 @@ import q3df.mil.exception.DialogNotFoundException;
 import q3df.mil.mapper.dialog.DialogMapper;
 import q3df.mil.repository.DialogRepository;
 
-import javax.transaction.Transactional;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -37,6 +36,7 @@ public class DialogServiceImpl implements q3df.mil.service.DialogService {
     }
 
     @Override
+    @org.springframework.transaction.annotation.Transactional
     public DialogDto saveDialog(DialogDto dialogDto) {
         Dialog dialog = dialogMapper.fromDto(dialogDto);
         Dialog savedDialog = dialogRepository.save(dialog);

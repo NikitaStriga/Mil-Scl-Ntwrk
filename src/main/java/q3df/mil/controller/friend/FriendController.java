@@ -53,7 +53,7 @@ public class FriendController {
     })
     @ApiResponses({
             @ApiResponse(code = 201, message = "Friend was successfully added"),
-            @ApiResponse(code = 404, message = "Friend almost exist in friend- or friend list, or either of both doesn't exist")
+            @ApiResponse(code = 400, message = "Friend almost exist in friend- or friend list, or either of both doesn't exist")
     })
     @PostMapping
     public ResponseEntity<String> addFriendToUser(@PathVariable Long id,@Valid HelperFriendClass friend){
@@ -68,7 +68,7 @@ public class FriendController {
     })
     @ApiResponses({
             @ApiResponse(code = 204, message = "Friend was successfully deleted"),
-            @ApiResponse(code = 404, message = "Friend doesn't exist in subscriber list of user")
+            @ApiResponse(code = 400, message = "Friend doesn't exist in subscriber list of user")
     })
     @DeleteMapping
     public ResponseEntity<String> deleteFriendFromUser(@PathVariable Long id,@Valid HelperFriendClass friend ){

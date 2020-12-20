@@ -1,5 +1,6 @@
 package q3df.mil.dto.text.tc;
 
+import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.context.annotation.PropertySource;
@@ -18,15 +19,18 @@ public class TextCommentSaveDto {
 
 
     //Text
+    @ApiModelProperty(position = 1)
     @NotNull(message = "{textId.empty}")
     @Positive(message = "{textId.positive}")
     private Long textId;
 
     //User
+    @ApiModelProperty(position = 2)
     @NotNull(message = "{userId.empty}")
     @Positive(message = "{userId.positive}")
     private Long userId;
 
+    @ApiModelProperty(position = 3)
     @NotNull(message = "{textComment.empty}")
     @NotBlank(message = "{textComment.empty}")
     @NotEmpty(message = "{textComment.empty}")

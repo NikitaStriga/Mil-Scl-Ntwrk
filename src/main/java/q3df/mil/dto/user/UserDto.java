@@ -6,6 +6,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.context.annotation.PropertySource;
 import q3df.mil.dto.text.t.TextDto;
+import q3df.mil.entities.contacts.Contact;
 import q3df.mil.entities.photo.Photo;
 import q3df.mil.validators.ValidDate;
 
@@ -65,11 +66,11 @@ public class UserDto {
     @ValidDate(afterYear = 1930,beforeYear = 2020)
     private LocalDate birthday;
 
+    private Contact contact;
 
-    private List<TextDto> texts=new ArrayList<>();
+    private List<TextDto> texts = new ArrayList<>();
 
-
-  private List<Photo> photos=new ArrayList<>();
+    private List<Photo> photos = new ArrayList<>();
 
 
 

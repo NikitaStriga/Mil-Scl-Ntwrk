@@ -31,6 +31,7 @@ public class TextCommentImpl implements TextCommentService {
 
 
     @Override
+    @org.springframework.transaction.annotation.Transactional
     public TextCommentDto saveTextComment(TextCommentSaveDto textCommentSaveDto) {
         TextComment textComment = textCommentSaveMapper.fromDto(textCommentSaveDto);
         TextComment savedText = textCommentRepository.save(textComment);
@@ -39,6 +40,7 @@ public class TextCommentImpl implements TextCommentService {
 
 
     @Override
+    @org.springframework.transaction.annotation.Transactional
     public TextCommentDto updateTextComment(TextCommentUpdateDto textCommentUpdateDto) {
         TextComment textComment;
         try{

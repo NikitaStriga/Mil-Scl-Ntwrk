@@ -11,7 +11,6 @@ import q3df.mil.mapper.text.tcl.TextCommentLikeSaveMapper;
 import q3df.mil.repository.TextCommentLikeRepository;
 import q3df.mil.service.TextCommentLikeService;
 
-import javax.persistence.EntityNotFoundException;
 
 @Service
 public class TextCommentLikeServiceImpl implements TextCommentLikeService {
@@ -29,6 +28,7 @@ public class TextCommentLikeServiceImpl implements TextCommentLikeService {
 
 
     @Override
+    @org.springframework.transaction.annotation.Transactional
     public TextCommentLikeDto saveTextCommentLike(TextCommentLikeSaveDto textCommentLikeDto) {
         TextCommentLike textCommentLike = textCommentLikeSaveMapper.fromDto(textCommentLikeDto);
         TextCommentLike savedTextCommentLike = textCommentLikeRepository.save(textCommentLike);

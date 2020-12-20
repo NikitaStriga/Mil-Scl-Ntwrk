@@ -82,7 +82,7 @@ public class JwtTokenFilter extends OncePerRequestFilter {
 
         //throw BadCredentialsException if parsing of Jwt Token throw UnsupportedJwtException | MalformedJwtException | SignatureException | IllegalArgumentException
         //or throw UsernameNotFoundException if UserDetailsService cant find username by use loadUserByUsername()
-        }catch (BadCredentialsException |UsernameNotFoundException ex) {
+        }catch (BadCredentialsException | UsernameNotFoundException ex) {
             request.setAttribute("exception", ex);
         }
 

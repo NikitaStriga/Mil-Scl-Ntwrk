@@ -1,5 +1,6 @@
 package q3df.mil.dto.message;
 
+import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.context.annotation.PropertySource;
@@ -15,18 +16,21 @@ import javax.validation.constraints.Size;
 @PropertySource("classpath:messages.properties")
 public class MessageSaveDto {
 
+    @ApiModelProperty(position = 1)
     @NotNull(message = "{userId.empty}")
     @Positive(message = "{userId.positive}")
     private Long fromWhoId;
 
+    @ApiModelProperty(position = 2)
     @NotNull(message = "{userId.empty}")
     @Positive(message = "{userId.positive}")
     private Long toWhoId;
 
-    @NotNull(message = "{userId.empty}")
-    @Positive(message = "{userId.positive}")
-    private Long dialogId;
+//    @NotNull(message = "{userId.empty}")
+//    @Positive(message = "{userId.positive}")
+//    private Long dialogId;
 
+    @ApiModelProperty(position = 3)
     @NotNull(message = "{messageText.empty}")
     @NotBlank(message = "{messageText.empty}")
     @NotEmpty(message = "{messageText.empty}")

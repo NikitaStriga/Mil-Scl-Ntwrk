@@ -71,9 +71,10 @@ public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter {
                 .antMatchers("/authentication/**").permitAll()
                 .antMatchers("/password/**").permitAll()
                 .antMatchers("/refresh/**").permitAll()
+                .antMatchers("/recovery/**").permitAll()
                 .antMatchers("/users/**").permitAll() //hasAnyRole
                 .antMatchers("/roles/**").permitAll() //for admin
-//                .antMatchers("/admin/**").hasRole("ADMIN")
+                .antMatchers("/admin/**").permitAll() //for admin
                 .anyRequest().authenticated()
                 .and().exceptionHandling().authenticationEntryPoint(jwtAuthenticationEntryPoint)
                 .and().addFilterBefore(jwtTokenFilter, UsernamePasswordAuthenticationFilter.class);

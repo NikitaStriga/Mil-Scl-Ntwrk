@@ -5,6 +5,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
 import org.modelmapper.ModelMapper;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import q3df.mil.entities.user.User;
 
 import java.time.LocalDate;
@@ -38,6 +39,15 @@ public class ForTests {
 
         System.out.println(hello);
         System.out.println(hello1);
+        BCryptPasswordEncoder bCryptPasswordEncoder=new BCryptPasswordEncoder();
+        System.out.println(bCryptPasswordEncoder.encode("111"));
+        System.out.println(bCryptPasswordEncoder.encode("112"));
+        System.out.println(bCryptPasswordEncoder.encode("113"));
+        System.out.println(bCryptPasswordEncoder.encode("114"));
+        System.out.println(bCryptPasswordEncoder.encode("115"));
+        System.out.println(bCryptPasswordEncoder.encode("116"));
+        System.out.println(bCryptPasswordEncoder.encode("117"));
+        System.out.println(bCryptPasswordEncoder.encode("118"));
 
 
 //        CommentEntity commentDto0=new CommentEntity("privet");

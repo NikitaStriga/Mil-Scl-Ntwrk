@@ -38,7 +38,7 @@ import java.util.Set;
 @Entity
 @Table(name = "text",
         indexes = {
-            @Index(name = "created_idx",columnList = "created DESC")
+            @Index(name = "text_created_idx",columnList = "created DESC")
         })
 @Data
 @Builder
@@ -96,6 +96,7 @@ public class Text {
                     CascadeType.PERSIST,
                     CascadeType.REFRESH},orphanRemoval = true)
     @OnDelete(action = org.hibernate.annotations.OnDeleteAction.CASCADE)
+    @org.hibernate.annotations.OrderBy(clause = "created DESC")
     private List<TextComment> textComments=new ArrayList<>();
 
     //add comments

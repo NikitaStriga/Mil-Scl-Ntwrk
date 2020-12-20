@@ -1,6 +1,6 @@
 package q3df.mil.validators;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
+import  com.fasterxml.jackson.annotation.JsonFormat;
 
 import javax.validation.Constraint;
 import javax.validation.Payload;

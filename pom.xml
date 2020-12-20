@@ -25,6 +25,7 @@
 		<jwt.version>0.9.1</jwt.version>
 		<modelmapper.version>2.3.9</modelmapper.version>
 		<hibernatevalidator.version>6.1.6.Final</hibernatevalidator.version>
+		<flyway.version>7.3.1</flyway.version>
 	</properties>
 
 	<!-- starter + exclude default logger -->
@@ -81,6 +82,12 @@
 			<artifactId>hibernate-validator</artifactId>
 			<version>${hibernatevalidator.version}</version>
 		</dependency>
+
+		<!-- for cache 2nd level and queries  -->
+<!--		<dependency>-->
+<!--			<groupId>org.hibernate</groupId>-->
+<!--			<artifactId>hibernate-ehcache</artifactId>-->
+<!--		</dependency>-->
 
 		<!-- ModelMapper -->
 		<dependency>
@@ -142,18 +149,17 @@
 
 		<!-- AOP -->
 		<!-- used to support annotations -->
-		<dependency>
-			<groupId>org.aspectj</groupId>
-			<artifactId>aspectjweaver</artifactId>
-			<scope>runtime</scope>
-		</dependency>
+<!--		<dependency>-->
+<!--			<groupId>org.aspectj</groupId>-->
+<!--			<artifactId>aspectjweaver</artifactId>-->
+<!--			<scope>runtime</scope>-->
+<!--		</dependency>-->
 
 		<!-- compile-time linking or at the class loading stage  ||| this dependency is not need in my case -->
 <!--		<dependency>-->
 <!--			<groupId>org.aspectj</groupId>-->
 <!--			<artifactId>aspectjrt</artifactId>-->
 <!--		</dependency>-->
-
 
 
 
@@ -178,7 +184,15 @@
 			<artifactId>commons-lang3</artifactId>
 		</dependency>
 
+		<!-- flyway -->
+<!--		<dependency>-->
+<!--			<groupId>org.flywaydb</groupId>-->
+<!--			<artifactId>flyway-core</artifactId>-->
+<!--		</dependency>-->
+
 	</dependencies>
+
+
 
 
 

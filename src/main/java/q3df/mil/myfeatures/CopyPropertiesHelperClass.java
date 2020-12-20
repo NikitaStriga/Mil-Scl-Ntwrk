@@ -3,6 +3,7 @@ package q3df.mil.myfeatures;
 import lombok.NoArgsConstructor;
 import org.springframework.stereotype.Component;
 import q3df.mil.dto.user.UserUpdateDto;
+import q3df.mil.entities.contacts.Contact;
 import q3df.mil.entities.enums.Gender;
 import q3df.mil.entities.user.User;
 
@@ -37,6 +38,9 @@ public class CopyPropertiesHelperClass {
         String country = fromWho.getCountry();
         if (country!=null) toWho.setCountry(country);
     }
+
+
+
 
 
 

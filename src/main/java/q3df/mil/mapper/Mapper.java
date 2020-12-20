@@ -25,11 +25,11 @@ public abstract class Mapper <E,D> {
     }
 
     public D toDto(E entityClass){
-        return Objects.isNull(entityClass) ? null:modelMapper.map(entityClass,dtoClass);
+        return Objects.isNull(entityClass) ? null : modelMapper.map(entityClass,dtoClass);
     }
 
     public E fromDto(D dto){
-        return Objects.isNull(dto) ? null:modelMapper.map(dto,entityClass);
+        return Objects.isNull(dto) ? null : modelMapper.map(dto,entityClass);
     }
 
 
