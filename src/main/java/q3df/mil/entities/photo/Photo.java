@@ -5,6 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.FetchMode;
 import org.hibernate.annotations.OnDelete;
 import org.springframework.context.annotation.PropertySource;
 import q3df.mil.entities.user.User;
@@ -101,6 +102,7 @@ public class Photo {
                     CascadeType.REFRESH})
     @OnDelete(action = org.hibernate.annotations.OnDeleteAction.CASCADE)
     @org.hibernate.annotations.OrderBy(clause = "created DESC")
+    @org.hibernate.annotations.Fetch(FetchMode.SUBSELECT)
     private List<PhotoComment> photoComments=new ArrayList<>();
 
     public void addPhotoComments(PhotoComment pc){
@@ -119,6 +121,7 @@ public class Photo {
                     CascadeType.PERSIST,
                     CascadeType.REFRESH})
     @OnDelete(action = org.hibernate.annotations.OnDeleteAction.CASCADE)
+    @org.hibernate.annotations.Fetch(FetchMode.SUBSELECT)
     private List<PhotoLike> photoLikes=new ArrayList<>();
 
     public void addPhotoLike(PhotoLike pl){

@@ -8,8 +8,10 @@ import java.util.List;
 @Repository
 public interface CustomRepository {
 
-    public List<?> showCountOfUserByCityAndCountry();
+    List<?> showCountOfUserByCityAndCountry();
 
-    public List<UserPreview> showUsersByParams(String... params);
+    List<UserPreview> showUsersByParams(String... params);
+
+    Long countOfResults();
 
 }

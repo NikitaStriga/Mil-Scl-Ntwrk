@@ -8,8 +8,12 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import q3df.mil.dto.user.UserUpdateDto;
 import q3df.mil.entities.contacts.Contact;
+import q3df.mil.entities.text.Text;
+import q3df.mil.entities.text.TextComment;
+import q3df.mil.entities.text.TextLike;
 import q3df.mil.exception.CustomException;
 import q3df.mil.mail.MailSender;
 import q3df.mil.myfeatures.CopyPropertiesHelperClass;
@@ -76,7 +80,6 @@ public class UserServiceImpl implements UserService {
     }
 
 
-
     @Override
     public List<UserPreview> findAll(Pageable pageable) {
         return userRepository
@@ -87,16 +90,14 @@ public class UserServiceImpl implements UserService {
     }
 
 
-
     @Override
     @org.springframework.transaction.annotation.Transactional(readOnly = true)
     public UserDto findById(Long id) {
         Optional<User> byId = userRepository.findById(id);
         return userMapper
-                .toDto(byId.orElseThrow(()-> new UserNotFoundException("User with id " + id + " not found!")));
+                .toDto(byId.orElseThrow(() -> new UserNotFoundException("User with id " + id + " not found!")));
 
     }
-
 
 
     @Override
@@ -105,7 +106,7 @@ public class UserServiceImpl implements UserService {
         List<User> usersByEmailAndLogin = userRepository
                 .findUsersByEmailOrLogin(userRegistrationDto.getEmail(), userRegistrationDto.getLogin());
         //check for same login or email in db
-        supClass.checkForLoginAndEmail(usersByEmailAndLogin,userRegistrationDto);
+        supClass.checkForLoginAndEmail(usersByEmailAndLogin, userRegistrationDto);
         User user = userRegistrationMapper.fromDto(userRegistrationDto);
         User savedUser = userRepository.save(user);
         //creating and associating a role with user
@@ -123,9 +124,9 @@ public class UserServiceImpl implements UserService {
     @org.springframework.transaction.annotation.Transactional
     public UserDto updateUser(UserUpdateDto userDto) {
         User user;
-        try{
-            user=userRepository.getOne(userDto.getId());
-        }catch (EntityNotFoundException ex){
+        try {
+            user = userRepository.getOne(userDto.getId());
+        } catch (EntityNotFoundException ex) {
             throw new UserNotFoundException("User with id " + userDto.getId() + " doesn't exist!");
         }
         copyPropertiesHelperClass.copyUserProperties(userDto, user);
@@ -137,9 +138,9 @@ public class UserServiceImpl implements UserService {
     @org.springframework.transaction.annotation.Transactional
     public void deleteUser(Long id) {
         User user;
-        try{
-            user=userRepository.getOne(id);
-        }catch (EntityNotFoundException ex){
+        try {
+            user = userRepository.getOne(id);
+        } catch (EntityNotFoundException ex) {
             throw new UserNotFoundException("User with id " + id + " doesn't exist!");
         }
         user.setDelete(true);
@@ -160,9 +161,9 @@ public class UserServiceImpl implements UserService {
     @org.springframework.transaction.annotation.Transactional
     public void addRoleToUser(Long userId, SystemRoles systemRoles) {
         User user;
-        try{
-            user=userRepository.getOne(userId);
-        }catch (EntityNotFoundException ex){
+        try {
+            user = userRepository.getOne(userId);
+        } catch (EntityNotFoundException ex) {
             throw new UserNotFoundException("User with id " + userId + " doesn't exist!");
         }
         user.addRoles(Role.builder().role(systemRoles).user(user).build());
@@ -173,9 +174,9 @@ public class UserServiceImpl implements UserService {
     @org.springframework.transaction.annotation.Transactional
     public void deleteRoleFromUser(Long userId, SystemRoles systemRoles) {
         User user;
-        try{
-            user=userRepository.getOne(userId);
-        }catch (EntityNotFoundException ex){
+        try {
+            user = userRepository.getOne(userId);
+        } catch (EntityNotFoundException ex) {
             throw new UserNotFoundException("User with id " + userId + " doesn't exist!");
         }
         List<Role> roles = user.getRoles();
@@ -183,16 +184,15 @@ public class UserServiceImpl implements UserService {
     }
 
 
-
     @Override
     public List<UserPreview> findUserBetweenDates(String before, String after, Pageable page) {
-        try{
+        try {
             return userRepository
                     .findByDeleteFalseAndBirthdayBetween(LocalDate.parse(before), LocalDate.parse(after), page)
                     .stream()
                     .map(userPreviewMapper::toDto)
                     .collect(Collectors.toList());
-        }catch (java.time.format.DateTimeParseException ex){
+        } catch (java.time.format.DateTimeParseException ex) {
             throw new CustomException("Bad format of date!");
         }
 
@@ -201,7 +201,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public List<UserPreview> findByCountryAndCity(String country, String city, Pageable page) {
         return userRepository
-                .findByDeleteFalseAndCountryIgnoreCaseAndCityIgnoreCase(country,city,page)
+                .findByDeleteFalseAndCountryIgnoreCaseAndCityIgnoreCase(country, city, page)
                 .stream()
                 .map(userPreviewMapper::toDto)
                 .collect(Collectors.toList());
@@ -210,9 +210,9 @@ public class UserServiceImpl implements UserService {
     @Override
     public List<UserPreview> findByFirstNameAndLastName(String name, String surname, Pageable page) {
         String firstName = StringUtils.join("%", name, "%");
-        String lastName = StringUtils.join("%",surname,"%");
+        String lastName = StringUtils.join("%", surname, "%");
         return userRepository
-                .findByDeleteFalseAndFirstNameLikeIgnoreCaseAndLastNameLikeIgnoreCase(firstName,lastName,page)
+                .findByDeleteFalseAndFirstNameLikeIgnoreCaseAndLastNameLikeIgnoreCase(firstName, lastName, page)
                 .stream()
                 .map(userPreviewMapper::toDto)
                 .collect(Collectors.toList());
@@ -225,15 +225,15 @@ public class UserServiceImpl implements UserService {
         Optional<User> byLogin = userRepository.findByLogin(passwordRecovery.getLogin());
         User user = byLogin
                 .orElseThrow(() -> new UserNotFoundException("User with login " + passwordRecovery.getLogin() + " doesn't exist!"));
-        if(!user.getEmail().equals(passwordRecovery.getEmail())){
+        if (!user.getEmail().equals(passwordRecovery.getEmail())) {
             throw new CustomException("Email is not match with login!");
         }
-        if(user.getRecoveryCode()!=null){
+        if (user.getRecoveryCode() != null) {
             throw new CustomException("The letter has already been sent on your mail!");
         }
         String length;
         {
-            length = passwordRecovery.getLogin().length()>10
+            length = passwordRecovery.getLogin().length() > 10
                     ? "" + passwordRecovery.getLogin().length()
                     : "0" + passwordRecovery.getLogin().length();
         }
@@ -243,7 +243,7 @@ public class UserServiceImpl implements UserService {
                 user.getFirstName(),
                 "! \nPlease follow the link to indicate that it is really you want change password!" +
                         "\nLink : \nhttp://localhost8080/recovery/",
-                recoveryCode,length,passwordRecovery.getLogin(),generatedString,
+                recoveryCode, length, passwordRecovery.getLogin(), generatedString,
                 " \nYour new password is ",
                 generatedString);
         user.setRecoveryCode(recoveryCode);
@@ -256,9 +256,9 @@ public class UserServiceImpl implements UserService {
         final String exception = "Invalid recoveryCode!";
         String length = StringUtils.substring(recoveryCode, 36, 38);
         int a;
-        try{
+        try {
             a = Integer.parseInt(length);
-        }catch (NumberFormatException ex){
+        } catch (NumberFormatException ex) {
             throw new CustomException(exception);
         }
         String login = StringUtils.substring(recoveryCode, 38, 38 + a);
@@ -267,10 +267,10 @@ public class UserServiceImpl implements UserService {
         Optional<User> byLogin = userRepository.findByLogin(login);
         User user = byLogin
                 .orElseThrow(() -> new CustomException(exception));
-        if (user.getRecoveryCode()==null){
+        if (user.getRecoveryCode() == null) {
             throw new CustomException(exception);
         }
-        if(!recoveryCode.contains(user.getRecoveryCode())){
+        if (!recoveryCode.contains(user.getRecoveryCode())) {
             throw new CustomException(exception);
         }
         user.setRecoveryCode(null);
@@ -284,9 +284,9 @@ public class UserServiceImpl implements UserService {
     @org.springframework.transaction.annotation.Transactional
     public void updateContact(Long id, Contact contact) {
         User user;
-        try{
-            user=userRepository.getOne(id);
-        }catch (EntityNotFoundException ex){
+        try {
+            user = userRepository.getOne(id);
+        } catch (EntityNotFoundException ex) {
             throw new UserNotFoundException("User with id " + id + " doesn't exist!");
         }
         user.setContact(contact);
@@ -295,9 +295,9 @@ public class UserServiceImpl implements UserService {
     @Override
     public Contact getUserContacts(Long id) {
         User user;
-        try{
-            user=userRepository.getOne(id);
-        }catch (EntityNotFoundException ex){
+        try {
+            user = userRepository.getOne(id);
+        } catch (EntityNotFoundException ex) {
             throw new UserNotFoundException("User with id " + id + " doesn't exist!");
         }
         return user.getContact();
@@ -315,5 +315,20 @@ public class UserServiceImpl implements UserService {
         return customRepository.showUsersByParams(params);
     }
 
+
+    @Transactional(readOnly = true)
+    public void testMethod() {
+        Optional<User> byId = userRepository.findById(1L);
+        List<TextComment> textComments = null;
+        for (Text text : byId.get().getTexts()) {
+            if (text.getTextComments().size() > 1) {
+                textComments = text.getTextComments();
+            }
+        }
+
+        for (TextComment textComment : textComments) {
+            textComment.getTextCommentsLikeSet().size();
+        }
+    }
 
 }

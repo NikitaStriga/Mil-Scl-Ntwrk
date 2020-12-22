@@ -7,6 +7,7 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
+import org.hibernate.annotations.FetchMode;
 import org.hibernate.annotations.OnDelete;
 import org.springframework.context.annotation.PropertySource;
 import q3df.mil.entities.user.User;
@@ -38,7 +39,7 @@ import java.util.Set;
 @Entity
 @Table(name = "text",
         indexes = {
-            @Index(name = "text_created_idx",columnList = "created DESC")
+                @Index(name = "text_created_idx", columnList = "created DESC")
         })
 @Data
 @Builder
@@ -53,11 +54,11 @@ public class Text {
 
     @ToString.Exclude
     @EqualsAndHashCode.Exclude
-    @ManyToOne(cascade = {
+    @ManyToOne(fetch = FetchType.LAZY, cascade = {
             CascadeType.DETACH,
             CascadeType.MERGE,
             CascadeType.PERSIST,
-            CascadeType.REFRESH })
+            CascadeType.REFRESH})
     @JoinColumn(name = "user_id")
     private User user;
 
@@ -68,60 +69,60 @@ public class Text {
     @Size(min = 1, max = 350, message = "{text.size}")
     private String text;
 
-    @Column(name = "created",updatable = false)
+    @Column(name = "created", updatable = false)
     private LocalDateTime created;
 
     @Column(name = "update_time")
     private LocalDateTime updateTime;
 
-    @Column(name= "delete")
+    @Column(name = "delete")
     private Boolean delete;
 
     @PrePersist
-    void onCreate(){
+    void onCreate() {
         this.setCreated(LocalDateTime.now());
     }
 
     @PreUpdate
-    void onUpdate(){
+    void onUpdate() {
         this.setUpdateTime(LocalDateTime.now());
     }
 
 
     /************** Relation to TextComment  + add ***********/
-    @OneToMany(fetch = FetchType.LAZY,mappedBy = "text",
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "text",
             cascade = {
                     CascadeType.DETACH,
                     CascadeType.MERGE,
                     CascadeType.PERSIST,
-                    CascadeType.REFRESH},orphanRemoval = true)
+                    CascadeType.REFRESH}, orphanRemoval = true)
     @OnDelete(action = org.hibernate.annotations.OnDeleteAction.CASCADE)
     @org.hibernate.annotations.OrderBy(clause = "created DESC")
-    private List<TextComment> textComments=new ArrayList<>();
+    @org.hibernate.annotations.Fetch(FetchMode.SUBSELECT)
+    private List<TextComment> textComments = new ArrayList<>();
 
     //add comments
-    public void addComments(TextComment comment){
+    public void addComments(TextComment comment) {
         textComments.add(comment);
     }
 
     /**********************************************************/
 
 
-
-
     /************** Relation to TextLike  + add ***********/
-    @OneToMany(fetch = FetchType.LAZY,mappedBy = "textId",
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "textId",
             cascade = {
                     CascadeType.DETACH,
                     CascadeType.MERGE,
                     CascadeType.PERSIST,
-                    CascadeType.REFRESH},orphanRemoval = true)
+                    CascadeType.REFRESH}, orphanRemoval = true)
     @OnDelete(action = org.hibernate.annotations.OnDeleteAction.CASCADE)
-    private Set<TextLike> textLikes=new HashSet<>();
+    @org.hibernate.annotations.Fetch(FetchMode.SUBSELECT)
+    private Set<TextLike> textLikes = new HashSet<>();
 
 
     //add comments
-    public void addLikes(TextLike likes){
+    public void addLikes(TextLike likes) {
         textLikes.add(likes);
     }
 

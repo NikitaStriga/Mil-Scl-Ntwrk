@@ -12,6 +12,7 @@ import q3df.mil.entities.user.User;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -48,7 +49,7 @@ public class PhotoComment {
     private Long id;
 
 
-    @ManyToOne(cascade = {
+    @ManyToOne(fetch = FetchType.LAZY, cascade = {
             CascadeType.DETACH,
             CascadeType.MERGE,
             CascadeType.PERSIST,
@@ -56,7 +57,7 @@ public class PhotoComment {
     @JoinColumn(name = "photo_id")
     private Photo photo;
 
-    @ManyToOne(cascade = {
+    @ManyToOne(fetch = FetchType.LAZY, cascade = {
             CascadeType.DETACH,
             CascadeType.MERGE,
             CascadeType.PERSIST,
@@ -100,6 +101,7 @@ public class PhotoComment {
                     CascadeType.PERSIST,
                     CascadeType.REFRESH})
     @OnDelete(action = org.hibernate.annotations.OnDeleteAction.CASCADE)
+    @org.hibernate.annotations.BatchSize(size = 10)
     private List<PhotoCommentLike> photoCommentLikeList=new ArrayList<>();
 
     public void addPhotoCommentLike(PhotoCommentLike pcl){

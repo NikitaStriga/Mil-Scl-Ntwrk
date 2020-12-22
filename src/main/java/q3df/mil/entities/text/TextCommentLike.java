@@ -12,10 +12,10 @@ import q3df.mil.entities.user.User;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.Index;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
@@ -36,7 +36,7 @@ public class TextCommentLike {
 
     @EqualsAndHashCode.Exclude
     @ToString.Exclude
-    @ManyToOne(cascade = {
+    @ManyToOne(fetch = FetchType.LAZY, cascade = {
             CascadeType.DETACH,
             CascadeType.MERGE,
             CascadeType.PERSIST,
@@ -46,7 +46,7 @@ public class TextCommentLike {
 
     @EqualsAndHashCode.Exclude
     @ToString.Exclude
-    @ManyToOne(cascade = {
+    @ManyToOne(fetch = FetchType.LAZY, cascade = {
             CascadeType.DETACH,
             CascadeType.MERGE,
             CascadeType.PERSIST,

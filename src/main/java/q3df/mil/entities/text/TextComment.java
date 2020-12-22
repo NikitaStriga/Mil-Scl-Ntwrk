@@ -7,6 +7,8 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
+import org.hibernate.annotations.BatchSize;
+import org.hibernate.annotations.FetchMode;
 import org.hibernate.annotations.OnDelete;
 import org.springframework.context.annotation.PropertySource;
 import q3df.mil.entities.user.User;
@@ -36,9 +38,9 @@ import java.util.Set;
 
 @Entity
 @Table(name = "text_comments",
-            indexes = {
-        @Index(name = "text_comments_created_idx",columnList = "created DESC")
-            })
+        indexes = {
+                @Index(name = "text_comments_created_idx", columnList = "created DESC")
+        })
 @Data
 @Builder
 @AllArgsConstructor
@@ -53,21 +55,21 @@ public class TextComment {
 
     @EqualsAndHashCode.Exclude
     @ToString.Exclude
-    @ManyToOne(cascade = {
+    @ManyToOne(fetch = FetchType.LAZY, cascade = {
             CascadeType.DETACH,
             CascadeType.MERGE,
             CascadeType.PERSIST,
-            CascadeType.REFRESH })
+            CascadeType.REFRESH})
     @JoinColumn(name = "text_id")
     private Text text;
 
     @EqualsAndHashCode.Exclude
     @ToString.Exclude
-    @ManyToOne(cascade = {
+    @ManyToOne(fetch = FetchType.LAZY, cascade = {
             CascadeType.DETACH,
             CascadeType.MERGE,
             CascadeType.PERSIST,
-            CascadeType.REFRESH })
+            CascadeType.REFRESH})
     @JoinColumn(name = "user_id")
     private User user;
 
@@ -78,7 +80,7 @@ public class TextComment {
     @Size(min = 1, max = 350, message = "{textComment.size} {min}-{max} characters!")
     private String comment;
 
-    @Column(name = "created",updatable = false)
+    @Column(name = "created", updatable = false)
     private LocalDateTime created;
 
     @Column(name = "update_time")
@@ -88,26 +90,39 @@ public class TextComment {
     private Boolean deleted;
 
     @PrePersist
-    void onCreate(){
+    void onCreate() {
         this.setCreated(LocalDateTime.now());
     }
 
     @PreUpdate
-    void onUpdate(){
+    void onUpdate() {
         this.setUpdateTime(LocalDateTime.now());
     }
 
     /****************** Relation TextCommentLike + add *********/
-    @OneToMany(fetch = FetchType.LAZY,mappedBy = "textComment",
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "textComment",
             cascade = {
                     CascadeType.DETACH,
                     CascadeType.MERGE,
                     CascadeType.PERSIST,
                     CascadeType.REFRESH})
     @OnDelete(action = org.hibernate.annotations.OnDeleteAction.CASCADE)
-    private Set<TextCommentLike> textCommentsLikeSet=new HashSet<>();
+    @org.hibernate.annotations.BatchSize(size = 10)
+    /*
+        dunno ... but @org.hibernate.annotations.Fetch(FetchMode.SUBSELECT) do double IN operator when hibernate try to download all collections
+        if i use @Batch all is ok ... strange behavior...
+        Hibernate: select textcommen0_.text_comment_id as text_com3_8_1_,
+         textcommen0_.id as id1_8_1_, textcommen0_.id as id1_8_0_,
+          textcommen0_.delete as delete2_8_0_,
+           textcommen0_.text_comment_id as text_com3_8_0_,
+            textcommen0_.user_id as user_id4_8_0_ from text_comment_likes textcommen0_
+             where textcommen0_.text_comment_id
+              IN (select textcommen0_.id from text_comments textcommen0_ where textcommen0_.text_id
+               IN (select texts0_.id from text texts0_ where texts0_.user_id=? ) )
+     */
+    private Set<TextCommentLike> textCommentsLikeSet = new HashSet<>();
 
-    public void addTextCommentLike(TextCommentLike tcl){
+    public void addTextCommentLike(TextCommentLike tcl) {
         textCommentsLikeSet.add(tcl);
     }
 

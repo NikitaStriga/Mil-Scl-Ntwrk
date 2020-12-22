@@ -6,6 +6,7 @@ import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
+import org.hibernate.validator.constraints.Length;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
@@ -201,9 +202,9 @@ public class UserController {
     }
 
 
-    //search users by param Criteria
-    @ApiOperation(value = "Find user by params",
-            notes = "% means any matches")
+    //search users by param Criteria (all method define
+    //this method combines all the methods defined above that used Jpa Repository + Pagination
+    @ApiOperation(value = "Find user by params")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "X-Auth-Token", defaultValue = "token", required = true, paramType = "header", dataType = "string"),
     })
@@ -215,11 +216,11 @@ public class UserController {
     public ResponseEntity<List<UserPreview>> findUserByParams(
             @RequestParam(defaultValue = "1900-01-01") String afterDate,
             @RequestParam(defaultValue = "2100-01-01") String beforeDate,
-            @RequestParam(defaultValue = "%") String country,
-            @RequestParam(defaultValue = "%") String city,
-            @RequestParam(defaultValue = "%") String firstName,
-            @RequestParam(defaultValue = "%") String lastName,
-            @RequestParam(defaultValue = "%") String gender,
+            @RequestParam(defaultValue = "") String country,
+            @RequestParam(defaultValue = "") String city,
+            @RequestParam(defaultValue = "") String firstName,
+            @RequestParam(defaultValue = "") String lastName,
+            @RequestParam(defaultValue = "") String gender,
             @RequestParam(defaultValue = "1") String page,
             @RequestParam(defaultValue = "15") String size) {
         return ResponseEntity.ok(

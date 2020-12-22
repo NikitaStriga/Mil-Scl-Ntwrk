@@ -83,6 +83,12 @@
 			<version>${hibernatevalidator.version}</version>
 		</dependency>
 
+		<!-- static metamodel -->
+		<dependency>
+			<groupId>org.hibernate</groupId>
+			<artifactId>hibernate-jpamodelgen</artifactId>
+		</dependency>
+
 		<!-- for cache 2nd level and queries  -->
 <!--		<dependency>-->
 <!--			<groupId>org.hibernate</groupId>-->
