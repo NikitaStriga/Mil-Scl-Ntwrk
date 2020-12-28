@@ -37,7 +37,11 @@ public class MessageServiceImpl implements MessageService {
     }
 
 
-
+    /**
+     * find all messages by dialog id
+     * @param id dialog id
+     * @return founded messages
+     */
     @Override
     @org.springframework.transaction.annotation.Transactional(readOnly = true)
     public List<MessageDto> findMessagesByDialogId(Long id) {
@@ -49,7 +53,12 @@ public class MessageServiceImpl implements MessageService {
     }
 
 
-
+    /**
+     * save new messages
+     * if the dialog does not exist between users at the moment, then it will be installed automatically
+     * @param messageSaveDto new message
+     * @return saved message
+     */
     @Override
     @org.springframework.transaction.annotation.Transactional
     public MessageDto saveMessage(MessageSaveDto messageSaveDto) {
@@ -87,7 +96,11 @@ public class MessageServiceImpl implements MessageService {
     }
 
 
-
+    /**
+     * edit message
+     * @param messageUpdateDto message
+     * @return edited message
+     */
     @Override
     @Transactional
     public MessageDto updateMessage(MessageUpdateDto messageUpdateDto) {
@@ -102,6 +115,10 @@ public class MessageServiceImpl implements MessageService {
     }
 
 
+    /**
+     * delete message by id
+     * @param id message id
+     */
     @Override
     public void deleteById(Long id) {
         try{

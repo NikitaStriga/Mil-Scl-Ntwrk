@@ -11,7 +11,6 @@ import q3df.mil.service.SubscriberService;
 import java.util.List;
 import java.util.stream.Collectors;
 
-
 @Service
 public class SubscriberServiceImpl implements SubscriberService {
 
@@ -33,6 +32,13 @@ public class SubscriberServiceImpl implements SubscriberService {
     }
 
 
+    /**
+     * add subscriber
+     * at the same time it is checked whether this user is already a friend or subscriber
+     * @param userId who are following
+     * @param subscriberId who subscribes
+     * @return added rows (always 1)
+     */
     @Override
     @org.springframework.transaction.annotation.Transactional
     public int addSubscriber(Long userId, Long subscriberId) {
@@ -53,6 +59,11 @@ public class SubscriberServiceImpl implements SubscriberService {
     }
 
 
+    /**
+     * delete from subscribers
+     * @param userId owner of subscriber :)
+     * @param subscriberId who wants to be deleted from subscribers
+     */
     @Override
     public void deleteSubscriber(Long userId, Long subscriberId) {
         int i = userRepository.deleteFromSubs(userId, subscriberId);

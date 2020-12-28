@@ -25,6 +25,11 @@ public class DialogServiceImpl implements q3df.mil.service.DialogService {
     }
 
 
+    /**
+     * find list of dialogs by user id
+     * @param id user id
+     * @return list of user dialogs
+     */
     @Override
     public List<DialogDto> findDialogsByUserId(Long id){
         return dialogRepository
@@ -35,14 +40,20 @@ public class DialogServiceImpl implements q3df.mil.service.DialogService {
 
     }
 
-    @Override
-    @org.springframework.transaction.annotation.Transactional
-    public DialogDto saveDialog(DialogDto dialogDto) {
-        Dialog dialog = dialogMapper.fromDto(dialogDto);
-        Dialog savedDialog = dialogRepository.save(dialog);
-        return dialogMapper.toDto(savedDialog);
-    }
 
+    //this method is not used cuz all dialogs create in message repostory
+//    @org.springframework.transaction.annotation.Transactional
+//    public DialogDto saveDialog(DialogDto dialogDto) {
+//        Dialog dialog = dialogMapper.fromDto(dialogDto);
+//        Dialog savedDialog = dialogRepository.save(dialog);
+//        return dialogMapper.toDto(savedDialog);
+//    }
+
+
+    /**
+     * delete dialog
+     * @param id dialog id
+     */
     @Override
     public void deleteById(Long id) {
         try{

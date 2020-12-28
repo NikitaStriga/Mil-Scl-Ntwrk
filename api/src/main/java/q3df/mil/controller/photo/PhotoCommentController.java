@@ -43,7 +43,7 @@ public class PhotoCommentController {
             @ApiResponse(code = 404, message = "If the user who wants to save the photo comment or photo is not found")
     })
     @PostMapping
-    public ResponseEntity<PhotoCommentDto> saveText(@Valid @RequestBody PhotoCommentSaveDto photoCommentSaveDto) {
+    public ResponseEntity<PhotoCommentDto> savePhotoComment(@Valid @RequestBody PhotoCommentSaveDto photoCommentSaveDto) {
         PhotoCommentDto savedPhotoComment = photoCommentService.savePhotoComment(photoCommentSaveDto);
 //        URI location=
 //                ServletUriComponentsBuilder
@@ -65,7 +65,7 @@ public class PhotoCommentController {
             @ApiResponse(code = 404, message = "Photo comment not found")
     })
     @PutMapping("/{photoCommentId}")
-    public ResponseEntity<PhotoCommentDto> updateText(@Valid @RequestBody PhotoCommentUpdateDto photoCommentUpdateDto) {
+    public ResponseEntity<PhotoCommentDto> updatePhotoComment(@Valid @RequestBody PhotoCommentUpdateDto photoCommentUpdateDto) {
         return ResponseEntity.ok(photoCommentService.updatePhotoComment(photoCommentUpdateDto));
     }
 
@@ -79,7 +79,7 @@ public class PhotoCommentController {
             @ApiResponse(code = 404, message = "Photo comment not found")
     })
     @DeleteMapping("/{photoCommentId}")
-    public ResponseEntity<?> deleteText(@PathVariable Long photoCommentId) {
+    public ResponseEntity<?> deletePhotoComment(@PathVariable Long photoCommentId) {
         photoCommentService.deletePhotoCommentById(photoCommentId);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }

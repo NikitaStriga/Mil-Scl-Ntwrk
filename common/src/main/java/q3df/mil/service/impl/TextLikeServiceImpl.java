@@ -12,7 +12,6 @@ import q3df.mil.mapper.text.tl.TextLikeSaveMapper;
 import q3df.mil.repository.TextLikeRepository;
 import q3df.mil.service.TextLikeService;
 
-
 @Service
 public class TextLikeServiceImpl implements TextLikeService {
 
@@ -27,6 +26,11 @@ public class TextLikeServiceImpl implements TextLikeService {
         this.textLikeSaveMapper = textLikeSaveMapper;
     }
 
+    /**
+     * save text like
+     * @param textLikeDto new text like
+     * @return saved text like
+     */
     @Override
     @org.springframework.transaction.annotation.Transactional
     public TextLikeDto saveTextLike(TextLikeSaveDto textLikeDto) {
@@ -36,6 +40,10 @@ public class TextLikeServiceImpl implements TextLikeService {
     }
 
 
+    /**
+     * delete text like
+     * @param id text like id
+     */
     @Override
     public void deleteTextLikeById(Long id) {
         try {

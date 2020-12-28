@@ -16,6 +16,7 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
+import q3df.mil.exception.AmazonCustomException;
 import q3df.mil.exception.CriteriaCustomException;
 import q3df.mil.exception.CustomException;
 import q3df.mil.exception.CustomMailException;
@@ -40,6 +41,8 @@ import javax.servlet.http.HttpServletRequest;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
+
+import static q3df.mil.exception.CustomExceptionConstants.AMAZON_EXCEPTION;
 
 
 /**
@@ -126,12 +129,21 @@ public class GlobalExceptionHandler {
             CriteriaCustomException.class,
             CustomMailException.class
     })
-    public ResponseEntity<HelperClassException> customEx(CustomException ex) {
+    public ResponseEntity<HelperClassException> customEx(Exception ex) {
         return new ResponseEntity<>(
                 new HelperClassException(ex.getMessage(), CustomExceptionConstants.BAD_PARAMS),
                 HttpStatus.BAD_REQUEST);
     }
 
+    //amazon exception
+    @ExceptionHandler({
+            AmazonCustomException.class
+    })
+    public ResponseEntity<HelperClassException> amazonExc(AmazonCustomException ex){
+        return new ResponseEntity<>(
+                new HelperClassException(ex.getMessage(),AMAZON_EXCEPTION),
+                HttpStatus.BAD_REQUEST);
+    }
 
     //for JacksonParsing serialization  or deserialization exceptions
     @ExceptionHandler(com.fasterxml.jackson.databind.exc.InvalidFormatException.class)
@@ -221,7 +233,7 @@ public class GlobalExceptionHandler {
     @AllArgsConstructor
     class HelperClassException {
         private String message;
-        private CustomExceptionConstants customExceptionConstants;
+        private CustomExceptionConstants generalizedError;
     }
 
 

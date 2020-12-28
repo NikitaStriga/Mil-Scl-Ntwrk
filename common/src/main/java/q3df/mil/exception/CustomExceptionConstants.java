@@ -8,7 +8,8 @@ public enum CustomExceptionConstants {
     CANT_FIND_ENTITY("Some entities participating in the request were not found in the database!"),
     BAD_PARAMS("Invalid input parameters! Some of params are not correct (cant parse,etc.)!"),
     NO_PERMISSION_TO_EXECUTE("The owner of the request have no permission to execute operation!"),
-    BAD_JSON("Invalid syntax of  input JSON!");
+    BAD_JSON("Invalid syntax of  input JSON!"),
+    AMAZON_EXCEPTION("Can't save photo to Amazon");
 
     private final String customResponse;
 

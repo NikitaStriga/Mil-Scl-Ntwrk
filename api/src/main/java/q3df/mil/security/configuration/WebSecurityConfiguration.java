@@ -16,7 +16,7 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-import q3df.mil.security.epoint.JwtAuthenticationEntryPoint;
+import q3df.mil.security.exceptionhandling.authentication.JwtAuthenticationEntryPoint;
 import q3df.mil.security.filter.JwtTokenFilter;
 
 
@@ -54,17 +54,20 @@ public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(HttpSecurity httpSecurity) throws Exception {
         httpSecurity
+
+                //disable csrf support
                 .csrf()
                 .disable()
-                .exceptionHandling()
-                .and()
+
+                //session is not created and not used by Spring Security
+                //every request needs to be re-authenticated
                 .sessionManagement()
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-                .and()
-                .authorizeRequests()
-//                /*For swagger access only*/
-                .antMatchers("/v2/api-docs", "/configuration/ui/**", "/swagger-resources/**", "/configuration/security/**", "/swagger-ui.html", "/webjars/**").permitAll()
-                .antMatchers("/actuator/**").permitAll()
+
+                //enable antMatchers (allows restricting access by url patterns which are below)
+                .and().authorizeRequests()
+
+                //matchers
                 .antMatchers(HttpMethod.GET, "/swagger-ui.html#").permitAll()
                 .antMatchers(HttpMethod.OPTIONS, "/**").permitAll()
                 .antMatchers("/registration/**").permitAll()
@@ -75,16 +78,25 @@ public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter {
                 .antMatchers("/users/**").permitAll() //hasAnyRole
                 .antMatchers("/roles/**").permitAll() //for admin
                 .antMatchers("/admin/**").permitAll() //for admin
+
+                //all requests except matchers above must be authenticated
                 .anyRequest().authenticated()
+
+                //registering a custom security exception handler
                 .and().exceptionHandling().authenticationEntryPoint(jwtAuthenticationEntryPoint)
+
+                //registering a custom filter
                 .and().addFilterBefore(jwtTokenFilter, UsernamePasswordAuthenticationFilter.class);
 
     }
 
-    //For swagger access only
+
     @Override
     public void configure(WebSecurity web) throws Exception {
-        web.ignoring()
+
+        web
+                //ignore swagger files
+                .ignoring()
                 .antMatchers(
                         "/v2/api-docs",
                         "/configuration/ui/**",
@@ -93,4 +105,5 @@ public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter {
                         "/swagger-ui.html",
                         "/webjars/**");
     }
+
 }

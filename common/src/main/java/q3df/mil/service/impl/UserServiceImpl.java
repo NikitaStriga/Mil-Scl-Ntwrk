@@ -41,6 +41,10 @@ import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
+/**
+ * most are logically described in this class,
+ * so the description will be more accurate
+ */
 @Service
 public class UserServiceImpl implements UserService {
 
@@ -100,6 +104,9 @@ public class UserServiceImpl implements UserService {
      */
     @Override
     @org.springframework.transaction.annotation.Transactional(readOnly = true)
+    //cache just for example
+    @org.springframework.cache.annotation.Cacheable(
+            value = "justForExampleCacheForUsersWithIdLessThan50", condition = "#id<50")
     public UserDto findById(Long id) {
         Optional<User> byId = userRepository.findById(id);
         return userMapper
@@ -132,8 +139,6 @@ public class UserServiceImpl implements UserService {
             savedUser.setRoles(Collections.singleton(role));
         }
         return userMapper.toDto(savedUser);
-
-
     }
 
 
@@ -145,6 +150,9 @@ public class UserServiceImpl implements UserService {
      */
     @Override
     @org.springframework.transaction.annotation.Transactional
+    //cache just for example
+    @org.springframework.cache.annotation.CachePut(
+            value = "justForExampleCacheForUsersWithIdLessThan50", condition = "#userDto.id<50")
     public UserDto updateUser(UserUpdateDto userDto) {
         User user;
         try {

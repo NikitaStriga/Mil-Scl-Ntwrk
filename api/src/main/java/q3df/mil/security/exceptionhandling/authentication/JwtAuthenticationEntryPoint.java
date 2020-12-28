@@ -1,4 +1,4 @@
-package q3df.mil.security.epoint;
+package q3df.mil.security.exceptionhandling.authentication;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.http.MediaType;
@@ -6,18 +6,20 @@ import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.stereotype.Component;
 
-import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.Collections;
 
+/**
+ * this class is essential to implement custom error handling for authentication exception
+ */
 @Component
 public class JwtAuthenticationEntryPoint implements AuthenticationEntryPoint {
 
     @Override
     public void commence(HttpServletRequest request, HttpServletResponse response,
-                         AuthenticationException authException) throws IOException, ServletException {
+                         AuthenticationException authException) throws IOException {
 
         //set response code
         response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
@@ -49,5 +51,6 @@ public class JwtAuthenticationEntryPoint implements AuthenticationEntryPoint {
             response.getOutputStream().write(body);
         }
     }
+
 
 }

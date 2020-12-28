@@ -65,7 +65,7 @@ public class PhotoCommentLikeController {
             @ApiResponse(code = 404, message = "Photo comment like not found")
     })
     @DeleteMapping("/{photoCommentLikeId}")
-    public ResponseEntity<?> deleteText(@PathVariable Long photoCommentLikeId) {
+    public ResponseEntity<?> deletePhotoCommentLike(@PathVariable Long photoCommentLikeId) {
         photoCommentLikeService.deleteCommentLikeById(photoCommentLikeId);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }

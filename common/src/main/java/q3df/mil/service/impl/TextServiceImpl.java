@@ -31,6 +31,11 @@ public class TextServiceImpl implements TextService {
     }
 
 
+    /**
+     * find all texts by user id by date order
+     * @param id user id
+     * @return list of user texts
+     */
     @Override
     @org.springframework.transaction.annotation.Transactional(readOnly = true)
     public List<TextDto> findTextsByUserIdInDescOrder(Long id) {
@@ -41,6 +46,11 @@ public class TextServiceImpl implements TextService {
     }
 
 
+    /**
+     *saving new text
+     * @param textSaveDto new text
+     * @return saved text
+     */
     @Override
     @org.springframework.transaction.annotation.Transactional
     public TextDto saveText(TextSaveDto textSaveDto) {
@@ -50,6 +60,11 @@ public class TextServiceImpl implements TextService {
     }
 
 
+    /**
+     * update text
+     * @param textUpdateDto text
+     * @return updated text
+     */
     @Override
     @org.springframework.transaction.annotation.Transactional
     public TextDto updateText(TextUpdateDto textUpdateDto) {
@@ -64,6 +79,10 @@ public class TextServiceImpl implements TextService {
     }
 
 
+    /**
+     * delete text
+     * @param id text id
+     */
     @Override
     public void deleteTextById(Long id) {
         try{
@@ -72,9 +91,6 @@ public class TextServiceImpl implements TextService {
             throw new TextNotFoundException("Text with id " + id + " doesn't exist!");
         }
     }
-
-
-
 
 
 }

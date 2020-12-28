@@ -30,6 +30,12 @@ public class PhotoCommentServiceImpl implements PhotoCommentService {
         this.photoCommentSaveMapper = photoCommentSaveMapper;
     }
 
+
+    /**
+     * save photo comment
+     * @param photoCommentSaveDto new photo comment
+     * @return saved photo comment
+     */
     @Override
     @org.springframework.transaction.annotation.Transactional
     public PhotoCommentDto savePhotoComment(PhotoCommentSaveDto photoCommentSaveDto) {
@@ -39,6 +45,11 @@ public class PhotoCommentServiceImpl implements PhotoCommentService {
     }
 
 
+    /**
+     * update photo comment
+     * @param photoCommentUpdateDto photo comment
+     * @return updated photo comment
+     */
     @Override
     @org.springframework.transaction.annotation.Transactional
     public PhotoCommentDto updatePhotoComment(PhotoCommentUpdateDto photoCommentUpdateDto) {
@@ -53,6 +64,10 @@ public class PhotoCommentServiceImpl implements PhotoCommentService {
     }
 
 
+    /**
+     * delete photo comment
+     * @param id photo comment id
+     */
     @Override
     public void deletePhotoCommentById(Long id) {
         try{

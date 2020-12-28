@@ -20,15 +20,19 @@ public class CustomPermission {
      * @throws NoPermissionCustomException if user have no permission
      */
     public boolean checkPermission(HttpServletRequest request, Long userId) {
-        Long id = (Long) request.getAttribute(USER_ID);
-        if (id != null && !id.equals(userId)) {
-            return true;
-        }
-        String isPermitted = (String) request.getAttribute("permission");
-        if (isPermitted != null && isPermitted.equals("true")) {
-            return true;
-        }
-        throw new NoPermissionCustomException("No permission to execute the operation!");
+//        Long id = (Long) request.getAttribute(USER_ID);
+//        if (id != null && !id.equals(userId)) {
+//            return true;
+//        }
+//        String isPermitted = (String) request.getAttribute("permission");
+//        if (isPermitted != null && isPermitted.equals("true")) {
+//            return true;
+//        }
+//        throw new NoPermissionCustomException("No permission to execute the operation!");
+
+        //delete after uncomment
+        return true;
+        ////////////////////////
     }
 
 }

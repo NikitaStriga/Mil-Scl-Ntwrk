@@ -54,8 +54,10 @@ public class MessageMapper extends Mapper<Message, MessageDto> {
 
     @Override
     public void mapFromDtoToEntity(MessageDto source, Message destination) {
-        destination.setDialog(dialogRepository.findById(source.getDialogId()).orElse(null));
-        Message message = messageRepository.findById(source.getId()).orElseThrow(() -> new MessageNotFoundException("Cant find message!"));
+        destination.setDialog(dialogRepository.findById(source.getDialogId()).
+                orElse(null));
+        Message message = messageRepository.findById(source.getId()).
+                orElseThrow(() -> new MessageNotFoundException("Cant find message!"));
         destination.setFromWho(message.getFromWho());
         destination.setFromWho(message.getToWho());
     }

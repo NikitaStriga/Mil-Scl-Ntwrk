@@ -8,6 +8,7 @@ import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -15,7 +16,9 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 import q3df.mil.dto.photo.p.PhotoDto;
 import q3df.mil.dto.photo.p.PhotoSaveDto;
 import q3df.mil.dto.photo.p.PhotoUpdateDto;
@@ -25,6 +28,10 @@ import q3df.mil.service.PhotoService;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
+import java.util.Collections;
+import java.util.Map;
 
 
 @RestController
@@ -64,12 +71,20 @@ public class PhotoController {
             @ApiResponse(code = 403, message = "No permission to execute the operation"),
             @ApiResponse(code = 404, message = "If the user who wants to save the photo is not found")
     })
-    @PostMapping
-    public ResponseEntity<PhotoDto> saveText(@Valid @RequestBody PhotoSaveDto photoSaveDto,
-                                             @PathVariable Long id,
-                                             HttpServletRequest request) {
+    @PostMapping(consumes = {
+            MediaType.MULTIPART_FORM_DATA_VALUE
+    })
+    public ResponseEntity<Map<String, String>> savePhoto(@RequestPart MultipartFile multipartFile,
+                                                         @NotNull @NotBlank @RequestPart(required = false) String description,
+                                                         @PathVariable Long id,
+                                                         HttpServletRequest request) {
         customPermission.checkPermission(request, id);
-        PhotoDto savedPhoto = photoService.savePhoto(photoSaveDto);
+        String urlOfSavedImage =
+                photoService.savePhoto(
+                        PhotoSaveDto.builder()
+                                .userId(id)
+                                .description(description)
+                                .build(), multipartFile);
 //        URI location=
 //                ServletUriComponentsBuilder
 //                        .fromCurrentRequest()
@@ -77,7 +92,7 @@ public class PhotoController {
 //                        .buildAndExpand(savedPhoto.getId())
 //                        .toUri();
 //        return ResponseEntity.created(location).build();
-        return new ResponseEntity<>(savedPhoto, HttpStatus.CREATED);
+        return new ResponseEntity<>(Collections.singletonMap("url", urlOfSavedImage), HttpStatus.CREATED);
     }
 
 
@@ -91,9 +106,9 @@ public class PhotoController {
             @ApiResponse(code = 404, message = "If photo not found")
     })
     @PutMapping("/{photoId}")
-    public ResponseEntity<PhotoDto> updateText(@Valid @RequestBody PhotoUpdateDto photoUpdateDto,
-                                               @PathVariable Long id,
-                                               HttpServletRequest request
+    public ResponseEntity<PhotoDto> updatePhoto(@Valid @RequestBody PhotoUpdateDto photoUpdateDto,
+                                                @PathVariable Long id,
+                                                HttpServletRequest request
     ) {
         customPermission.checkPermission(request, id);
         return ResponseEntity.ok(photoService.updatePhoto(photoUpdateDto));
@@ -110,9 +125,10 @@ public class PhotoController {
             @ApiResponse(code = 404, message = "If photo not found")
     })
     @DeleteMapping("/{photoId}")
-    public ResponseEntity<?> deleteText(@PathVariable Long photoId, @PathVariable Long id, HttpServletRequest request) {
+    public ResponseEntity<?> deletePhoto(@PathVariable Long photoId, @PathVariable Long id, HttpServletRequest request) {
         customPermission.checkPermission(request, id);
         photoService.deletePhotoById(photoId);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
+
 }

@@ -42,7 +42,7 @@ public class PhotoLikeController {
             @ApiResponse(code = 404, message = "User or photo not found")
     })
     @PostMapping
-    public ResponseEntity<PhotoLikeDto> saveText(PhotoLikeSaveDto photoLikeSaveDto) {
+    public ResponseEntity<PhotoLikeDto> savePhotoLike(PhotoLikeSaveDto photoLikeSaveDto) {
         PhotoLikeDto savedPhotoLike = photoLikeService.savePhotoLike(photoLikeSaveDto);
 //        URI location=
 //                ServletUriComponentsBuilder
@@ -63,7 +63,7 @@ public class PhotoLikeController {
             @ApiResponse(code = 404, message = "Photo like not found")
     })
     @DeleteMapping("/{photoLikeId}")
-    public ResponseEntity<?> deleteText(@PathVariable Long photoLikeId) {
+    public ResponseEntity<?> deletePhotoLike(@PathVariable Long photoLikeId) {
         photoLikeService.deletePhotoLikeById(photoLikeId);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }

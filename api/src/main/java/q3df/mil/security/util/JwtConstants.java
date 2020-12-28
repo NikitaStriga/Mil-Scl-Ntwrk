@@ -6,4 +6,5 @@ public interface JwtConstants {
     String CREATE_VALUE = "created";
     String ROLES = "roles";
     String P_CHANGE = "pChange";
+
 }

@@ -13,7 +13,7 @@ public class CaffeineConfig {
 
     @Bean
     public CacheManager cacheManager() {
-        final String [] cacheNames = {"justForTestInAdminCountOperation"};
+        final String [] cacheNames = {"justForExampleCacheForUsersWithIdLessThan50"};
         //create Manager
         CaffeineCacheManager cacheManager = new CaffeineCacheManager(cacheNames);
         //set properties

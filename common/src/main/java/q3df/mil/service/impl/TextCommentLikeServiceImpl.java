@@ -11,7 +11,6 @@ import q3df.mil.mapper.text.tcl.TextCommentLikeSaveMapper;
 import q3df.mil.repository.TextCommentLikeRepository;
 import q3df.mil.service.TextCommentLikeService;
 
-
 @Service
 public class TextCommentLikeServiceImpl implements TextCommentLikeService {
 
@@ -27,6 +26,11 @@ public class TextCommentLikeServiceImpl implements TextCommentLikeService {
     }
 
 
+    /**
+     * save text comment like
+     * @param textCommentLikeDto new text comment like
+     * @return saved text comment like
+     */
     @Override
     @org.springframework.transaction.annotation.Transactional
     public TextCommentLikeDto saveTextCommentLike(TextCommentLikeSaveDto textCommentLikeDto) {
@@ -35,6 +39,11 @@ public class TextCommentLikeServiceImpl implements TextCommentLikeService {
         return textCommentLikeMapper.toDto(savedTextCommentLike);
     }
 
+
+    /**
+     * delete comment like
+     * @param id comment like id
+     */
     @Override
     public void deleteCommentLikeById(Long id) {
 
@@ -44,4 +53,5 @@ public class TextCommentLikeServiceImpl implements TextCommentLikeService {
             throw new TextCommentLikeNotFoundException("Text comment like with id " + id + " doesn't exist!");
         }
     }
+
 }

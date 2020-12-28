@@ -1,6 +1,7 @@
 package q3df.mil.dto.photo.p;
 
 import io.swagger.annotations.ApiModelProperty;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.context.annotation.PropertySource;
@@ -15,6 +16,7 @@ import javax.validation.constraints.Size;
 @Data
 @NoArgsConstructor
 @PropertySource("classpath:messages.properties")
+@Builder
 public class PhotoSaveDto {
 
     //userId
@@ -30,11 +32,12 @@ public class PhotoSaveDto {
     @Size(min = 1, max = 350, message = "{text.size} {min}-{max} characters!")
     private String description;
 
-    @ApiModelProperty(position = 3)
-    @NotNull(message = "{path.empty}")
-    @NotBlank(message = "{path.empty}")
-    @NotEmpty(message = "{path.empty}")
-    @Size(min = 1, max = 100, message = "{path.size} {min}-{max} characters!")
-    private String path;
+    //path will generate in amazonSender
+//    @ApiModelProperty(position = 3)
+//    @NotNull(message = "{path.empty}")
+//    @NotBlank(message = "{path.empty}")
+//    @NotEmpty(message = "{path.empty}")
+//    @Size(min = 1, max = 100, message = "{path.size} {min}-{max} characters!")
+//    private String path;
 
 }

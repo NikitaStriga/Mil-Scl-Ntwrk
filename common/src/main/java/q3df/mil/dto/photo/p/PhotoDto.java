@@ -3,10 +3,8 @@ package q3df.mil.dto.photo.p;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.springframework.context.annotation.PropertySource;
 import q3df.mil.dto.photo.pc.PhotoCommentDto;
 import q3df.mil.dto.photo.pl.PhotoLikeDto;
-
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;

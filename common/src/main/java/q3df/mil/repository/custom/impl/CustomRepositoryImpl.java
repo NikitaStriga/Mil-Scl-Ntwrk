@@ -22,11 +22,14 @@ import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
 @Repository
 public class CustomRepositoryImpl implements CustomRepository {
+
+    private static final String CRITERIA_EXC = "Invalid input parameters in search  criteria method ";
 
     @PersistenceContext
     private EntityManager entityManager;
@@ -75,8 +78,9 @@ public class CustomRepositoryImpl implements CustomRepository {
         for (Object[] objects : resultList) {
             list.add(new SupStatisticClass((String) objects[0], (String) objects[1], (Long) objects[2]));
         }
-        return resultList;
+        return list;
     }
+
 
     /**
      * Show result of searching users by params
@@ -87,21 +91,67 @@ public class CustomRepositoryImpl implements CustomRepository {
      */
     @Override
     @org.springframework.transaction.annotation.Transactional(readOnly = true)
-    public List<UserPreview> showUsersByParams(String... params) {
+    public List<UserPreview> showUsersByParams(final String... params) {
 
-        //max number of results
-        final int maxResults = 50;
+        //get criteria builder
+        CriteriaBuilder cb = entityManager.getCriteriaBuilder();
+
+        //get criteria query
+        CriteriaQuery<User> criteria = cb.createQuery(User.class);
+
+        //get root element
+        Root<User> userRoot = criteria.from(User.class);
+
+        //extract the necessary data for searching by criteria from the incoming parameters
+        final String [] paramsForCriteria = Arrays.copyOfRange (params,0,7);
+
+        //get predicates
+        Predicate[] predicates = getPredicates(paramsForCriteria, cb, userRoot);
+
+        //define criteria query
+        criteria
+                .select(userRoot)
+                .where(
+                        cb.and(
+                                predicates
+                        )
+                );
+
+        //get query
+        TypedQuery<User> query = entityManager.createQuery(criteria);
+
+        //extracting the necessary data which is needed for pagination from the incoming parameters
+        final String [] paramsForPagination = Arrays.copyOfRange (params,7,9);
+
+        //get firstResult and maxResults which is needed to pagination in criteria
+        int[] firstResultAndMaxResult = getFirstResultAndMaxResult(paramsForPagination);
+
+        //set pagination
+        query.setFirstResult(firstResultAndMaxResult[0]).setMaxResults(firstResultAndMaxResult[1]);
+
+        //get result
+        List<User> resultList = query.getResultList();
+
+        return resultList
+                .stream()
+                .map(userPreviewMapper::toDto)
+                .collect(Collectors.toList());
+
+    }
+
+
+    /**
+     * parse input data and create predicates
+     * this method used by -----> showUsersByParams(String... params)
+     * @param params input data which is used for search
+     * @param cb criteriaBuilder
+     * @param userRoot userRoot element from criteriaQuery
+     * @return predicates
+     */
+    private Predicate[] getPredicates(final String[] params, CriteriaBuilder cb, Root<User> userRoot) {
 
         //for concatenation in like operator
         final String defaultValue = "%";
-
-        //the first step is to count the number of records
-        Long count = countOfResults();
-
-        //the second step is make pageable request to db
-        CriteriaBuilder cb = entityManager.getCriteriaBuilder();
-        CriteriaQuery<User> criteria = cb.createQuery(User.class);
-        Root<User> userRoot = criteria.from(User.class);
 
         //paths
         Path<LocalDate> localDatePath = userRoot.get(User_.birthday);
@@ -181,62 +231,73 @@ public class CustomRepositoryImpl implements CustomRepository {
             //only users who's not deleted
             listOfPredicates.add(cb.equal(deletePath, false));
 
-            //define criteria query
-            criteria
-                    .select(userRoot)
-                    .where(
-                            cb.and(
-                                    listOfPredicates.toArray(Predicate[]::new)
-                            )
-                    );
+        } catch (Exception ex) {
+            throw new CriteriaCustomException(CRITERIA_EXC + ex.getMessage());
+        }
 
-            //get query
-            TypedQuery<User> query = entityManager.createQuery(criteria);
+        return listOfPredicates.toArray(Predicate[]::new);
 
-            //determine the page and the number of returned results
-            int countOfAvailableRecords = count.intValue();
+    }
 
-            //number of page
-            int numberOfPage = 1;
-            if (!StringUtils.isBlank(params[7])
-                    && Integer.parseInt(params[7]) > 1) {
+
+    /**
+     * calculate firstResult and MaxResults which are needed for pagination in criteria
+     * this method used by -----> showUsersByParams(String... params)
+     * @param params input data
+     * @return array which contains 2 params - [1] is firstResult and [2] is maxResults
+     */
+    private int[] getFirstResultAndMaxResult(final String[] params) {
+
+        //max number of results
+        final int maxResults = 50;
+
+        //the first step is to count the number of records
+        Long count = countOfResults();
+
+        //number of available records
+        int countOfAvailableRecords = count.intValue();
+
+        //number of page
+        int numberOfPage = 1;
+        try {
+            if (!StringUtils.isBlank(params[0])
+                    && Integer.parseInt(params[0]) > 1) {
                 numberOfPage = Integer.parseInt(params[7]);
             }
-
-            //number of result, if greater than 50 the value will be set to the maximum number of results
-            int numberOfResults = 10;
-            if (!StringUtils.isBlank(params[8])
-                    && Integer.parseInt(params[8]) > 0
-                    && Integer.parseInt(params[8]) <= maxResults) {
-                numberOfResults = Integer.parseInt(params[8]);
-            }
-
-            //define values of firstResult and maxResult which the final query needs for pagination
-            int firstResult = numberOfPage == 1 ? 0 : (numberOfPage - 1) * numberOfResults - 1;
-            int maxResult = numberOfResults;
-            if (countOfAvailableRecords <= firstResult + 1) {
-                numberOfPage = countOfAvailableRecords / numberOfResults;
-                firstResult = (numberOfPage - 1) * numberOfResults - 1;
-            }
-
-            //set pagination
-            query.setFirstResult(firstResult).setMaxResults(maxResult);
-
-            //get result
-            List<User> resultList = query.getResultList();
-
-            return resultList
-                    .stream()
-                    .map(userPreviewMapper::toDto)
-                    .collect(Collectors.toList());
-
-        } catch (Exception ex) {
-            throw new CriteriaCustomException("Invalid input parameters in search  criteria method " + ex.getMessage());
+        } catch (NumberFormatException ex) {
+            throw new CriteriaCustomException(
+                    CRITERIA_EXC + ex.getMessage());
         }
+
+        //default number of results
+        //if the value is greater than the maximum value, then the default value will be used
+        int numberOfResults = 10;
+        try {
+            if (!StringUtils.isBlank(params[1])
+                    && Integer.parseInt(params[1]) > 0
+                    && Integer.parseInt(params[1]) <= maxResults) {
+                numberOfResults = Integer.parseInt(params[1]);
+            }
+        } catch (NumberFormatException ex) {
+            throw new CriteriaCustomException(
+                    CRITERIA_EXC + ex.getMessage());
+        }
+
+        //define values of firstResult and maxResult which the final query needs for pagination
+        int firstResult = numberOfPage == 1 ? 0 : (numberOfPage - 1) * numberOfResults - 1;
+        int maxResult = numberOfResults;
+        if (countOfAvailableRecords <= firstResult + 1) {
+            numberOfPage = countOfAvailableRecords / numberOfResults;
+            firstResult = (numberOfPage - 1) * numberOfResults - 1;
+        }
+
+        return new int[]{firstResult, maxResult};
     }
+
 
     /**
      * Counts users with param delete = false
+     * used in -----> getFirstResultAndMaxResult(String... params)
      * @return count of available users
      */
     @Override

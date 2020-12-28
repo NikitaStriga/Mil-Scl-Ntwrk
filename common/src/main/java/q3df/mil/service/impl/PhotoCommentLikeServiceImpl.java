@@ -26,7 +26,11 @@ public class PhotoCommentLikeServiceImpl implements PhotoCommentLikeService {
     }
 
 
-
+    /**
+     * save photo comment like
+     * @param photoCommentLikeSaveDto new photo comment like
+     * @return saved photo comment like
+     */
     @Override
     @org.springframework.transaction.annotation.Transactional
     public PhotoCommentLikeDto savePhotoCommentLike(PhotoCommentLikeSaveDto photoCommentLikeSaveDto) {
@@ -36,6 +40,10 @@ public class PhotoCommentLikeServiceImpl implements PhotoCommentLikeService {
     }
 
 
+    /**
+     * delete photo comment like
+     * @param id photo comment like id
+     */
     @Override
     public void deleteCommentLikeById(Long id) {
         try{

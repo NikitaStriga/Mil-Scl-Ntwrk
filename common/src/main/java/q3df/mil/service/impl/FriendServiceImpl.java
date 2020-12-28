@@ -24,6 +24,11 @@ public class FriendServiceImpl implements FriendService {
     }
 
 
+    /**
+     * find user friend by user id
+     * @param id user id
+     * @return list of user friends
+     */
     @Override
     @org.springframework.transaction.annotation.Transactional(readOnly = true)
     public List<FriendDto> findUserFriends(Long id) {
@@ -35,12 +40,20 @@ public class FriendServiceImpl implements FriendService {
     }
 
 
+    /**
+     * add new friend to user
+     * 1. also in this method, it first checks if the added user is in the subscribers of another user,
+     * if not, then an exception will be thrown
+     * 2. checked whether the user already exists in friends, if its true an exception will be thrown
+     * @param userId user who accepted another user to friend list
+     * @param friendId friend id
+     * @return number of rows (its already 1 if all is ok)
+     */
     @Override
     @org.springframework.transaction.annotation.Transactional
     public int addFriendToUser(Long userId, Long friendId) {
         //if we need add friend to user, first of all nee to check if friend is always exist in friend list
         // then -> need to check friend in subscriber list if its exist delete from subs and add to friends
-        System.out.println(friendId);
         Long checkInFriendList = userRepository.checkForFriend(userId,friendId);
         if(checkInFriendList!=null){
             throw new CustomException("Friend with id " + friendId + " is always exist in friend list of user");
@@ -56,6 +69,12 @@ public class FriendServiceImpl implements FriendService {
     }
 
 
+    /**
+     * delete friend from user
+     * if a user is removed from friends, he will be added to subscribers
+     * @param userId user who want to delete another from friend list
+     * @param friendId friend id
+     */
     @Override
     @org.springframework.transaction.annotation.Transactional
     public void deleteFriendFromUser(Long userId, Long friendId) {
@@ -67,6 +86,5 @@ public class FriendServiceImpl implements FriendService {
         //if we delete friend we need to add him in a subscriber list
         userRepository.addSubscriber(userId,friendId);
     }
-
 
 }

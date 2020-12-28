@@ -27,6 +27,11 @@ public class PhotoLikeServiceImpl implements PhotoLikeService {
     }
 
 
+    /**
+     * save photo like
+     * @param photoLikeSaveDto new photo like
+     * @return saved photo like
+     */
     @Override
     @org.springframework.transaction.annotation.Transactional
     public PhotoLikeDto savePhotoLike(PhotoLikeSaveDto photoLikeSaveDto) {
@@ -36,7 +41,10 @@ public class PhotoLikeServiceImpl implements PhotoLikeService {
     }
 
 
-
+    /**
+     * delete photo like
+     * @param id photo like id
+     */
     @Override
     public void deletePhotoLikeById(Long id) {
         try{
@@ -45,4 +53,5 @@ public class PhotoLikeServiceImpl implements PhotoLikeService {
             throw new PhotoLikeNotFoundException("Photo like with id " + id + " doesn't exist!");
         }
     }
+
 }
