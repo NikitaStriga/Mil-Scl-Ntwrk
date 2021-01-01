@@ -32,11 +32,6 @@
 ##### main application.properties: [props](https://github.com/NikitaStriga/Mil-Scl-Ntwrk/blob/master/api/src/main/resources/application.properties)  
 ##### From the author:
 &ensp;Краткое описание: ORM + DTO + JPA + Rest + Security + Mail + AWS + FLYWAY + SWAGGER + CACHE  
-&ensp;Сложновато было по началу писать, потому что слишком много таблиц было принято на  душу населения + логика не совсем типичная в некоторых моментах
- что сделало мою работу не такой свободной как хотелось бы (это про ORM).
-Обладая определенными знаниями на данном этапе можно было бы написать что-то получше,
- заменить некоторые "замыкающие" @Entity на @Embeddable, посовмещать ключи и т.д.
- В общем больше разнообразия... 
 Чтобы хотелось выделить в проекте:
 * оптимизация запросов с помощью ***@org.hibernate.annotations.BatchSize***,
  ***@org.hibernate.annotations.Fetch(FetchMode.SUBSELECT)***, 
