@@ -32,7 +32,7 @@
 ##### main application.properties: [props](https://github.com/NikitaStriga/Mil-Scl-Ntwrk/blob/master/api/src/main/resources/application.properties)  
 ##### From the author:
 &ensp;Краткое описание: ORM + DTO + JPA + Rest + Security + Mail + AWS + FLYWAY + SWAGGER + CACHE  
-Чтобы хотелось выделить в проекте:
+&ensp;Чтобы хотелось выделить в проекте:
 * оптимизация запросов с помощью ***@org.hibernate.annotations.BatchSize***,
  ***@org.hibernate.annotations.Fetch(FetchMode.SUBSELECT)***, 
  а так же удаления  ***@org.hibernate.annotations.OnDelete(action = org.hibernate.annotations.OnDeleteAction.CASCADE)***
