@@ -21,6 +21,8 @@ import javax.transaction.Transactional;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import static q3df.mil.exception.ExceptionConstants.MESSAGE_NF;
+
 @Service
 public class MessageServiceImpl implements MessageService {
 
@@ -104,12 +106,10 @@ public class MessageServiceImpl implements MessageService {
     @Override
     @Transactional
     public MessageDto updateMessage(MessageUpdateDto messageUpdateDto) {
-        Message message;
-        try{
-            message = messageRepository.getOne(messageUpdateDto.getId());
-        }catch (EntityNotFoundException ex){
-            throw new MessageNotFoundException("Message with id " + messageUpdateDto.getId() + " doesn't exist!");
-        }
+        Message message =
+                messageRepository
+                .findById(messageUpdateDto.getId())
+                .orElseThrow( () -> new MessageNotFoundException(MESSAGE_NF + messageUpdateDto.getId()));
         message.setText(messageUpdateDto.getText());
         return messageMapper.toDto(message);
     }
@@ -124,7 +124,7 @@ public class MessageServiceImpl implements MessageService {
         try{
             messageRepository.deleteById(id);
         }catch (EmptyResultDataAccessException e){
-            throw new MessageNotFoundException("Message with id " + id + " doesn't exist!");
+            throw new MessageNotFoundException(MESSAGE_NF+ id);
         }
     }
 }

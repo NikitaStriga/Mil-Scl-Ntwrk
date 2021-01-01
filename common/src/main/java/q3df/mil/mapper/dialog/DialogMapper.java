@@ -3,11 +3,14 @@ package q3df.mil.mapper.dialog;
 import org.springframework.stereotype.Component;
 import q3df.mil.dto.dialog.DialogDto;
 import q3df.mil.entities.dialog.Dialog;
+import q3df.mil.exception.UserNotFoundException;
 import q3df.mil.mapper.Mapper;
 import q3df.mil.repository.UserRepository;
 
 import javax.annotation.PostConstruct;
 import java.util.Arrays;
+
+import static q3df.mil.exception.ExceptionConstants.USER_NF;
 
 
 @Component
@@ -50,7 +53,13 @@ public class DialogMapper extends Mapper<Dialog, DialogDto> {
 
     @Override
     public void mapFromDtoToEntity(DialogDto source, Dialog destination) {
-        destination.setUsers(Arrays.asList(userRepository.findById(source.getFirstUserId()).get(),
-                userRepository.findById(source.getSecondUserId()).get()));
+        destination.setUsers(
+                Arrays.asList(
+                        userRepository
+                                .findById(source.getFirstUserId())
+                                .orElseThrow( () -> new UserNotFoundException(USER_NF + source.getFirstUserId())),
+                userRepository
+                        .findById(source.getSecondUserId())
+                        .orElseThrow( () -> new UserNotFoundException(USER_NF + source.getSecondUserId()))));
     }
 }

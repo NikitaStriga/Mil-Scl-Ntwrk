@@ -12,6 +12,8 @@ import q3df.mil.mapper.text.tl.TextLikeSaveMapper;
 import q3df.mil.repository.TextLikeRepository;
 import q3df.mil.service.TextLikeService;
 
+import static q3df.mil.exception.ExceptionConstants.TEXT_LIKE_NF;
+
 @Service
 public class TextLikeServiceImpl implements TextLikeService {
 
@@ -49,7 +51,7 @@ public class TextLikeServiceImpl implements TextLikeService {
         try {
             textLikeRepository.deleteById(id);
         }catch (EmptyResultDataAccessException ex){
-            throw new TextLikeNotFoundException("Like with id " + id + " doesn't exist!");
+            throw new TextLikeNotFoundException(TEXT_LIKE_NF + id);
         }
     }
 }

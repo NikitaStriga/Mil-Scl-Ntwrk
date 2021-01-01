@@ -1,6 +1,7 @@
 package q3df.mil.dto.photo.p;
 
 import io.swagger.annotations.ApiModelProperty;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -15,6 +16,7 @@ import javax.validation.constraints.Size;
 
 @Data
 @NoArgsConstructor
+@AllArgsConstructor
 @PropertySource("classpath:messages.properties")
 @Builder
 public class PhotoSaveDto {

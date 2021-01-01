@@ -11,6 +11,8 @@ import q3df.mil.service.FriendService;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import static q3df.mil.exception.ExceptionConstants.FRIEND_NF;
+
 @Service
 public class FriendServiceImpl implements FriendService {
 
@@ -81,7 +83,7 @@ public class FriendServiceImpl implements FriendService {
         //delete from friend list
         int i = userRepository.deleteFromFriends(userId, friendId);
         if (i==0) {
-            throw new CustomException("Cant find friend with id " + friendId + " in user list!");
+            throw new CustomException(FRIEND_NF + friendId);
         }
         //if we delete friend we need to add him in a subscriber list
         userRepository.addSubscriber(userId,friendId);

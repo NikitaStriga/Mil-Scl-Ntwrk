@@ -11,6 +11,8 @@ import q3df.mil.mapper.text.tcl.TextCommentLikeSaveMapper;
 import q3df.mil.repository.TextCommentLikeRepository;
 import q3df.mil.service.TextCommentLikeService;
 
+import static q3df.mil.exception.ExceptionConstants.TEXT_COMMENT_LIKE_NF;
+
 @Service
 public class TextCommentLikeServiceImpl implements TextCommentLikeService {
 
@@ -50,7 +52,7 @@ public class TextCommentLikeServiceImpl implements TextCommentLikeService {
         try{
             textCommentLikeRepository.deleteById(id);
         }catch (EmptyResultDataAccessException ex){
-            throw new TextCommentLikeNotFoundException("Text comment like with id " + id + " doesn't exist!");
+            throw new TextCommentLikeNotFoundException(TEXT_COMMENT_LIKE_NF + id);
         }
     }
 

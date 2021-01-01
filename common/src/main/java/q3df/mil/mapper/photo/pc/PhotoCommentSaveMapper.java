@@ -11,6 +11,9 @@ import q3df.mil.repository.UserRepository;
 
 import javax.annotation.PostConstruct;
 
+import static q3df.mil.exception.ExceptionConstants.PHOTO_NF;
+import static q3df.mil.exception.ExceptionConstants.USER_NF;
+
 @Component
 public class PhotoCommentSaveMapper extends Mapper<PhotoComment, PhotoCommentSaveDto> {
 
@@ -44,8 +47,10 @@ public class PhotoCommentSaveMapper extends Mapper<PhotoComment, PhotoCommentSav
     @Override
     public void mapFromDtoToEntity(PhotoCommentSaveDto source, PhotoComment destination) {
         destination.setPhoto(photoRepository.findById(source.getPhotoId())
-                .orElseThrow(() -> new PhotoNotFoundException("Photo with id " + source.getPhotoId() + " doesn't exist!")));
+                .orElseThrow(() -> new PhotoNotFoundException(PHOTO_NF + source.getPhotoId())));
         destination.setUser(userRepository.findById(source.getUserId())
-                .orElseThrow(() -> new UserNotFoundException("User with id " + source.getUserId() + " doesn't exist!")));
+                .orElseThrow(() -> new UserNotFoundException(USER_NF + source.getUserId())));
     }
+
+
 }

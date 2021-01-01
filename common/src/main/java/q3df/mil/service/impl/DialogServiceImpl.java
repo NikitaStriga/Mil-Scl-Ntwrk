@@ -12,6 +12,8 @@ import q3df.mil.repository.DialogRepository;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import static q3df.mil.exception.ExceptionConstants.DIALOG_NF;
+
 @Service
 public class DialogServiceImpl implements q3df.mil.service.DialogService {
 
@@ -59,7 +61,7 @@ public class DialogServiceImpl implements q3df.mil.service.DialogService {
         try{
             dialogRepository.deleteById(id);
         }catch (EmptyResultDataAccessException ex){
-            throw new DialogNotFoundException("Dialog with id " + id + " doesn't exist!");
+            throw new DialogNotFoundException(DIALOG_NF + id);
         }
     }
 

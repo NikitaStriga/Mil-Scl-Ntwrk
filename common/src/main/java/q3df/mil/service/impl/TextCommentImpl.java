@@ -14,6 +14,8 @@ import q3df.mil.service.TextCommentService;
 
 import javax.persistence.EntityNotFoundException;
 
+import static q3df.mil.exception.ExceptionConstants.TEXT_COMMENT_NF;
+
 @Service
 public class TextCommentImpl implements TextCommentService {
 
@@ -51,12 +53,10 @@ public class TextCommentImpl implements TextCommentService {
     @Override
     @org.springframework.transaction.annotation.Transactional
     public TextCommentDto updateTextComment(TextCommentUpdateDto textCommentUpdateDto) {
-        TextComment textComment;
-        try{
-            textComment = textCommentRepository.getOne(textCommentUpdateDto.getId());
-        }catch (EntityNotFoundException ex){
-            throw  new TextCommentNotFoundException("Text comment with id " + textCommentUpdateDto.getId() + " doesn't exist!");
-        }
+        TextComment textComment =
+                textCommentRepository
+                .findById(textCommentUpdateDto.getId())
+                .orElseThrow(() -> new TextCommentNotFoundException(TEXT_COMMENT_NF + textCommentUpdateDto.getId()));
         textComment.setComment(textCommentUpdateDto.getComment());
         return textCommentMapper.toDto(textComment);
     }
@@ -71,7 +71,7 @@ public class TextCommentImpl implements TextCommentService {
         try{
             textCommentRepository.deleteById(id);
         }catch (EmptyResultDataAccessException ex){
-            throw new TextCommentNotFoundException("Text comment with id " + id + " doesn't exist");
+            throw new TextCommentNotFoundException(TEXT_COMMENT_NF+ id);
         }
     }
 

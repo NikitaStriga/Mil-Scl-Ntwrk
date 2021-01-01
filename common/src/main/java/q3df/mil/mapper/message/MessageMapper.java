@@ -10,6 +10,8 @@ import q3df.mil.repository.MessageRepository;
 
 import javax.annotation.PostConstruct;
 
+import static q3df.mil.exception.ExceptionConstants.MESSAGE_NF;
+
 
 @Component
 public class MessageMapper extends Mapper<Message, MessageDto> {
@@ -57,7 +59,7 @@ public class MessageMapper extends Mapper<Message, MessageDto> {
         destination.setDialog(dialogRepository.findById(source.getDialogId()).
                 orElse(null));
         Message message = messageRepository.findById(source.getId()).
-                orElseThrow(() -> new MessageNotFoundException("Cant find message!"));
+                orElseThrow(() -> new MessageNotFoundException(MESSAGE_NF + source.getId()));
         destination.setFromWho(message.getFromWho());
         destination.setFromWho(message.getToWho());
     }

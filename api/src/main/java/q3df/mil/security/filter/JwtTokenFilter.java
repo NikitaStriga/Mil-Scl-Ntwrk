@@ -2,6 +2,7 @@ package q3df.mil.security.filter;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -19,12 +20,8 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.time.LocalDateTime;
-import java.util.Date;
 import java.util.List;
 
-import static q3df.mil.security.util.JwtConstants.CREATE_VALUE;
-import static q3df.mil.security.util.JwtConstants.P_CHANGE;
 import static q3df.mil.security.util.JwtConstants.ROLES;
 import static q3df.mil.security.util.JwtConstants.USER_ID;
 
@@ -61,6 +58,13 @@ public class JwtTokenFilter extends OncePerRequestFilter {
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain)
             throws ServletException, IOException {
 
+        //check for specific url to avoid all logic in filter
+        if (checkForSomeUrlsToAvoidFilter(request)) {
+            chain.doFilter(request, response);
+            return;
+        }
+
+
         try {
 
             //receive token
@@ -84,7 +88,7 @@ public class JwtTokenFilter extends OncePerRequestFilter {
             //check if password was changed after creation token and whether the URL contains refresh token
             if (!tokenUtils.
                     isCreatedBeforeLastPasswordReset(
-                            claims.get(CREATE_VALUE, Date.class), claims.get(P_CHANGE, LocalDateTime.class)) &&
+                            claims) &&
                     requestUrl.contains("refresh")) {
 
                 //by this method we set into request attribute claims with info about claims
@@ -171,6 +175,20 @@ public class JwtTokenFilter extends OncePerRequestFilter {
         // Set the claims so that in controller we will be using it to create
         // new JWT
         request.setAttribute("claims", ex.getClaims());
-
     }
+
+
+    /**
+     * helper method that defines unnecessary urls for checking
+     * @param request HttpServletRequest
+     * @return false if request contains urls that are need to validate by filter, otherwise true
+     */
+    private boolean checkForSomeUrlsToAvoidFilter(HttpServletRequest request){
+        return !StringUtils.containsAny(request.getRequestURL().toString(),
+                "refresh",
+                "users",
+                "roles",
+                "admin");
+    }
+
 }

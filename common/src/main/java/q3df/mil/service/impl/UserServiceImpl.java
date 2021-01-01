@@ -41,6 +41,8 @@ import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
+import static q3df.mil.exception.ExceptionConstants.USER_NF;
+
 /**
  * most are logically described in this class,
  * so the description will be more accurate
@@ -57,7 +59,6 @@ public class UserServiceImpl implements UserService {
     private final CopyPropertiesHelperClass copyPropertiesHelperClass;
     private final MailSender mailSender;
     private final CustomRepository customRepository;
-
 
     @Autowired
     public UserServiceImpl(UserRepository userRepository,
@@ -109,8 +110,7 @@ public class UserServiceImpl implements UserService {
             value = "justForExampleCacheForUsersWithIdLessThan50", condition = "#id<50")
     public UserDto findById(Long id) {
         Optional<User> byId = userRepository.findById(id);
-        return userMapper
-                .toDto(byId.orElseThrow(() -> new UserNotFoundException("User with id " + id + " not found!")));
+        return userMapper.toDto(byId.orElseThrow(() -> new UserNotFoundException(USER_NF + id)));
 
     }
 
@@ -154,12 +154,9 @@ public class UserServiceImpl implements UserService {
     @org.springframework.cache.annotation.CachePut(
             value = "justForExampleCacheForUsersWithIdLessThan50", condition = "#userDto.id<50")
     public UserDto updateUser(UserUpdateDto userDto) {
-        User user;
-        try {
-            user = userRepository.getOne(userDto.getId());
-        } catch (EntityNotFoundException ex) {
-            throw new UserNotFoundException("User with id " + userDto.getId() + " doesn't exist!");
-        }
+        User user = userRepository
+                .findById(userDto.getId())
+                .orElseThrow(() -> new UserNotFoundException(USER_NF + userDto.getId()));
         copyPropertiesHelperClass.copyUserProperties(userDto, user);
         return userMapper.toDto(user);
     }
@@ -177,7 +174,7 @@ public class UserServiceImpl implements UserService {
         try {
             user = userRepository.getOne(id);
         } catch (EntityNotFoundException ex) {
-            throw new UserNotFoundException("User with id " + id + " doesn't exist!");
+            throw new UserNotFoundException(USER_NF+ id);
         }
         user.setDelete(true);
     }
@@ -190,10 +187,12 @@ public class UserServiceImpl implements UserService {
      */
     @Override
     @org.springframework.transaction.annotation.Transactional
+    @org.springframework.cache.annotation.CachePut(
+            value = "verTokCache", key = "#cp.login")
     public void changePassword(ChangePasswordRequest cp) {
         Optional<User> byLogin = userRepository.findByLogin(cp.getLogin());
         User user = byLogin
-                .orElseThrow(() -> new UserNotFoundException("User with login " + cp.getLogin() + " doesn't exist!"));
+                .orElseThrow(() -> new UserNotFoundException(USER_NF + cp.getLogin()));
         user.setPChange(LocalDateTime.now());
         user.setPassword(passwordEncoder.encode(cp.getNewPassword()));
     }
@@ -208,12 +207,9 @@ public class UserServiceImpl implements UserService {
     @Override
     @org.springframework.transaction.annotation.Transactional
     public void addRoleToUser(Long userId, SystemRoles systemRoles) {
-        User user;
-        try {
-            user = userRepository.getOne(userId);
-        } catch (EntityNotFoundException ex) {
-            throw new UserNotFoundException("User with id " + userId + " doesn't exist!");
-        }
+        User user = userRepository
+                .findById(userId)
+                .orElseThrow(() -> new UserNotFoundException(USER_NF +userId));
         user.addRoles(Role.builder().role(systemRoles).user(user).build());
     }
 
@@ -227,12 +223,9 @@ public class UserServiceImpl implements UserService {
     @Override
     @org.springframework.transaction.annotation.Transactional
     public void deleteRoleFromUser(Long userId, SystemRoles systemRoles) {
-        User user;
-        try {
-            user = userRepository.getOne(userId);
-        } catch (EntityNotFoundException ex) {
-            throw new UserNotFoundException("User with id " + userId + " doesn't exist!");
-        }
+        User user = userRepository
+                .findById(userId)
+                .orElseThrow(() -> new UserNotFoundException(USER_NF +userId));
         Set<Role> roles = user.getRoles();
         roles.removeIf(role -> role.getRole().equals(systemRoles));
     }
@@ -378,27 +371,19 @@ public class UserServiceImpl implements UserService {
     @Override
     @org.springframework.transaction.annotation.Transactional
     public void updateContact(Long id, Contact contact) {
-        User user;
-        try {
-            user = userRepository.getOne(id);
-        } catch (EntityNotFoundException ex) {
-            throw new UserNotFoundException("User with id " + id + " doesn't exist!");
-        }
+        User user = userRepository
+                .findById(id)
+                .orElseThrow(() -> new UserNotFoundException(USER_NF +id));
         user.setContact(contact);
     }
 
     //quick method just for show embeddable
     @Override
     public Contact getUserContacts(Long id) {
-        User user;
-        try {
-            user = userRepository.getOne(id);
-        } catch (EntityNotFoundException ex) {
-            throw new UserNotFoundException("User with id " + id + " doesn't exist!");
-        }
+        User user = userRepository
+                .findById(id)
+                .orElseThrow(() -> new UserNotFoundException(USER_NF +id));
         return user.getContact();
-
-
     }
 
 

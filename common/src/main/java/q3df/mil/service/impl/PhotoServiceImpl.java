@@ -19,6 +19,8 @@ import q3df.mil.service.PhotoService;
 
 import javax.persistence.EntityNotFoundException;
 
+import static q3df.mil.exception.ExceptionConstants.PHOTO_NF;
+
 @Service
 public class PhotoServiceImpl implements PhotoService {
 
@@ -45,7 +47,7 @@ public class PhotoServiceImpl implements PhotoService {
     @org.springframework.transaction.annotation.Transactional(readOnly = true)
     public PhotoDto findById(Long id) {
         Photo photo = photoRepository.findById(id)
-                .orElseThrow(() -> new PhotoNotFoundException("Photo with id " + id + " doesn't exist!"));
+                .orElseThrow(() -> new PhotoNotFoundException(PHOTO_NF+ id));
         return photoMapper.toDto(photo);
     }
 
@@ -82,12 +84,10 @@ public class PhotoServiceImpl implements PhotoService {
     @Override
     @org.springframework.transaction.annotation.Transactional
     public PhotoDto updatePhoto(PhotoUpdateDto photoUpdateDto) {
-        Photo photo;
-        try{
-            photo = photoRepository.getOne(photoUpdateDto.getId());
-        }catch (EntityNotFoundException ex){
-            throw  new PhotoNotFoundException("Photo with id " + photoUpdateDto.getId() + " doesn't exist!");
-        }
+        Photo photo =
+                photoRepository
+                .findById(photoUpdateDto.getId())
+                .orElseThrow(() -> new PhotoNotFoundException(PHOTO_NF + photoUpdateDto.getId()));
         photo.setDescription(photoUpdateDto.getDescription());
 
         //if user want to change main photo 1st we false previous main photo and then define true to this
@@ -110,7 +110,7 @@ public class PhotoServiceImpl implements PhotoService {
         try {
             photo = photoRepository.getOne(id);
         } catch (EntityNotFoundException ex) {
-            throw new UserNotFoundException("Photo with id " + id + " doesn't exist!");
+            throw new PhotoNotFoundException(PHOTO_NF+ id);
         }
 
         //deleting a record from the db

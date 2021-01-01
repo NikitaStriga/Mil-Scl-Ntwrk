@@ -13,6 +13,9 @@ import q3df.mil.repository.UserRepository;
 
 import javax.annotation.PostConstruct;
 
+import static q3df.mil.entities.text.TextCommentLike_.TEXT_COMMENT;
+import static q3df.mil.exception.ExceptionConstants.USER_NF;
+
 @Component
 public class TextCommentLikeSaveMapper extends Mapper<TextCommentLike, TextCommentLikeSaveDto> {
 
@@ -46,8 +49,8 @@ public class TextCommentLikeSaveMapper extends Mapper<TextCommentLike, TextComme
     @Override
     public void mapFromDtoToEntity(TextCommentLikeSaveDto source, TextCommentLike destination) {
         destination.setTextComment(textCommentRepository.findById(source.getTextCommentId())
-                .orElseThrow(() -> new TextCommentNotFoundException("Text comment with id " + source.getTextCommentId() + " doesn't exist!")));
+                .orElseThrow(() -> new TextCommentNotFoundException(TEXT_COMMENT + source.getTextCommentId())));
         destination.setUser(userRepository.findById(source.getUserId())
-                .orElseThrow(() -> new UserNotFoundException("User with id " + source.getUserId() + " doesn't exist!")));
+                .orElseThrow(() -> new UserNotFoundException(USER_NF + source.getUserId())));
     }
 }

@@ -59,7 +59,7 @@ public class AmazonSender {
                         .withCredentials(new AWSStaticCredentialsProvider(awsCredentials))
                         .build();
 
-        //path for saving files
+        //path for saving files on local storage
         this.pathForUploadOnPc = System.getProperty("user.dir") + "/uploaded/";
     }
 
@@ -72,13 +72,13 @@ public class AmazonSender {
      */
     public String sendToAmazon(MultipartFile multipartFile, Long userId) {
 
-        //get original name
+        //get original name, it will be need to save in local storage
         String originalName =
                 Optional
                         .ofNullable(multipartFile.getOriginalFilename())
                         .orElseThrow(() -> new AmazonCustomException("File name not specified!"));
 
-        //get extension
+        //get extension of file
         String extensionOfFile =
                 Optional
                         .ofNullable(originalName)
@@ -86,27 +86,26 @@ public class AmazonSender {
                         .map(f -> f.substring(originalName.lastIndexOf(".") + 1))
                         .orElseThrow(() -> new AmazonCustomException("Extension of file is not specified! "));
 
-        //amazon searchPatter
-        String amazonSearchPatter = amazonConfig.getSearchPattern();
+        //amazon search pattern
+        String searchPattern = amazonConfig.getSearchPattern();
 
         //bucketName
         String bucketName = amazonConfig.getBucketName();
 
         //folder
-        String folderName = "photos" + userId.toString();
+        String folderName = "photos/" + userId + "/";
 
-        //random file name
+        //random file name without extension
         String fileName = UUID.randomUUID().toString();
+
+        //fullName of file
+        String fullName = StringUtils.join(folderName, fileName,".", extensionOfFile);
 
         //convert MultiPartFile to File
         File file = convertMultipartFileToFile(multipartFile);
 
         //create request
-        PutObjectRequest request =
-                new PutObjectRequest(
-                        bucketName,
-                        folderName + "/" + fileName,
-                        file);
+        PutObjectRequest request = new PutObjectRequest(bucketName, fullName, file);
 
         //send file
         try {
@@ -114,17 +113,17 @@ public class AmazonSender {
 
             //delete file after upload to Amazon
             if (!file.delete()) {
-                log.error("Cant delete file " + file.getName());
+                log.error("Can't delete file " + file.getName());
             }
+
         } catch (SdkClientException ex) {
             throw new AmazonCustomException("Cant send file to Amazon, cause - " + ex.getMessage());
         }
 
         //url of file
-        String fileNameWithExtension =
-                StringUtils.join(amazonSearchPatter,folderName,"/",fileName,extensionOfFile);
+        String urlOfFile = searchPattern + fullName;
 
-        return fileNameWithExtension;
+        return urlOfFile;
 
     }
 
@@ -144,7 +143,7 @@ public class AmazonSender {
         //create file
         File convertedFile = new File(pathForUploadOnPc + fileName);
 
-        //create directory if doesn't exist
+        //create directory (if it already exist this method just return false)
         convertedFile.getParentFile().mkdir();
 
         //create inputStream and getBytes
@@ -160,10 +159,14 @@ public class AmazonSender {
 
     /**
      * get bytes from downloaded file from Amazon
-     * @param fileName file name of file in Amazon
+     * method is NOT USED in the application
+     * @param urlOfFile url  of file in Amazon
      * @return bytes of file
      */
-    public byte[] getFile(String fileName) {
+    public byte[] getFile(String urlOfFile) {
+
+        //fileName
+        String fileName = urlOfFile.replace(amazonConfig.getSearchPattern(),"");
 
         //get object
         S3Object object = this.amazonS3Client.getObject(amazonConfig.getBucketName(), fileName);
@@ -183,15 +186,19 @@ public class AmazonSender {
 
     /**
      * delete file from Amazon and then from db
-     * @param fileName file Name on Amazon
+     * @param urlOfFile url of file  on Amazon
      */
-    public void deleteFromAmazon(String fileName) {
+    public void deleteFromAmazon(String urlOfFile) {
+
+        //fileName
+        String fileName = urlOfFile.replace(amazonConfig.getSearchPattern(),"");
+
         try {
             this.amazonS3Client.deleteObject(amazonConfig.getBucketName(), fileName);
         } catch (SdkClientException ex) {
             throw new AmazonCustomException("Can't delete file from Amazon" + ex.getMessage());
         }
-    }
 
+    }
 
 }

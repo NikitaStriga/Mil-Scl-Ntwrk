@@ -8,8 +8,6 @@ import io.jsonwebtoken.MalformedJwtException;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.SignatureException;
 import io.jsonwebtoken.UnsupportedJwtException;
-import lombok.AllArgsConstructor;
-import lombok.Data;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.PropertySource;
@@ -22,6 +20,7 @@ import q3df.mil.exception.UserNotFoundException;
 import q3df.mil.repository.UserRepository;
 import q3df.mil.security.configuration.JwtTokenConfig;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.Calendar;
@@ -29,12 +28,12 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import static io.jsonwebtoken.Claims.SUBJECT;
 import static java.util.Calendar.MILLISECOND;
 import static q3df.mil.security.util.JwtConstants.CREATE_VALUE;
-import static q3df.mil.security.util.JwtConstants.P_CHANGE;
 import static q3df.mil.security.util.JwtConstants.ROLES;
 import static q3df.mil.security.util.JwtConstants.USER_ID;
 
@@ -89,7 +88,6 @@ public class TokenUtils {
 
     /**
      * get all claims which token contains
-     *
      * @param token jwtToken
      * @return claims
      */
@@ -105,7 +103,6 @@ public class TokenUtils {
 
     /**
      * check for valid of token
-     *
      * @param token jwtToken
      * @return exception if token is not valid , true if the parsing was successful
      */
@@ -124,7 +121,6 @@ public class TokenUtils {
 
     /**
      * this method generate date for new token
-     *
      * @return Date
      */
     private Date generateCurrentDate() {
@@ -134,7 +130,6 @@ public class TokenUtils {
 
     /**
      * generate expiration Date for token
-     *
      * @return expiration Date of token
      */
     private Date generateExpirationDate() {
@@ -158,23 +153,41 @@ public class TokenUtils {
     /**
      * this method is intended for checking time of creation jwtToken and time when user change his password
      * if the time of the first is less than the time of the second we need to change jwtToken
-     *
-     * @param created           created time of jwtToken
-     * @param lastPasswordReset password reset time
+     * @param claims claims of jwtToken
      * @return true if password reset date was change after creation time of jwtToken, true if not
      */
-    public Boolean isCreatedBeforeLastPasswordReset(Date created, LocalDateTime lastPasswordReset) {
-        LocalDateTime createdLocalDateTime = created.toInstant()
+    public boolean isCreatedBeforeLastPasswordReset(Claims claims) {
+
+        //get time of creation of jwtToken
+        LocalDateTime createTime = claims.get(CREATE_VALUE, Date.class).toInstant()
                 .atZone(ZoneId.systemDefault())
                 .toLocalDateTime();
-        return (lastPasswordReset != null && createdLocalDateTime.isBefore(lastPasswordReset));
+
+        //compare dates
+        return createTime.isBefore(getPChange(claims.getSubject()));
+    }
+
+    /**
+     * sup method for getting pChange time, used by -----> isCreatedBeforeLastPasswordReset(Claims claims)
+     * @param login username
+     * @return time of pChange
+     */
+    @org.springframework.cache.annotation.Cacheable(
+            value = "verTokCache", key = "#login")
+    public LocalDateTime getPChange(String login){
+        //find user
+        User user = userRepository
+                .findByLogin(login)
+                .orElseThrow( () -> new UserNotFoundException("User with login " + login + " not found!"));
+
+        //get pChange time
+        return user.getPChange();
     }
 
 
     /**
      * generate token from claims, expirationDate, algorithm and secret
-     *
-     * @param claims claims of user
+     * @param claims claims of jwtToken
      * @return jwt token
      */
     private String generateToken(Map<String, Object> claims) {
@@ -189,15 +202,12 @@ public class TokenUtils {
 
     /**
      * add claims
-     *
      * @param userDetails basic information from userProvider which is implemented in  {@link q3df.mil.security.service.UserServiceProvider}
      * @return jwtToken
      */
     public String generateToken(UserDetails userDetails) {
         Map<String, Object> claims = new HashMap<>();
-        UserHelperClaims userIdAndPCByLogin = findUserIdAndPCByLogin(userDetails);
-        claims.put(USER_ID, userIdAndPCByLogin.getId());
-        claims.put(P_CHANGE, userIdAndPCByLogin.getPChange());
+        claims.put(USER_ID, findUserId(userDetails));
         claims.put(SUBJECT, userDetails.getUsername());
         claims.put(CREATE_VALUE, generateCurrentDate());
         claims.put(ROLES, getEncryptedRoles(userDetails));
@@ -206,23 +216,21 @@ public class TokenUtils {
 
 
     /**
-     * find user id and pChange by user details
-     *
+     * find user id
      * @param userDetails basic information from userProvider which is implemented in  {@link q3df.mil.security.service.UserServiceProvider}
-     * @return UserHelperClaims with user id and pChange
+     * @return user Id
      * @throws UserNotFoundException if user is not found
      */
-    private UserHelperClaims findUserIdAndPCByLogin(UserDetails userDetails) {
+    private Long findUserId(UserDetails userDetails) {
         User user = userRepository
                 .findByLogin(userDetails.getUsername())
                 .orElseThrow(() ->
                         new UserNotFoundException("User with login " + userDetails.getUsername() + " not found!"));
-        return new UserHelperClaims(user.getId(), user.getPChange());
+        return user.getId();
     }
 
     /**
      * get List of Roles without prefix ROLE_
-     *
      * @param userDetails basic information from userProvider which is implemented in  {@link q3df.mil.security.service.UserServiceProvider}
      * @return the List of user roles without prefix ROLE_
      */
@@ -256,7 +264,6 @@ public class TokenUtils {
 
     /**
      * refresh token
-     *
      * @param claims claims of Expired jwtToken
      * @return new jwtToken
      */
@@ -284,14 +291,6 @@ public class TokenUtils {
 //        final String username = getUsernameFromToken(token);
 //        return username.equals(userDetails.getUsername());
 //    }
-
-
-    @Data
-    @AllArgsConstructor
-    class UserHelperClaims {
-        private Long id;
-        private LocalDateTime pChange;
-    }
 
 
 }

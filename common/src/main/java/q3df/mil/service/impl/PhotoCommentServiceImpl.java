@@ -14,6 +14,8 @@ import q3df.mil.service.PhotoCommentService;
 
 import javax.persistence.EntityNotFoundException;
 
+import static q3df.mil.exception.ExceptionConstants.PHOTO_COMMENT_NF;
+
 @Service
 public class PhotoCommentServiceImpl implements PhotoCommentService {
 
@@ -53,12 +55,10 @@ public class PhotoCommentServiceImpl implements PhotoCommentService {
     @Override
     @org.springframework.transaction.annotation.Transactional
     public PhotoCommentDto updatePhotoComment(PhotoCommentUpdateDto photoCommentUpdateDto) {
-        PhotoComment photoComment;
-        try{
-            photoComment = photoCommentRepository.getOne(photoCommentUpdateDto.getId());
-        }catch (EntityNotFoundException ex){
-            throw new PhotoCommentNotFoundException("Photo comment with id " + photoCommentUpdateDto.getId() + " doesn't exist!");
-        }
+        PhotoComment photoComment =
+                photoCommentRepository
+                .findById(photoCommentUpdateDto.getId())
+                .orElseThrow( () -> new PhotoCommentNotFoundException(PHOTO_COMMENT_NF + photoCommentUpdateDto.getId()));
         photoComment.setComment(photoCommentUpdateDto.getComment());
         return photoCommentMapper.toDto(photoComment);
     }
@@ -73,7 +73,7 @@ public class PhotoCommentServiceImpl implements PhotoCommentService {
         try{
         photoCommentRepository.deleteById(id);
         }catch (EmptyResultDataAccessException ex){
-            throw new PhotoCommentNotFoundException("Photo comment with id " + id + " doesn't exist!");
+            throw new PhotoCommentNotFoundException(PHOTO_COMMENT_NF + id);
         }
     }
 

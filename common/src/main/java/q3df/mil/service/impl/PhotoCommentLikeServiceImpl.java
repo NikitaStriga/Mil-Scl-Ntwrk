@@ -11,6 +11,8 @@ import q3df.mil.mapper.photo.pcl.PhotoCommentLikeSaveMapper;
 import q3df.mil.repository.PhotoCommentLikeRepository;
 import q3df.mil.service.PhotoCommentLikeService;
 
+import static q3df.mil.exception.ExceptionConstants.PHOTO_COMMENT_NF;
+
 @Service
 public class PhotoCommentLikeServiceImpl implements PhotoCommentLikeService {
 
@@ -49,7 +51,7 @@ public class PhotoCommentLikeServiceImpl implements PhotoCommentLikeService {
         try{
             photoCommentLikeRepository.deleteById(id);
         }catch (EmptyResultDataAccessException ex){
-            throw new PhotoCommentLikeNotFoundException("Photo comment like with id " + id + " doesn't exist!");
+            throw new PhotoCommentLikeNotFoundException(PHOTO_COMMENT_NF + id);
         }
     }
 }

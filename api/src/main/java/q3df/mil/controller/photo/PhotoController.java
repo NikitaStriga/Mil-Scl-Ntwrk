@@ -11,6 +11,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -39,13 +40,11 @@ import java.util.Map;
 public class PhotoController {
 
     private final PhotoService photoService;
-    private final SupClass supClass;
     private final CustomPermission customPermission;
 
     @Autowired
-    public PhotoController(PhotoService photoService, SupClass supClass, CustomPermission customPermission) {
+    public PhotoController(PhotoService photoService, CustomPermission customPermission) {
         this.photoService = photoService;
-        this.supClass = supClass;
         this.customPermission = customPermission;
     }
 
@@ -58,6 +57,7 @@ public class PhotoController {
             @ApiResponse(code = 200, message = "Photo was founded"),
             @ApiResponse(code = 404, message = "Photo not found")
     })
+    @GetMapping
     public ResponseEntity<PhotoDto> findById(@PathVariable Long id) {
         return ResponseEntity.ok(photoService.findById(id));
     }

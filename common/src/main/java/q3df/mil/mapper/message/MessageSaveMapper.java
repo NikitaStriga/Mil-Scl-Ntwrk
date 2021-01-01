@@ -11,6 +11,8 @@ import q3df.mil.repository.UserRepository;
 
 import javax.annotation.PostConstruct;
 
+import static q3df.mil.exception.ExceptionConstants.USER_NF;
+
 @Component
 public class MessageSaveMapper extends Mapper<Message, MessageSaveDto> {
 
@@ -51,8 +53,8 @@ public class MessageSaveMapper extends Mapper<Message, MessageSaveDto> {
             destination.setDialog(null);
         }
         destination.setFromWho(userRepository.findById(source.getFromWhoId())
-                .orElseThrow( () -> new UserNotFoundException("User with id " + source.getFromWhoId() + " doesn't exist!1")));
+                .orElseThrow( () -> new UserNotFoundException(USER_NF + source.getFromWhoId())));
         destination.setToWho(userRepository.findById(source.getToWhoId())
-                .orElseThrow( () -> new UserNotFoundException("User with id " + source.getToWhoId() + " doesn't exist!1")));
+                .orElseThrow( () -> new UserNotFoundException(USER_NF + source.getToWhoId())));
     }
 }

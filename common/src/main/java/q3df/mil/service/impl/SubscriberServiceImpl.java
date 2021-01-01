@@ -11,6 +11,8 @@ import q3df.mil.service.SubscriberService;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import static q3df.mil.exception.ExceptionConstants.SUBSCRIBER_NF;
+
 @Service
 public class SubscriberServiceImpl implements SubscriberService {
 
@@ -68,7 +70,7 @@ public class SubscriberServiceImpl implements SubscriberService {
     public void deleteSubscriber(Long userId, Long subscriberId) {
         int i = userRepository.deleteFromSubs(userId, subscriberId);
         if(i==0){
-            throw new CustomException("Cant find subscriber with id " + subscriberId + " in subscribers of user with id " + userId );
+            throw new CustomException(SUBSCRIBER_NF+ subscriberId);
         }
     }
 

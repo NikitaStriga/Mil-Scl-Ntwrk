@@ -11,6 +11,8 @@ import q3df.mil.mapper.photo.pl.PhotoLikeSaveMapper;
 import q3df.mil.repository.PhotoLikeRepository;
 import q3df.mil.service.PhotoLikeService;
 
+import static q3df.mil.exception.ExceptionConstants.PHOTO_LIKE_NF;
+
 @Service
 public class PhotoLikeServiceImpl implements PhotoLikeService {
 
@@ -50,7 +52,7 @@ public class PhotoLikeServiceImpl implements PhotoLikeService {
         try{
             photoLikeRepository.deleteById(id);
         }catch (EmptyResultDataAccessException ex){
-            throw new PhotoLikeNotFoundException("Photo like with id " + id + " doesn't exist!");
+            throw new PhotoLikeNotFoundException(PHOTO_LIKE_NF + id);
         }
     }
 

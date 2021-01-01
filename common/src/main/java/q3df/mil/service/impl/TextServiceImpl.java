@@ -17,6 +17,9 @@ import javax.persistence.EntityNotFoundException;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import static q3df.mil.exception.ExceptionConstants.TEXT_NF;
+import static q3df.mil.exception.ExceptionConstants.USER_NF;
+
 @Service
 public class TextServiceImpl implements TextService {
 
@@ -41,7 +44,7 @@ public class TextServiceImpl implements TextService {
     public List<TextDto> findTextsByUserIdInDescOrder(Long id) {
         List<Text> texts = textRepository.findTextByUserIdWithDescOrder(id);
         List<TextDto> textDtos = texts.stream().map(textMapper::toDto).collect(Collectors.toList());
-        if(textDtos.isEmpty()) throw new UserNotFoundException("User with id " + id + " doesn't exist!");
+        if(textDtos.isEmpty()) throw new UserNotFoundException(USER_NF + id);
         return textDtos;
     }
 
@@ -68,12 +71,10 @@ public class TextServiceImpl implements TextService {
     @Override
     @org.springframework.transaction.annotation.Transactional
     public TextDto updateText(TextUpdateDto textUpdateDto) {
-        Text text;
-        try{
-            text = textRepository.getOne(textUpdateDto.getId());
-        }catch (EntityNotFoundException ex){
-            throw new TextNotFoundException("Text with id" + textUpdateDto.getId() + " doesn't exist!");
-        }
+        Text text =
+                textRepository
+                .findById(textUpdateDto.getId())
+                .orElseThrow(() -> new TextNotFoundException(TEXT_NF + textUpdateDto.getId()));
         text.setText(textUpdateDto.getText());
         return textMapper.toDto(text);
     }
@@ -88,7 +89,7 @@ public class TextServiceImpl implements TextService {
         try{
             textRepository.deleteById(id);
         }catch (EmptyResultDataAccessException e){
-            throw new TextNotFoundException("Text with id " + id + " doesn't exist!");
+            throw new TextNotFoundException(TEXT_NF + id);
         }
     }
 
