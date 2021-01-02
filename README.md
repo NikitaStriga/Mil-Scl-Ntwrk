@@ -5,7 +5,7 @@
 * Dto (link: [DTO](https://github.com/NikitaStriga/Mil-Scl-Ntwrk/tree/master/common/src/main/java/q3df/mil/dto). For conversion was used [ModeMapper](http://modelmapper.org/), impl in code: [mapper](https://github.com/NikitaStriga/Mil-Scl-Ntwrk/tree/master/common/src/main/java/q3df/mil/mapper) )
 * JPA (vendor adapter - Hibernate + covered by Spring Data JPA)
   * [repository](https://github.com/NikitaStriga/Mil-Scl-Ntwrk/tree/master/common/src/main/java/q3df/mil/repository) (JPA wrappers + @Queries + | Pageable with Sort | )
-  * [service](https://github.com/NikitaStriga/Mil-Scl-Ntwrk/tree/master/common/src/main/java/q3df/mil/service)
+  * [service](https://github.com/NikitaStriga/Mil-Scl-Ntwrk/tree/master/common/src/main/java/q3df/mil/service) (most of the non-primitive logic locate in [userServiceImpl](https://github.com/NikitaStriga/Mil-Scl-Ntwrk/blob/master/common/src/main/java/q3df/mil/service/impl/UserServiceImpl.java))
   * [customRepository](https://github.com/NikitaStriga/Mil-Scl-Ntwrk/blob/master/common/src/main/java/q3df/mil/repository/custom/impl/CustomRepositoryImpl.java) (written using Criteria) 
 * Controllers
   * [controllers](https://github.com/NikitaStriga/Mil-Scl-Ntwrk/tree/master/api/src/main/java/q3df/mil/controller)
