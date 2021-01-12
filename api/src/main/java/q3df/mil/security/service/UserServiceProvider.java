@@ -8,6 +8,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import q3df.mil.entities.enums.SystemRoles;
 import q3df.mil.entities.role.Role;
 import q3df.mil.repository.UserRepository;
@@ -28,6 +29,7 @@ public class UserServiceProvider implements UserDetailsService {
      * @throws UsernameNotFoundException if user with input login not founded
      */
     @Override
+    @Transactional
     public UserDetails loadUserByUsername(String login) throws UsernameNotFoundException {
         try {
             Optional<q3df.mil.entities.user.User> searchResult = userRepository.findByLogin(login);

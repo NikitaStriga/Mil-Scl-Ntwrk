@@ -17,7 +17,7 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import q3df.mil.security.exceptionhandling.authentication.JwtAuthenticationEntryPoint;
-import q3df.mil.security.exceptionhandling.authorization.JwtAuthorizationExceptionHandler;
+//import q3df.mil.security.exceptionhandling.authorization.JwtAuthorizationExceptionHandler;
 import q3df.mil.security.filter.JwtTokenFilter;
 
 
@@ -28,14 +28,17 @@ public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter {
 
     private final UserDetailsService userProvider;
     private final JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint;
-    private final JwtAuthorizationExceptionHandler jwtAuthorizationExceptionHandler;
+//    private final JwtAuthorizationExceptionHandler jwtAuthorizationExceptionHandler;
     private final JwtTokenFilter jwtTokenFilter;
 
     @Autowired
-    public WebSecurityConfiguration(@Qualifier("userServiceProvider") UserDetailsService userProvider, JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint, JwtAuthorizationExceptionHandler jwtAuthorizationExceptionHandler, JwtTokenFilter jwtTokenFilter) {
+    public WebSecurityConfiguration(@Qualifier("userServiceProvider") UserDetailsService userProvider,
+                                    JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint,
+//                                    JwtAuthorizationExceptionHandler jwtAuthorizationExceptionHandler,
+                                    JwtTokenFilter jwtTokenFilter) {
         this.userProvider = userProvider;
         this.jwtAuthenticationEntryPoint = jwtAuthenticationEntryPoint;
-        this.jwtAuthorizationExceptionHandler = jwtAuthorizationExceptionHandler;
+//        this.jwtAuthorizationExceptionHandler = jwtAuthorizationExceptionHandler;
         this.jwtTokenFilter = jwtTokenFilter;
     }
 
@@ -78,18 +81,17 @@ public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter {
                 .antMatchers("/password").permitAll()
                 .antMatchers("/recovery").permitAll()
                 .antMatchers("/refresh").permitAll()
-                .antMatchers("/users/**").hasAnyRole() //hasAnyRole
+                .antMatchers("/users/**").hasAnyRole ("ADMIN","USER") //hasAnyRole
                 .antMatchers("/roles/**").hasRole("ADMIN") //for admin
                 .antMatchers("/admin/**").hasRole("ADMIN") //for admin
 
                 //all requests except matchers above must be authenticated
-                .anyRequest().authenticated()
+//                .anyRequest().authenticated()
 
                 //registering a custom security authentication exception handler
-                .and().exceptionHandling().authenticationEntryPoint(jwtAuthenticationEntryPoint).accessDeniedHandler(jwtAuthorizationExceptionHandler)
-
+                .and().exceptionHandling().authenticationEntryPoint(jwtAuthenticationEntryPoint)
                 //registering a custom security authorization exception handler
-                .and().exceptionHandling().accessDeniedHandler(jwtAuthorizationExceptionHandler)
+//                .and().exceptionHandling().accessDeniedHandler(jwtAuthorizationExceptionHandler)
 
                 //registering a custom filter
                 .and().addFilterBefore(jwtTokenFilter, UsernamePasswordAuthenticationFilter.class);

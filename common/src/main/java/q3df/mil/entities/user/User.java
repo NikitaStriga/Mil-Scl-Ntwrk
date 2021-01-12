@@ -6,7 +6,9 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 import lombok.ToString;
 import org.hibernate.annotations.FetchMode;
 import org.hibernate.annotations.OnDelete;
@@ -68,7 +70,8 @@ import java.util.Set;
                 //which cannot be written using Java code
                 //hibernate does not provide such features
         })
-@Data
+@Getter
+@Setter
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
@@ -128,7 +131,7 @@ public class User {
     private Gender gender;
 
     @Column(name = "birthday")
-    @ValidDate(afterYear = 1930, beforeYear = 2020)
+//    @ValidDate(afterYear = 1930, beforeYear = 2020)
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
     private LocalDate birthday;
 
@@ -186,6 +189,7 @@ public class User {
             cascade = {CascadeType.DETACH,
                     CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH}, orphanRemoval = true)
     @OnDelete(action = org.hibernate.annotations.OnDeleteAction.CASCADE)
+    @ToString.Exclude
     private Set<Role> roles = new HashSet<>();
 
     //add new role
@@ -213,6 +217,7 @@ public class User {
                     CascadeType.REFRESH}, orphanRemoval = true)
     @OnDelete(action = org.hibernate.annotations.OnDeleteAction.CASCADE)
     @org.hibernate.annotations.OrderBy(clause = "created DESC")
+    @ToString.Exclude
     private List<Text> texts = new ArrayList<>();
 
     //add new text
@@ -234,6 +239,7 @@ public class User {
     @ManyToMany(mappedBy = "users", cascade = {CascadeType.DETACH,
             CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH, CascadeType.REMOVE})
     @OnDelete(action = org.hibernate.annotations.OnDeleteAction.CASCADE)
+    @ToString.Exclude
     private List<Dialog> dialogs = new ArrayList<>();
 
     //add new dialog
@@ -259,6 +265,7 @@ public class User {
                     CascadeType.PERSIST,
                     CascadeType.REFRESH}, orphanRemoval = true)
     @OnDelete(action = org.hibernate.annotations.OnDeleteAction.CASCADE)
+    @ToString.Exclude
     private List<Message> outboxMessages = new ArrayList<>();
 
     //add outbox message
@@ -284,6 +291,7 @@ public class User {
                     CascadeType.PERSIST,
                     CascadeType.REFRESH}, orphanRemoval = true)
     @OnDelete(action = org.hibernate.annotations.OnDeleteAction.CASCADE)
+    @ToString.Exclude
     private List<Message> inboxMessages = new ArrayList<>();
 
     //add inbox message
@@ -310,6 +318,7 @@ public class User {
                     CascadeType.REFRESH}, orphanRemoval = true)
     @OnDelete(action = org.hibernate.annotations.OnDeleteAction.CASCADE)
     @org.hibernate.annotations.OrderBy(clause = "created DESC")
+    @ToString.Exclude
     private List<Photo> photos = new ArrayList<>();
 
     //add photos
@@ -368,6 +377,7 @@ public class User {
                     CascadeType.REFRESH}, orphanRemoval = true)
     @OnDelete(action = org.hibernate.annotations.OnDeleteAction.CASCADE)
     @org.hibernate.annotations.Fetch(FetchMode.SUBSELECT)
+    @ToString.Exclude
     private List<TextComment> textComments = new ArrayList<>();
 
     @OneToMany(fetch = FetchType.LAZY,
@@ -378,6 +388,7 @@ public class User {
                     CascadeType.PERSIST,
                     CascadeType.REFRESH}, orphanRemoval = true)
     @OnDelete(action = org.hibernate.annotations.OnDeleteAction.CASCADE)
+    @ToString.Exclude
     private List<TextLike> textLikes = new ArrayList<>();
 
     @OneToMany(fetch = FetchType.LAZY,
@@ -388,6 +399,7 @@ public class User {
                     CascadeType.PERSIST,
                     CascadeType.REFRESH}, orphanRemoval = true)
     @OnDelete(action = org.hibernate.annotations.OnDeleteAction.CASCADE)
+    @ToString.Exclude
     private List<TextCommentLike> textCommentLikes = new ArrayList<>();
 
 
@@ -409,6 +421,7 @@ public class User {
                     CascadeType.PERSIST,
                     CascadeType.REFRESH}, orphanRemoval = true)
     @OnDelete(action = org.hibernate.annotations.OnDeleteAction.CASCADE)
+    @ToString.Exclude
     private List<PhotoLike> photoLikes = new ArrayList<>();
 
     @OneToMany(fetch = FetchType.LAZY,
@@ -419,6 +432,7 @@ public class User {
                     CascadeType.PERSIST,
                     CascadeType.REFRESH}, orphanRemoval = true)
     @OnDelete(action = org.hibernate.annotations.OnDeleteAction.CASCADE)
+    @ToString.Exclude
     private List<PhotoCommentLike> photoCommentLikes = new ArrayList<>();
 
 

@@ -106,8 +106,8 @@ public class UserServiceImpl implements UserService {
     @Override
     @org.springframework.transaction.annotation.Transactional(readOnly = true)
     //cache just for example
-    @org.springframework.cache.annotation.Cacheable(
-            value = "justForExampleCacheForUsersWithIdLessThan50", condition = "#id<50")
+//    @org.springframework.cache.annotation.Cacheable(
+//            value = "justForExampleCacheForUsersWithIdLessThan50", condition = "#id<50")
     public UserDto findById(Long id) {
         Optional<User> byId = userRepository.findById(id);
         return userMapper.toDto(byId.orElseThrow(() -> new UserNotFoundException(USER_NF + id)));
@@ -151,8 +151,8 @@ public class UserServiceImpl implements UserService {
     @Override
     @org.springframework.transaction.annotation.Transactional
     //cache just for example
-    @org.springframework.cache.annotation.CachePut(
-            value = "justForExampleCacheForUsersWithIdLessThan50", condition = "#userDto.id<50")
+//    @org.springframework.cache.annotation.CachePut(
+//            value = "justForExampleCacheForUsersWithIdLessThan50", condition = "#userDto.id<50")
     public UserDto updateUser(UserUpdateDto userDto) {
         User user = userRepository
                 .findById(userDto.getId())
@@ -187,8 +187,8 @@ public class UserServiceImpl implements UserService {
      */
     @Override
     @org.springframework.transaction.annotation.Transactional
-    @org.springframework.cache.annotation.CachePut(
-            value = "verTokCache", key = "#cp.login")
+//    @org.springframework.cache.annotation.CachePut(
+//            value = "verTokCache", key = "#cp.login")
     public void changePassword(ChangePasswordRequest cp) {
         Optional<User> byLogin = userRepository.findByLogin(cp.getLogin());
         User user = byLogin

@@ -47,8 +47,9 @@ insert into users (email, login, password, first_name, last_name, gender, birthd
 insert into users (email, login, password, first_name, last_name, gender, birthday, country, city,  registration_time, update_time, p_change, delete) values ('kcowsby1a@webs.com', 'dbelliss1a', '6d8lNY1u4mFL', 'Karly', 'Cowsby', 'FEMALE', '2020-03-19', 'Serbia', 'Svilajnac', '2019-12-31', '2020-08-02','2019-01-01', false);
 insert into users (email, login, password, first_name, last_name, gender, birthday, country, city,  registration_time, update_time, p_change, delete) values ('coverton1b@army.mil', 'rvinecombe1b', 'akIftDZqi', 'Carly', 'Overton', 'FEMALE', '2019-12-25', 'Saudi Arabia', 'Mizhirah', '2020-10-21', '2020-05-20','2019-01-01', false);
 insert into users (email, login, password, first_name, last_name, gender, birthday, country, city,  registration_time, update_time, p_change, delete) values ('abrabon1c@parallels.com', 'lkenealy1c', 'tnH5Dd', 'Aeriell', 'Brabon', 'FEMALE', '2019-12-15', 'Nicaragua', 'Masaya', '2020-08-25', '2020-09-02','2019-01-01', false);
-insert into users (email, login, password, first_name, last_name, gender, birthday, country, city,  registration_time, update_time, p_change, delete) values ('bestmaster94@mail.ru', 'string', '$2a$10$BV9vkowurwm/bliD5qLCb.yByE6fL16jbtN9AFvODx9HilVmyPD6C', 'Devin', 'Lempel', 'MALE', '2020-11-05', 'China', 'Shimen', '2020-08-07', '2020-09-22','2019-01-01', false);
+insert into users (email, login, password, first_name, last_name, gender, birthday, country, city,  registration_time, update_time, p_change, delete) values ('formyproject94@mail.ru', 'string', '$2a$10$BV9vkowurwm/bliD5qLCb.yByE6fL16jbtN9AFvODx9HilVmyPD6C', 'Devin', 'Lempel', 'MALE', '2020-11-05', 'China', 'Shimen', '2020-08-07', '2020-09-22','2019-01-01', false);
 insert into roles (role, user_id) VALUES ('ROLE_ADMIN',50);
+insert into roles (role, user_id) VALUES ('ROLE_USER',50);
 
 CREATE  INDEX lower_case_username_idx ON users ((lower(first_name)));
 CREATE  INDEX lower_case_last_name_idx ON users ((lower(last_name)));

@@ -27,7 +27,7 @@ public class AuthRequest {
     @NotNull(message = "{password.empty}")
     @NotEmpty(message = "{password.empty}")
     @Size(min = 3, max = 50, message = "{password.size} {min}-{max} characters!")
-    @Pattern(regexp = "^[0-9A-z_@!@#$%^&*)(\\-\\]\\[]*$",
-            message = "{password.pattern} {regexp}")
+//    @Pattern(regexp = "^[0-9A-z_@!@#$%^&*)(\\-\\]\\[]*$",
+//            message = "{password.pattern} {regexp}")
     private String password;
 }
