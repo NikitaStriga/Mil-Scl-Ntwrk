@@ -5,7 +5,7 @@
 * Dto (link: [DTO](https://github.com/NikitaStriga/Mil-Scl-Ntwrk/tree/master/common/src/main/java/q3df/mil/dto). For conversion was used [ModeMapper](http://modelmapper.org/), impl in code: [mapper](https://github.com/NikitaStriga/Mil-Scl-Ntwrk/tree/master/common/src/main/java/q3df/mil/mapper) )
 * JPA (vendor adapter - Hibernate + covered by Spring Data JPA)
   * [repository](https://github.com/NikitaStriga/Mil-Scl-Ntwrk/tree/master/common/src/main/java/q3df/mil/repository) (JPA wrappers + @Queries + | Pageable with Sort | )
-  * [service](https://github.com/NikitaStriga/Mil-Scl-Ntwrk/tree/master/common/src/main/java/q3df/mil/service)
+  * [service](https://github.com/NikitaStriga/Mil-Scl-Ntwrk/tree/master/common/src/main/java/q3df/mil/service) (most of the non-primitive logic locate in [userServiceImpl](https://github.com/NikitaStriga/Mil-Scl-Ntwrk/blob/master/common/src/main/java/q3df/mil/service/impl/UserServiceImpl.java))
   * [customRepository](https://github.com/NikitaStriga/Mil-Scl-Ntwrk/blob/master/common/src/main/java/q3df/mil/repository/custom/impl/CustomRepositoryImpl.java) (written using Criteria) 
 * Controllers
   * [controllers](https://github.com/NikitaStriga/Mil-Scl-Ntwrk/tree/master/api/src/main/java/q3df/mil/controller)
@@ -45,7 +45,7 @@
  Преимущества:
   * пользователь 1, не может читать например диалоги пользователя 2 (в общем проверку можно повесить там, где вы посчитаете нужным)
   * пользователь не может изменять, удалять чужие записи, а также постить не на своем ресурсе
-  * если токен был скомпроментирован, то пользователь может изменить пароль и тогда, токен на стороне bad guy не будет валиден (реализуется за счет проверки через Claims и pChange в таблице User, так же есть кеш для этого дела Map<UserID,PChange>, чтобы в бд постоянно не лезть, @PutCache стоит на операции изменения пароля)
+  * если токен был скомпроментирован, то пользователь может изменить пароль и тогда, токен на стороне bad guy не будет валиден (реализуется за счет проверки через Claims и pChange в таблице User, так же есть кеш для этого дела Map<login,pChange>, чтобы в бд постоянно не лезть, @PutCache стоит на операции изменения пароля)
   * так же в request записывается информация о id пользователя и наличие админ роли, но все же , если вы админ, то вам доступны не все операции, а только удаление (наверное глупо было бы разрешать постить или изменять записи у пользователей)
   * за более подробной информаацией необходимо посетить: [JWT](https://github.com/NikitaStriga/Mil-Scl-Ntwrk/blob/master/api/src/main/java/q3df/mil/security/util/TokenUtils.java), [filter](https://github.com/NikitaStriga/Mil-Scl-Ntwrk/blob/master/api/src/main/java/q3df/mil/security/filter/JwtTokenFilter.java) and [permissionClass](https://github.com/NikitaStriga/Mil-Scl-Ntwrk/blob/master/api/src/main/java/q3df/mil/util/CustomPermission.java).
 ##### _© by Mil_
