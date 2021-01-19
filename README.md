@@ -1,6 +1,6 @@
 # A *REST API* for social network
 ### Project name - Mil-Scl-Ntwrk
-### What was used - ORM(Hibernate) + PostgreSQL + DTO + JPA + Rest + Security + Mail + AWS + FLYWAY + SWAGGER + CACHE
+### What was used - PostgreSQL + JPA(Hibernate) + DTO(converter - ModelMapper) + SpringBoot(Data + Rest + Security) + Mail + AWS + JWT + FLYWAY + SWAGGER + CACHE(Caffeine)
 #### The project includes (main parts):
 * ORM (vendor adapter - Hibernate), link: [ORM](https://github.com/NikitaStriga/Mil-Scl-Ntwrk/tree/master/common/src/main/java/q3df/mil/entities)
 * Dto (link: [DTO](https://github.com/NikitaStriga/Mil-Scl-Ntwrk/tree/master/common/src/main/java/q3df/mil/dto). For conversion was used [ModeMapper](http://modelmapper.org/), impl in code: [mapper](https://github.com/NikitaStriga/Mil-Scl-Ntwrk/tree/master/common/src/main/java/q3df/mil/mapper) )
