@@ -32,23 +32,23 @@
   * [common](https://github.com/NikitaStriga/Mil-Scl-Ntwrk/tree/master/common)
 ##### main application.properties: [props](https://github.com/NikitaStriga/Mil-Scl-Ntwrk/blob/master/api/src/main/resources/application.properties)  
 ##### From the author:
-&ensp;Краткое описание: ORM + DTO + JPA + Rest + Security + Mail + AWS + FLYWAY + SWAGGER + CACHE  
-&ensp;Чтобы хотелось выделить в проекте:
-* оптимизация запросов с помощью ***@org.hibernate.annotations.BatchSize***,
+&ensp;Short description: ORM + DTO + JPA + Rest + Security + Mail + AWS + FLYWAY + SWAGGER + CACHE  
+&ensp;What I would like to highlight in the project:
+* optimizing queries using ***@org.hibernate.annotations.BatchSize***,
  ***@org.hibernate.annotations.Fetch(FetchMode.SUBSELECT)***, 
- а так же удаления  ***@org.hibernate.annotations.OnDelete(action = org.hibernate.annotations.OnDeleteAction.CASCADE)***
-  ( с моей "вложенностью" сущностей, не имея этих аннотаций,
-   моя бд бы просто пыхтела как та печка из мультфильма, собственно фрагмент мульта - [смотреть как пыхтит печка без смс и регистрации](https://youtu.be/iJzEJ7Oa_oI?t=1007) )
-* метод Criteria по всем свойствам с пагинацией
-* ну и наверное самой достойной частью проекта, как мне кажется, является реализация фильтра  в security, который использует измененную реализацию JWT. 
-И именно эта связка Filter + JWT позволяет обезапасить URL, а так же операции с данными
- к которым у пользователей не должно быть прав + реализована проверка даты создания токена с датой изменения пароля.
- Преимущества:
-  * пользователь 1, не может читать например диалоги пользователя 2 (в общем проверку можно повесить там, где вы посчитаете нужным)
-  * пользователь не может изменять, удалять чужие записи, а также постить не на своем ресурсе
-  * если токен был скомпроментирован, то пользователь может изменить пароль и тогда, токен на стороне bad guy не будет валиден (реализуется за счет проверки через Claims и pChange в таблице User, так же есть кеш для этого дела Map<login,pChange>, чтобы в бд постоянно не лезть, @PutCache стоит на операции изменения пароля)
-  * так же в request записывается информация о id пользователя и наличие админ роли, но все же , если вы админ, то вам доступны не все операции, а только удаление (наверное глупо было бы разрешать постить или изменять записи у пользователей)
-  * за более подробной информаацией необходимо посетить: [JWT](https://github.com/NikitaStriga/Mil-Scl-Ntwrk/blob/master/api/src/main/java/q3df/mil/security/util/TokenUtils.java), [filter](https://github.com/NikitaStriga/Mil-Scl-Ntwrk/blob/master/api/src/main/java/q3df/mil/security/filter/JwtTokenFilter.java) and [permissionClass](https://github.com/NikitaStriga/Mil-Scl-Ntwrk/blob/master/api/src/main/java/q3df/mil/util/CustomPermission.java).
+ as well as deleting  ***@org.hibernate.annotations.OnDelete(action = org.hibernate.annotations.OnDeleteAction.CASCADE)***
+  ( with my "nesting" of entities, not having these annotations,
+   my bd would just puff like that cartoon stove, actually a fragment of the cartoon - [watch how the stove puffs without SMS and registration](https://youtu.be/iJzEJ7Oa_oI?t=1007) )
+* Criteria method on all properties with pagination
+* well, and probably the most worthy part of the project, as it seems to me, is the implementation of the filter in security, which uses a modified JWT implementation.
+And it is this bunch of Filter + JWT that allows you to secure the URL, as well as operations with data
+ to which users should not have rights + implemented verification of the creation date of the token with the date of the password change.
+ Benefits:
+  * user 1, cannot read, for example, the dialogs of user 2 (in general, the check can be hung where you see fit)
+  * the user cannot change, delete other people's posts, and also post not on his resource
+  * if the token was compromised, then the user can change the password and then the token on the bad guy side will not be valid (implemented by checking through Claims and pChange in the User table, there is also a cache for this case Map <login, pChange>, so that do not constantly climb into the database, @PutCache is on the password change operation)
+  * the request also records information about the user id and the presence of an admin role, but nevertheless, if you are an admin, then not all operations are available to you, but only deletion (it would probably be silly to allow users to post or change records)
+  * for more information please visit: [JWT](https://github.com/NikitaStriga/Mil-Scl-Ntwrk/blob/master/api/src/main/java/q3df/mil/security/util/TokenUtils.java), [filter](https://github.com/NikitaStriga/Mil-Scl-Ntwrk/blob/master/api/src/main/java/q3df/mil/security/filter/JwtTokenFilter.java) and [permissionClass](https://github.com/NikitaStriga/Mil-Scl-Ntwrk/blob/master/api/src/main/java/q3df/mil/util/CustomPermission.java).
 ##### _© by Mil_
 
 
